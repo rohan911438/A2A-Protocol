@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { CheckCircle2, Star, ArrowLeft, Share2, PartyPopper, Trophy } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CheckCircle2, Star, ArrowLeft, Share2, PartyPopper, Trophy, ShieldCheck, Database, Zap, Activity } from 'lucide-react';
 import { getDeal } from '../services/DealService';
+import NeuralBackground from '../components/NeuralBackground';
 
 const Completion = () => {
   const navigate = useNavigate();
@@ -32,137 +33,142 @@ const Completion = () => {
   }, [dealId]);
 
   const finalPrice = dealRecord?.data?.result?.final_price || 0;
-  const summary = dealRecord?.data?.request?.description || 'Escrow payment released on Algorand TestNet.';
+  const summary = dealRecord?.data?.request?.description || 'Escrow payment released on Stellar Network.';
 
   const finalDeal = {
-    title: dealRecord?.data?.request?.description || "Deal Completed",
+    title: dealRecord?.data?.request?.description || "Protocol Finalized",
     price: finalPrice,
     summary
   };
 
   if (loadingData) {
     return (
-      <div className="pt-32 pb-20 px-6 min-h-screen bg-ink-900 flex flex-col items-center justify-center">
-        <div className="w-12 h-12 rounded-full border-2 border-aqua/20 border-t-aqua animate-spin" />
-        <p className="mt-4 text-slate font-mono text-xs uppercase tracking-widest">Loading completion data...</p>
+      <div className="pt-32 pb-20 px-6 min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+        <NeuralBackground />
+        <div className="w-16 h-16 rounded-2xl border-2 border-indigo-500/20 border-t-indigo-500 animate-spin flex items-center justify-center">
+            <Activity className="text-indigo-400" size={24} />
+        </div>
+        <p className="mt-6 text-mist/60 font-mono text-[10px] uppercase tracking-[0.4em] animate-pulse">Retrieving Settlement Data...</p>
       </div>
     );
   }
 
   if (!dealId || !dealRecord) {
     return (
-      <div className="pt-32 pb-20 px-6 min-h-screen bg-ink-900 flex flex-col items-center justify-center text-center space-y-6">
-        <div className="w-20 h-20 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4">
-          <Trophy size={40} className="text-slate/20" />
+      <div className="pt-32 pb-20 px-6 min-h-screen flex flex-col items-center justify-center text-center space-y-10 relative overflow-hidden">
+        <NeuralBackground />
+        <div className="w-24 h-24 rounded-[2.5rem] glass-morphism border border-white/5 flex items-center justify-center mx-auto shadow-2xl">
+          <Database size={40} className="text-slate/20" />
         </div>
-        <h1 className="text-3xl font-display font-bold text-white italic">No Completion Found</h1>
-        <p className="text-slate text-sm max-w-xs mx-auto">Please select a completed deal from your dashboard to view its final settlement and certificate.</p>
+        <div className="space-y-4">
+            <h1 className="text-4xl font-display font-black text-white uppercase tracking-tighter italic">Archive Not Found</h1>
+            <p className="text-slate text-xs max-w-xs mx-auto font-medium opacity-60">Please select a completed protocol from your terminal to view final settlement snapshots.</p>
+        </div>
         <button
           onClick={() => navigate('/dashboard')}
-          className="px-8 py-3 bg-white text-ink-900 font-bold rounded-xl hover:scale-105 transition-all"
+          className="px-12 py-5 bg-white text-ink-900 font-black rounded-2xl hover:scale-105 transition-all shadow-glow uppercase tracking-widest text-[11px]"
         >
-          Go to Dashboard
+          Return to Terminal
         </button>
       </div>
     );
   }
 
   return (
-    <div className="pt-32 pb-24 px-6 min-h-screen bg-ink-900 flex flex-col items-center relative overflow-hidden">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-gradient-to-b from-lime/5 to-transparent -z-10" />
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="absolute -top-20 -right-20 w-80 h-80 bg-aqua/5 blur-[80px] rounded-full -z-10"
-      />
+    <div className="pt-32 pb-32 px-6 min-h-screen flex flex-col items-center relative overflow-hidden selection:bg-indigo-500/30 selection:text-stellar-cyan">
+      <NeuralBackground />
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="max-w-2xl w-full text-center space-y-10"
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        className="max-w-2xl w-full text-center space-y-16 z-10"
       >
-        <div className="space-y-6">
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="w-24 h-24 bg-lime/10 border border-lime/20 rounded-full flex items-center justify-center mx-auto relative"
-          >
-            <CheckCircle2 size={48} className="text-lime" />
-            <motion.div
-              animate={{ scale: [1, 1.5, 1], opacity: [0, 0.5, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="absolute inset-0 bg-lime rounded-full"
-            />
-          </motion.div>
-
-          <div className="space-y-2">
-            <h1 className="text-4xl md:text-5xl font-display font-bold text-white italic">Deal Successfully Completed</h1>
-            <p className="text-slate text-sm max-w-md mx-auto italic">The transaction for your deal has been finalized and released from escrow.</p>
-          </div>
+        <div className="space-y-8">
+           <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-emerald-400/10 border border-emerald-400/20 text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.1)]">
+              <ShieldCheck size={14} /> Settlement Formalized
+           </div>
+           
+           <h1 className="text-6xl md:text-7xl font-display font-black text-white uppercase tracking-tighter leading-tight">
+             Protocol <br/>
+             <span className="text-transparent bg-clip-text bg-gradient-to-r from-stellar-cyan via-indigo-400 to-cyber-purple">Resolved</span>
+           </h1>
         </div>
 
-        <div className="bg-ink-800/50 border border-white/5 p-8 md:p-10 rounded-[2.5rem] backdrop-blur-xl shadow-soft space-y-8 relative group">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-white/5 pb-6">
-            <div className="text-center md:text-left">
-              <div className="text-[10px] uppercase font-mono text-slate tracking-widest mb-1">Final Settlement</div>
-              <div className="text-4xl font-display font-bold text-white">{finalDeal.price}.00 ALGO</div>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10">
-              <Trophy size={16} className="text-aqua" />
-              <span className="text-xs font-bold text-white uppercase tracking-tighter italic">Top Tier Delivery</span>
-            </div>
-          </div>
+        <div className="glass-morphism border border-white/10 p-12 md:p-16 rounded-[4rem] backdrop-blur-3xl shadow-2xl space-y-12 relative group overflow-hidden">
+           <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-400/[0.03] blur-[120px] -z-10 group-hover:bg-emerald-400/[0.07] transition-all duration-1000" />
+           
+           <div className="flex flex-col md:flex-row justify-between items-center gap-10 border-b border-white/5 pb-10">
+              <div className="text-center md:text-left space-y-2">
+                 <div className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em]">Final Disbursement</div>
+                 <div className="text-5xl font-display font-black text-white tracking-tighter">
+                   {finalDeal.price} <span className="text-xs font-mono text-slate opacity-40">XLM</span>
+                 </div>
+              </div>
+              <div className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-emerald-400/5 border border-emerald-400/10 shadow-inner">
+                 <Trophy size={20} className="text-emerald-400" />
+                 <span className="text-[10px] font-black text-white uppercase tracking-[0.2em]">Verified Proof</span>
+              </div>
+           </div>
 
-          <div className="space-y-4">
-            <h3 className="text-xs uppercase font-mono text-slate tracking-widest text-left font-bold">Project Summary</h3>
-            <p className="text-slate text-sm leading-relaxed text-left italic">
-              {finalDeal.summary}
-            </p>
-          </div>
+           <div className="space-y-6 text-left">
+              <h3 className="text-[10px] font-black text-slate uppercase tracking-[0.4em] mb-4 opacity-40">Agreement Metadata</h3>
+              <p className="text-lg font-medium text-white/80 leading-relaxed italic border-l-2 border-indigo-500/30 pl-8">
+                 "{finalDeal.summary}"
+              </p>
+           </div>
 
-          <div className="pt-4 space-y-4 border-t border-white/5">
-            <h3 className="text-xs uppercase font-mono text-slate tracking-widest font-bold">Rate the Negotiation</h3>
-            <div className="flex justify-center gap-3">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  type="button"
-                  className="transition-all hover:scale-125 focus:outline-none"
-                  onClick={() => setRating(star)}
-                  onMouseEnter={() => setHover(star)}
-                  onMouseLeave={() => setHover(0)}
-                >
-                  <Star
-                    size={32}
-                    fill={(hover || rating) >= star ? '#5EF0FF' : 'transparent'}
-                    className={(hover || rating) >= star ? 'text-aqua' : 'text-slate/20'}
-                  />
-                </button>
-              ))}
-            </div>
-            <p className="text-[10px] text-slate/40 italic">Your feedback helps improve the AI Agent training models.</p>
-          </div>
+           <div className="pt-10 space-y-8 border-t border-white/5">
+              <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em]">Protocol Efficiency Metric</h3>
+              <div className="flex justify-center gap-6">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    className="transition-all hover:scale-125 focus:outline-none group/star"
+                    onClick={() => setRating(star)}
+                    onMouseEnter={() => setHover(star)}
+                    onMouseLeave={() => setHover(0)}
+                  >
+                    <Star
+                      size={40}
+                      fill={(hover || rating) >= star ? '#22d3ee' : 'transparent'}
+                      className={`transition-all duration-300 ${
+                        (hover || rating) >= star 
+                        ? 'text-stellar-cyan drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]' 
+                        : 'text-white/5 group-hover/star:text-white/20'
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
+              <p className="text-[9px] font-bold text-slate/40 uppercase tracking-[0.4em]">Neural feedback requested for agent optimization</p>
+           </div>
 
-          <div className="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="w-full py-4 bg-white text-ink-900 font-bold rounded-2xl hover:scale-105 transition-all flex items-center justify-center gap-2"
-            >
-              <ArrowLeft size={18} /> Back to Dashboard
-            </button>
-            <button
-              className="w-full py-4 bg-white/5 border border-white/10 text-white font-bold rounded-2xl hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
-            >
-              <Share2 size={18} /> Share Results
-            </button>
-          </div>
+           <div className="pt-8 grid grid-cols-1 sm:grid-cols-2 gap-6 relative z-10">
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="w-full py-6 bg-white text-ink-900 font-black rounded-3xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3 shadow-glow uppercase tracking-widest text-[11px]"
+              >
+                <ArrowLeft size={18} /> Terminal Home
+              </button>
+              <button
+                className="w-full py-6 bg-white/5 border border-white/10 text-white font-black rounded-3xl hover:bg-white/10 transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-[11px]"
+              >
+                <Share2 size={18} /> Export Snapshot
+              </button>
+           </div>
         </div>
 
-        <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-aqua/5 border border-aqua/10">
-          <PartyPopper size={16} className="text-aqua" />
-          <span className="text-[10px] font-mono text-aqua uppercase tracking-widest font-bold">Transaction Confirmed</span>
-        </div>
+        <motion.div 
+           initial={{ opacity: 0, y: 20 }}
+           animate={{ opacity: 1, y: 0 }}
+           transition={{ delay: 0.5 }}
+           className="inline-flex items-center gap-4 px-8 py-4 rounded-3xl bg-indigo-500/5 border border-indigo-500/10 backdrop-blur-md"
+        >
+           <PartyPopper size={20} className="text-indigo-400" />
+           <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em]">Block 48,291,012 • TX Confirmed</span>
+        </motion.div>
       </motion.div>
     </div>
   );

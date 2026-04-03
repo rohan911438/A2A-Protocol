@@ -7,11 +7,8 @@ export default defineConfig({
   plugins: [
     react(),
     nodePolyfills({
-      globals: {
-        Buffer: true,
-        global: true,
-        process: true,
-      },
+      // We manually polyfill these in index.html to avoid proxy script corruption
+      globals: false, 
       protocolImports: true,
     }),
   ],

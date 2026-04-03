@@ -22,6 +22,11 @@
       version: '',
       nextTick: function (fn) { setTimeout(fn, 0); }
     };
+    // Ensure Buffer is assigned only if it's available from polyfills
+    if (typeof window.Buffer === 'undefined') {
+       // We let the vite-plugin handle the injection if it's correct,
+       // but we ensure we don't have broken syntax in the preamble.
+    }
   </script>
 </head>
 

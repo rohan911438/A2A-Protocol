@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, User, ArrowRight, Zap, CheckCircle2, MoreHorizontal, Coins } from 'lucide-react';
+import { Bot, User, ArrowRight, Zap, CheckCircle2, MoreHorizontal, Coins, Shield, Terminal, Cpu } from 'lucide-react';
 import { getDeal, startNegotiation, acceptDealWithWallet } from '../services/DealService';
 import { useWallet } from '../context/WalletContext';
+import NeuralBackground from '../components/NeuralBackground';
 
 const NegotiationRoom = () => {
   const location = useLocation();
@@ -19,7 +20,7 @@ const NegotiationRoom = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [accepting, setAccepting] = useState(false);
-  const { account, connected } = useWallet();
+  const { account, connected, formatAddress } = useWallet();
 
   useEffect(() => {
     if (!dealId) return;
@@ -52,7 +53,7 @@ const NegotiationRoom = () => {
     const request = dealData?.data?.request || dealData?.data || {};
     const title = request?.title || '';
     const desc = request?.description || '';
-    return title || desc.split('—')[0]?.trim() || 'New Deal';
+    return title || desc.split('—')[0]?.trim() || 'Neural Session';
   }, [dealData]);
 
   const buyerWallet = useMemo(() => {
@@ -78,7 +79,7 @@ const NegotiationRoom = () => {
       setMessages([]); 
       for (const msg of mappedMessages) {
         setIsTyping(true);
-        await new Promise(resolve => setTimeout(resolve, 1200 + Math.random() * 1000));
+        await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1000));
         setMessages(prev => [...prev, msg]);
         setIsTyping(false);
       }
@@ -93,7 +94,7 @@ const NegotiationRoom = () => {
 
   const handleAccept = async () => {
     if (!connected || !account) {
-      setError('Connect wallet to authorize.');
+      setError('Connect wallet to authorize protocol.');
       return;
     }
     if (!dealId) return;
@@ -110,137 +111,170 @@ const NegotiationRoom = () => {
   };
 
   return (
-    <div className="pt-24 min-h-screen bg-ink-900 flex flex-col items-center relative overflow-hidden">
-      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-aqua/5 blur-[120px] rounded-full -z-10" />
-      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-blush/5 blur-[120px] rounded-full -z-10" />
+    <div className="pt-20 min-h-screen flex flex-col items-center relative overflow-hidden selection:bg-indigo-500/30 selection:text-stellar-cyan">
+      <NeuralBackground />
 
-      <div className="w-full max-w-4xl px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-white/5 bg-ink-900/50 backdrop-blur-md z-20">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
-            <Zap className="text-aqua animate-pulse" size={24} />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-white font-display italic uppercase">Protocol Room</h1>
-            <div className="flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full ${isComplete ? 'bg-lime' : 'bg-aqua animate-ping'}`} />
-              <span className="text-[10px] uppercase tracking-[0.2em] font-mono text-slate">
-                {isComplete ? 'Consensus Reached' : (dealStatus === 'accepted' ? 'Agents Initialized' : 'Awaiting Peer Activation')}
-              </span>
+      {/* Header Panel */}
+      <div className="w-full h-24 glass-morphism border-b border-white/5 flex items-center z-20 px-8 relative">
+        <div className="max-w-6xl mx-auto w-full flex items-center justify-between">
+            <div className="flex items-center gap-5">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-cyber-purple p-[1px] shadow-glow">
+                <div className="w-full h-full rounded-[15px] bg-ink-900 flex items-center justify-center">
+                    <Terminal className="text-stellar-cyan" size={20} />
+                </div>
+              </div>
+              <div>
+                <h1 className="text-lg font-display font-black text-white uppercase tracking-tighter">Negotiation Channel</h1>
+                <div className="flex items-center gap-2">
+                  <div className={`w-1.5 h-1.5 rounded-full ${isComplete ? 'bg-emerald-400 shadow-[0_0_10px_#34d399]' : 'bg-stellar-cyan animate-pulse shadow-[0_0_10px_#22d3ee]'}`} />
+                  <span className="text-[9px] font-mono font-bold text-slate uppercase tracking-widest opacity-60">
+                    {isComplete ? 'Consensus Secure' : 'Neural Sync Active'}
+                  </span>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10">
-           <div className="text-[10px] font-mono text-slate uppercase tracking-widest">Context:</div>
-           <div className="text-xs font-bold text-white">{dealTitle}</div>
+            <div className="hidden md:flex items-center gap-4 px-6 py-2.5 rounded-2xl bg-white/5 border border-white/10 shadow-inner">
+               <div className="text-[9px] font-mono font-black text-indigo-400 uppercase tracking-[0.3em]">Objective Vector:</div>
+               <div className="text-xs font-bold text-white px-2 py-0.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20">{dealTitle}</div>
+            </div>
+
+            <div className="flex items-center gap-4">
+                <div className="text-right hidden sm:block">
+                    <div className="text-[8px] font-black text-slate uppercase tracking-widest opacity-40">Network Load</div>
+                    <div className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-tighter">0.00ms Latency</div>
+                </div>
+                <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate">
+                    <Shield size={18} />
+                </div>
+            </div>
         </div>
       </div>
 
-      <div className="flex-1 w-full max-w-3xl overflow-y-auto px-6 py-10 space-y-8 no-scrollbar scroll-smooth mb-28" ref={scrollRef}>
+      {/* Main Chat Area */}
+      <div className="flex-1 w-full max-w-4xl px-6 py-12 space-y-10 overflow-y-auto no-scrollbar pb-40 z-10" ref={scrollRef}>
         <AnimatePresence mode="popLayout">
           {messages.length === 0 && dealData && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col items-center gap-4 py-10 text-center"
-            >
-              <div className="p-8 rounded-[2rem] bg-ink-800/40 border border-white/10 max-w-lg">
-                <div className="text-[10px] uppercase font-mono text-aqua/60 tracking-widest mb-3">Objective Vector</div>
-                <p className="text-white/80 italic leading-relaxed font-display text-sm">
-                  "{dealData?.data?.request?.description || dealData?.data?.description}"
-                </p>
-              </div>
-              <div className="flex flex-col items-center gap-2">
-                <div className="h-12 w-px bg-gradient-to-b from-white/10 to-transparent" />
-                <p className="text-[10px] uppercase font-mono text-slate tracking-[0.2em] animate-pulse">
-                  {dealStatus === 'created' ? 'Waiting for participant to authorize the protocol...' : 'Autonomous agents are negotiating terms...'}
-                </p>
-              </div>
-            </motion.div>
+             <motion.div
+               initial={{ opacity: 0, scale: 0.98 }}
+               animate={{ opacity: 1, scale: 1 }}
+               className="flex flex-col items-center gap-8 py-20 text-center"
+             >
+               <div className="p-10 rounded-[3rem] glass-morphism border border-white/5 max-w-xl relative group">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-indigo-500 text-[10px] font-black uppercase tracking-[0.2em] shadow-glow">Initialization Packet</div>
+                  <p className="text-lg text-white font-medium leading-relaxed italic opacity-80 decoration-stellar-cyan/30 underline-offset-8 decoration-2">
+                    "{dealData?.data?.request?.description || dealData?.data?.description}"
+                  </p>
+                  <div className="mt-8 flex justify-center gap-6 opacity-40">
+                     <div className="flex flex-col items-center gap-1">
+                        <Cpu size={14} className="text-stellar-cyan" />
+                        <span className="text-[8px] font-bold uppercase tracking-widest">Logic Node 1</span>
+                     </div>
+                     <div className="flex flex-col items-center gap-1">
+                        <Bot size={14} className="text-cyber-purple" />
+                        <span className="text-[8px] font-bold uppercase tracking-widest">Logic Node 2</span>
+                     </div>
+                  </div>
+               </div>
+               
+               <div className="flex flex-col items-center gap-3">
+                 <div className="h-16 w-px bg-gradient-to-b from-indigo-500/40 to-transparent" />
+                 <p className="text-[10px] font-mono font-bold text-mist/40 uppercase tracking-[0.4em] animate-pulse">
+                   {dealStatus === 'created' ? 'Protocol requires peer handshake...' : 'Negotiating Pareto-optimal outcome...'}
+                 </p>
+               </div>
+             </motion.div>
           )}
 
           {messages.map((msg, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.4, ease: 'easeOut' }}
-              className={`flex items-end gap-3 ${msg.role === 'buyer' ? 'flex-row' : 'flex-row-reverse'}`}
+              initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className={`flex items-start gap-5 ${msg.role === 'buyer' ? 'flex-row' : 'flex-row-reverse'}`}
             >
-              <div className={`w-10 h-10 rounded-full border border-white/10 flex items-center justify-center shrink-0 shadow-lg ${msg.role === 'buyer' ? 'bg-aqua/20' : 'bg-blush/20'}`}>
-                {msg.role === 'buyer' ? <User size={20} className="text-aqua" /> : <Bot size={20} className="text-blush" />}
+              <div className={`w-12 h-12 rounded-2xl border border-white/10 flex items-center justify-center shrink-0 shadow-2xl relative group ${msg.role === 'buyer' ? 'bg-indigo-500/10' : 'bg-cyber-purple/10'}`}>
+                <div className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity blur-lg -z-10 ${msg.role === 'buyer' ? 'bg-indigo-500/40' : 'bg-cyber-purple/40'}`} />
+                {msg.role === 'buyer' ? <User size={22} className="text-indigo-400" /> : <Bot size={22} className="text-cyber-purple" />}
               </div>
-              <div className="space-y-1 max-w-[80%]">
-                <div className={`px-5 py-4 rounded-3xl text-sm leading-relaxed shadow-soft border backdrop-blur-md ${
-                  msg.role === 'buyer' 
-                  ? 'bg-aqua/10 border-aqua/20 text-white rounded-bl-none' 
-                  : 'bg-blush/10 border-blush/20 text-white rounded-br-none'
-                }`}>
+              
+              <div className={`space-y-2 max-w-[85%] ${msg.role === 'buyer' ? 'items-start' : 'items-end flex flex-col'}`}>
+                <div className={`
+                    px-7 py-5 rounded-[2rem] text-sm leading-relaxed font-medium backdrop-blur-xl border relative shadow-2xl
+                    ${msg.role === 'buyer' 
+                      ? 'bg-indigo-500/5 border-indigo-500/20 text-indigo-100 rounded-tl-none' 
+                      : 'bg-cyber-purple/5 border-cyber-purple/20 text-purple-100 rounded-tr-none'
+                    }
+                `}>
                   {msg.text}
                   {msg.price && (
-                    <div className={`mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
-                      msg.role === 'buyer' ? 'bg-aqua text-ink-900' : 'bg-blush text-ink-900'
+                    <div className={`mt-4 inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black tracking-widest shadow-lg ${
+                      msg.role === 'buyer' ? 'bg-indigo-500 text-white' : 'bg-cyber-purple text-white'
                     }`}>
-                      <Coins size={12} className="inline-block" /> {msg.price} XLM
+                      <Coins size={14} /> {msg.price} XLM
                     </div>
                   )}
                 </div>
-                <div className={`text-[9px] uppercase tracking-widest font-mono text-slate/40 flex items-center gap-2 ${msg.role === 'buyer' ? 'text-left' : 'text-right flex-row-reverse'}`}>
-                  <span>{msg.role === 'buyer' ? 'Buyer Agent' : 'Seller Agent'}</span>
-                  <span className="w-1 h-1 rounded-full bg-white/10" />
-                  <span>Verified Logic</span>
+                <div className={`flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.2em] opacity-30 ${msg.role === 'buyer' ? '' : 'flex-row-reverse'}`}>
+                    <span>{msg.role === 'buyer' ? 'Origin Agent' : 'Destination Agent'}</span>
+                    <div className="w-1 h-1 rounded-full bg-white/40" />
+                    <span className="font-mono">Packet V.{100 + i}</span>
                 </div>
               </div>
             </motion.div>
           ))}
         </AnimatePresence>
 
-      {isTyping && (
-        <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex items-end gap-3"
+        {isTyping && (
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center gap-4"
           >
-            <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center relative">
-               <div className="absolute inset-0 rounded-full border border-aqua/20 animate-ping opacity-20" />
-               <MoreHorizontal size={16} className="text-slate/40" />
+            <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center relative">
+               <div className="absolute inset-0 rounded-2xl border border-stellar-cyan/20 animate-ping opacity-20" />
+               <MoreHorizontal size={20} className="text-stellar-cyan" />
             </div>
+            <span className="text-[10px] font-black text-stellar-cyan uppercase tracking-[0.3em] animate-pulse">Syncing Logic...</span>
           </motion.div>
         )}
       </div>
 
+      {/* Control Navigation Dock */}
       <AnimatePresence>
         <motion.div 
-          initial={{ y: 100, opacity: 0 }}
+          initial={{ y: 150, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="fixed bottom-10 left-6 right-6 z-50 flex justify-center"
+          transition={{ type: "spring", damping: 25, stiffness: 200 }}
+          className="fixed bottom-12 left-6 right-6 z-50 flex justify-center"
         >
-          <div className="max-w-2xl w-full p-1 rounded-[2rem] bg-gradient-to-r from-aqua/50 via-blush/50 to-aqua/50 shadow-[0_0_50px_rgba(94,240,255,0.2)] backdrop-blur-xl">
-             <div className="bg-ink-900/90 rounded-[1.9rem] px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-6 border border-white/5">
-                <div className="flex items-center gap-4">
-                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border transition-all ${
-                     isComplete ? 'bg-lime/20 border-lime/30' : 
-                     dealStatus === 'accepted' ? 'bg-aqua/20 border-aqua/30' : 'bg-white/5 border-white/10'
+          <div className="max-w-3xl w-full p-[1px] rounded-[2.5rem] bg-gradient-to-r from-indigo-500 via-stellar-cyan to-cyber-purple shadow-[0_0_60px_rgba(99,102,241,0.3)]">
+             <div className="bg-ink-900/90 backdrop-blur-3xl rounded-[2.4rem] px-10 py-6 flex flex-col sm:flex-row items-center justify-between gap-8 border border-white/5">
+                <div className="flex items-center gap-6">
+                   <div className={`w-16 h-16 rounded-3xl flex items-center justify-center border-2 transition-all duration-700 shadow-xl ${
+                     isComplete ? 'bg-emerald-400/10 border-emerald-400/50 shadow-emerald-400/20' : 
+                     dealStatus === 'accepted' ? 'bg-stellar-cyan/10 border-stellar-cyan/50 shadow-stellar-cyan/20' : 'bg-white/5 border-white/10'
                    }`}>
-                      {isComplete ? <CheckCircle2 size={24} className="text-lime" /> : <Zap size={24} className={dealStatus === 'accepted' ? 'text-aqua' : 'text-slate'} />}
+                      {isComplete ? <CheckCircle2 size={32} className="text-emerald-400" /> : <Zap size={32} className={dealStatus === 'accepted' ? 'text-stellar-cyan' : 'text-slate/40'} />}
                    </div>
                    <div>
-                      <div className="text-[10px] uppercase tracking-[0.2em] font-mono text-slate mb-0.5">
-                        {isComplete ? 'Protocol Consensus' : (dealStatus === 'accepted' ? 'Ready to Deploy' : 'Peer Authorization')}
+                      <div className="text-[11px] font-mono font-black text-indigo-400 uppercase tracking-[0.3em] mb-1">
+                        {isComplete ? 'Protocol Consensus' : (dealStatus === 'accepted' ? 'Engines Primed' : 'Network Handshake')}
                       </div>
-                      <div className="text-lg font-bold text-white font-display uppercase tracking-tight">
-                        {isComplete ? 'Deal Synthesized' : (dealStatus === 'accepted' ? 'Ignite Agents' : 'Awaiting Peer')}
+                      <div className="text-2xl font-display font-black text-white uppercase tracking-tighter">
+                        {isComplete ? 'Terms Locked' : (dealStatus === 'accepted' ? 'Initialize Agents' : 'Awaiting Peer')}
                       </div>
                    </div>
                 </div>
 
-                <div className="flex items-center gap-4 w-full sm:w-auto">
+                <div className="flex items-center gap-5 w-full sm:w-auto">
                   {isComplete ? (
                     <button
                       onClick={() => navigate('/summary', { state: { dealId } })}
-                      className="w-full sm:w-auto px-10 py-3.5 bg-white text-ink-900 font-bold rounded-2xl hover:scale-105 transition-all shadow-lg flex items-center justify-center gap-2 uppercase tracking-widest text-[10px]"
+                      className="w-full sm:w-auto px-12 py-5 bg-white text-ink-900 font-black rounded-2xl hover:scale-105 transition-all shadow-glow flex items-center justify-center gap-3 uppercase tracking-widest text-[11px]"
                     >
-                      Inspect Agreement <ArrowRight size={16} />
+                      Audit Agreement <ArrowRight size={18} />
                     </button>
                   ) : (
                     <>
@@ -248,9 +282,13 @@ const NegotiationRoom = () => {
                          <button
                             onClick={handleAccept}
                             disabled={accepting}
-                            className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-aqua to-blush text-ink-900 font-bold rounded-2xl hover:scale-105 transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-[10px]"
+                            className="w-full sm:w-auto px-12 py-5 bg-gradient-to-r from-indigo-500 to-cyber-purple text-white font-black rounded-2xl hover:scale-105 transition-all shadow-glow flex items-center justify-center gap-3 uppercase tracking-widest text-[11px]"
                          >
-                            {accepting ? 'Authorizing...' : 'Authorize & Launch'} <Zap size={18} />
+                            {accepting ? (
+                                <>Processing... <MoreHorizontal size={20} className="animate-pulse" /></>
+                            ) : (
+                                <>Accept Invite <Zap size={20} /></>
+                            )}
                          </button>
                       )}
                       
@@ -258,15 +296,15 @@ const NegotiationRoom = () => {
                         <button 
                           onClick={handleStart}
                           disabled={loading}
-                          className="w-full sm:w-auto px-8 py-3.5 bg-white text-ink-900 font-bold rounded-2xl hover:scale-105 transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-[10px]"
+                          className="w-full sm:w-auto px-12 py-5 bg-white text-ink-900 font-black rounded-2xl hover:scale-105 transition-all shadow-glow flex items-center justify-center gap-3 uppercase tracking-widest text-[11px]"
                         >
-                          {loading ? 'Negotiating...' : 'Start Logic Agents'} <ArrowRight size={18} />
+                          {loading ? 'Synthesizing...' : 'Deploy Swarm'} <ArrowRight size={20} />
                         </button>
                       )}
 
                       {dealStatus === 'created' && isBuyer && (
-                        <div className="px-8 py-3.5 bg-white/5 border border-white/10 text-slate font-bold rounded-2xl cursor-not-allowed flex items-center gap-2 uppercase tracking-widest text-[10px]">
-                           Peer Pending <MoreHorizontal size={18} className="animate-pulse" />
+                        <div className="px-10 py-5 bg-white/5 border border-white/10 text-slate font-black rounded-2xl cursor-wait flex items-center gap-3 uppercase tracking-widest text-[11px] opacity-60">
+                           Awaiting Peer <MoreHorizontal size={20} className="animate-pulse" />
                         </div>
                       )}
                     </>
@@ -278,7 +316,12 @@ const NegotiationRoom = () => {
       </AnimatePresence>
 
       {error && (
-        <div className="text-xs text-blush mb-10 bg-blush/5 px-4 py-2 rounded-lg border border-blush/20 uppercase tracking-widest font-mono">{error}</div>
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="fixed bottom-32 left-1/2 -translate-x-1/2 text-xs text-cyber-purple bg-cyber-purple/5 px-6 py-3 rounded-xl border border-cyber-purple/20 uppercase tracking-[0.2em] font-black backdrop-blur-md shadow-2xl z-50">
+            {error}
+        </motion.div>
       )}
     </div>
   );
