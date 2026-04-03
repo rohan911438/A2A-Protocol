@@ -1,17 +1,17 @@
-import { 
-  getPublicKey, 
-  signTransaction, 
-  isConnected, 
-  getNetwork 
+import {
+  getPublicKey,
+  signTransaction,
+  isConnected,
+  getNetwork
 } from "@stellar/freighter-api";
-import * as StellarSdk from "@stellar/stellar-sdk";
+import { Horizon, Networks } from "@stellar/stellar-sdk";
 
 class StellarWalletService {
   constructor() {
     this.selectedWallet = null;
     this.horizonUrl = import.meta.env.VITE_HORIZON_URL || "https://horizon-testnet.stellar.org";
-    this.networkPassphrase = import.meta.env.VITE_NETWORK_PASSPHRASE || StellarSdk.Networks.TESTNET;
-    this.server = new StellarSdk.Horizon.Server(this.horizonUrl);
+    this.networkPassphrase = import.meta.env.VITE_NETWORK_PASSPHRASE || Networks.TESTNET;
+    this.server = new Horizon.Server(this.horizonUrl);
   }
 
   /**
@@ -23,23 +23,23 @@ class StellarWalletService {
     const albedoInstalled = true; // Albedo is web-based, always "available"
 
     return {
-      freighter: { 
-        id: 'freighter', 
-        name: 'Freighter', 
-        installed: freighterInstalled, 
-        icon: '🚢' 
+      freighter: {
+        id: 'freighter',
+        name: 'Freighter',
+        installed: freighterInstalled,
+        icon: '🚢'
       },
-      rabet: { 
-        id: 'rabet', 
-        name: 'Rabet', 
-        installed: rabetInstalled, 
-        icon: '🐰' 
+      rabet: {
+        id: 'rabet',
+        name: 'Rabet',
+        installed: rabetInstalled,
+        icon: '🐰'
       },
-      albedo: { 
-        id: 'albedo', 
-        name: 'Albedo', 
-        installed: albedoInstalled, 
-        icon: '✨' 
+      albedo: {
+        id: 'albedo',
+        name: 'Albedo',
+        installed: albedoInstalled,
+        icon: '✨'
       }
     };
   }
