@@ -13,7 +13,8 @@ from ..services import (
     get_deal, 
     update_deal, 
     list_deals, 
-    run_negotiation
+    run_negotiation,
+    get_wallet_state
 )
 
 router = APIRouter()
@@ -286,3 +287,14 @@ def list_all_deals():
     4. List Deals: Show all records in the store.
     """
     return list_deals()
+
+
+@router.get("/wallet-state/{address}")
+def get_user_state(address: str):
+    """
+    5. Wallet State: Restore user session and track activity.
+    """
+    try:
+        return get_wallet_state(address)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
