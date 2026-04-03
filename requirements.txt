@@ -1,0 +1,8 @@
+fastapi==0.115.0
+uvicorn==0.30.6
+pydantic==2.9.2
+google-generativeai
+python-dotenv==1.0.1
+pyteal==0.26.1
+py-algorand-sdk==2.6.1
+pymongo==4.10.1
