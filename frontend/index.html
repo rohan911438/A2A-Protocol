@@ -1,28 +1,31 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Agentic Exchange - Algorand Real-time Negotiator</title>
-    
-    <!-- Critical Node Polyfills - Must run before any other scripts -->
-    <script>
-      window.global = window;
-      var process = { 
-        env: { NODE_ENV: 'development' }, 
-        browser: true, 
-        version: '', 
-        nextTick: function(fn) { setTimeout(fn, 0); } 
-      };
-    </script>
-    <script type="module">
-      import { Buffer } from 'buffer';
-      window.Buffer = Buffer;
-    </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentic Exchange - Algorand Real-time Negotiator</title>
+
+  <!-- Critical Node Polyfills - Must run before any other scripts -->
+  <script>
+    window.global = window;
+    var process = {
+      env: { NODE_ENV: 'development' },
+      browser: true,
+      version: '',
+      nextTick: function (fn) { setTimeout(fn, 0); }
+    };
+  </script>
+  <script type="module">
+    import { Buffer } from 'buffer';
+    window.Buffer = Buffer;
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>
