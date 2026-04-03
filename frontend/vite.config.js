@@ -28,6 +28,6 @@ export default defineConfig({
     global: 'globalThis',
   },
   optimizeDeps: {
-    include: ['buffer', 'process', 'algosdk'],
+    include: ['buffer', 'process'],
   },
 })

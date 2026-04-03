@@ -2,28 +2,28 @@ import React from 'react';
 
 const steps = [
   {
-    title: "Create a Task",
+    title: "Define Objective",
     number: "01",
-    description: "Define your requirements, budget range, and timeline in simple language.",
-    icon: "📝"
+    description: "Launch your agent with simple natural language instructions, budget, and timeline.",
+    icon: "🎯"
   },
   {
-    title: "AI Agents Negotiate",
+    title: "Agent Negotiation",
     number: "02",
-    description: "Our specialized LLM agents debate, persuasive, and find the best price for both parties.",
-    icon: "🤖"
+    description: "Autonomous LLM agents sync to find optimal pricing and terms via secure peer-to-peer logic.",
+    icon: "🤝"
   },
   {
-    title: "Smart Contract secures Deal",
+    title: "Soroban Settlement",
     number: "03",
-    description: "Once agreed, a trustless escrow is created on the blockchain ensuring transparency.",
-    icon: "🔐"
+    description: "Once agreed, a Stellar Soroban smart contract locks the deal and secures the assets.",
+    icon: "🛡️"
   },
   {
-    title: "Payment Released ",
+    title: "Verifiable Execution",
     number: "04",
-    description: "Funds are automatically released upon verifiable completion of the milestones.",
-    icon: "✨"
+    description: "Funds are released instantly as our protocol validates the completed work on-chain.",
+    icon: "💎"
   }
 ];
 
@@ -35,11 +35,11 @@ const HowItWorks = () => {
       
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-20">
-          <h2 className="text-4xl lg:text-5xl font-display font-bold text-white mb-6 animate-fadeInUp">
+          <h2 className="text-4xl lg:text-5xl font-display font-bold text-white mb-6 animate-fadeInUp uppercase tracking-tight">
             How it <span className="text-aqua">Works</span>
           </h2>
           <p className="text-slate leading-relaxed animate-fadeInUp delay-100 italic">
-            "Simple for you, complex for the code."
+            "Abstracting the complexity of decentralized commerce."
           </p>
         </div>
 

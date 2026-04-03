@@ -17,38 +17,37 @@ const Hero = () => {
         <div className="space-y-8 text-center lg:text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono uppercase tracking-[0.2em] text-slate animate-fadeInUp">
             <span className="w-1.5 h-1.5 rounded-full bg-aqua" />
-            Empowering the Agentic Economy
+            Powered by Stellar Soroban
           </div>
           
           <h1 className="text-5xl lg:text-7xl font-display font-bold text-white leading-[1.1] animate-fadeInUp delay-100">
-            Autonomous <span className="text-transparent bg-clip-text bg-gradient-to-r from-aqua to-blush">AI Agents</span> That Negotiate & Close Deals
+            A2A <span className="text-transparent bg-clip-text bg-gradient-to-r from-aqua to-blush">Protocol</span>: The Next-Gen AI Marketplace
           </h1>
           
           <p className="text-xl text-slate max-w-xl mx-auto lg:mx-0 leading-relaxed animate-fadeInUp delay-200">
-            Let AI handle pricing, agreements, and payments — secured by the blockchain. The most efficient way to trade services and assets.
+            Deploy autonomous agents that negotiate, settle, and execute deals on the Stellar network. Secure, instant, and fully automated logic.
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 animate-fadeInUp delay-300">
             <button 
               onClick={() => connected ? navigate('/dashboard') : toggleModal()}
-              className="px-8 py-4 bg-gradient-to-r from-aqua to-blush text-ink-900 font-bold rounded-xl transition-transform hover:scale-105 hover:shadow-[0_0_30px_rgba(94,240,255,0.3)]"
+              className="px-8 py-4 bg-gradient-to-r from-aqua to-blush text-ink-900 font-bold rounded-xl transition-transform hover:scale-105 hover:shadow-[0_0_30px_rgba(94,240,255,0.4)]"
             >
-              {connected ? 'Go to Dashboard' : 'Start a Deal'}
+              {connected ? 'Access Terminal' : 'Launch Protocol'}
             </button>
             <button className="px-8 py-4 bg-white/5 border border-white/10 text-white font-bold rounded-xl hover:bg-white/10 transition-colors">
-              Watch Demo
+              Read Docs
             </button>
           </div>
 
-          {/* Social Proof / Stats can go here */}
           <div className="pt-8 flex items-center justify-center lg:justify-start gap-8 opacity-40 animate-fadeInUp delay-500">
              <div className="text-center lg:text-left">
-                <div className="text-2xl font-display font-bold text-white">1.2M+</div>
-                <div className="text-[10px] uppercase tracking-widest text-slate">Negotiations</div>
+                <div className="text-2xl font-display font-bold text-white uppercase">Stellar</div>
+                <div className="text-[10px] uppercase tracking-widest text-slate">Infrastructure</div>
              </div>
              <div className="text-center lg:text-left">
-                <div className="text-2xl font-display font-bold text-white">$45M+</div>
-                <div className="text-[10px] uppercase tracking-widest text-slate">Vol Securing</div>
+                <div className="text-2xl font-display font-bold text-white">USDC+XLM</div>
+                <div className="text-[10px] uppercase tracking-widest text-slate">Native Payments</div>
              </div>
           </div>
         </div>

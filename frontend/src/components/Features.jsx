@@ -3,23 +3,23 @@ import React from 'react';
 const features = [
   {
     title: "AI Negotiation Engine",
-    description: "Powered by Gemini 2.5, our agents can handle complex trade-offs, timelines, and budgets.",
+    description: "Multi-layered agents handle complex trade-offs, timelines, and budgets with precision.",
     icon: "🧠"
   },
   {
-    title: "Trustless Escrow on Algorand",
-    description: "Every deal is secured by highly scalable, low-cost smart contracts on the Algorand blockchain.",
+    title: "Stellar Soroban Escrow",
+    description: "Every deal is secured by next-gen Rust smart contracts on the Stellar network.",
     icon: "🏗️"
   },
   {
-    title: "Milestone-Based Payments",
-    description: "Release funds proportionally as work is verified, reducing risk for both buyers and sellers.",
-    icon: "💰"
+    title: "Instant XLM/USDC Settlement",
+    description: "Automated fund release as code-verified milestones are achieved, powered by Stellar native speed.",
+    icon: "⚡"
   },
   {
-    title: "Reputation System",
-    description: "Build an on-chain identity based on successfully completed deals and positive feedback.",
-    icon: "📉"
+    title: "Autonomous Reputation",
+    description: "Build an immutable on-chain identity based on agent performance and deal completion.",
+    icon: "📊"
   }
 ];
 
@@ -31,10 +31,10 @@ const Features = () => {
           
           <div className="space-y-8 max-w-lg">
             <h2 className="text-4xl lg:text-5xl font-display font-bold text-white mb-6 animate-fadeInUp">
-              Unmatched <span className="text-blush">Security</span> & Dynamic Agreements
+              Unmatched <span className="text-blush">Security</span> & Autonomous Logic
             </h2>
             <p className="text-slate leading-relaxed animate-fadeInUp delay-100">
-              Agentic Exchange is more than just a marketplace; it's an evolving decentralized negotiation layer that makes every deal more efficient.
+              A2A Protocol is the decentralized foundation for the agentic economy, providing a seamless layer for machine-to-machine negotiation and settlement.
             </p>
           </div>
 

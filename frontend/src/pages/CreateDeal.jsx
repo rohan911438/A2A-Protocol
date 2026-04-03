@@ -56,17 +56,17 @@ const CreateDeal = () => {
         <h1 className="text-4xl lg:text-5xl font-display font-bold text-white animate-fadeInUp">
           Create a New <span className="text-transparent bg-clip-text bg-gradient-to-r from-aqua to-blush">Deal</span>
         </h1>
-        <p className="text-slate max-w-lg mx-auto animate-fadeInUp delay-100">
-          Define your requirements and let our autonomous AI agents find the perfect agreement for you.
+        <p className="text-slate max-w-lg mx-auto animate-fadeInUp delay-100 italic">
+          Define your requirements and let A2A Protocol agents bridge the gap.
         </p>
       </div>
 
       <div className="w-full max-w-2xl bg-ink-800/50 backdrop-blur-xl border border-white/10 p-8 md:p-10 rounded-3xl shadow-soft animate-fadeInUp delay-200">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm font-medium text-slate ml-1">
-              <Briefcase size={16} className="text-aqua" />
-              Task Title
+            <label className="flex items-center gap-2 text-sm font-medium text-slate ml-1 uppercase tracking-widest text-[10px]">
+              <Briefcase size={14} className="text-aqua" />
+              Task Domain
             </label>
             <input 
               type="text"
@@ -74,32 +74,32 @@ const CreateDeal = () => {
               required
               value={formData.title}
               onChange={handleChange}
-              placeholder="e.g. Website Development for Fintech"
+              placeholder="e.g. LLM integration for A2A"
               className="w-full bg-ink-900/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-slate/30 focus:outline-none focus:border-aqua/50 transition-colors"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm font-medium text-slate ml-1">
-              <FileText size={16} className="text-aqua" />
-              Description
+            <label className="flex items-center gap-2 text-sm font-medium text-slate ml-1 uppercase tracking-widest text-[10px]">
+              <FileText size={14} className="text-aqua" />
+              Agent Context / Scope
             </label>
             <textarea 
               name="description"
               required
               value={formData.description}
               onChange={handleChange}
-              placeholder="Describe the project scope, requirements, and deliverables..."
+              placeholder="Describe what the agent needs to achieve..."
               rows={4}
               className="w-full bg-ink-900/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-slate/30 focus:outline-none focus:border-aqua/50 transition-colors resize-none"
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm font-medium text-slate ml-1">
-                  <Coins size={16} className="text-aqua" />
-                  Min Budget (ALGO)
+                <label className="flex items-center gap-2 text-sm font-medium text-slate ml-1 uppercase tracking-widest text-[10px]">
+                  <Coins size={14} className="text-aqua" />
+                  Min Allocation (XLM)
                 </label>
                 <input 
                   type="number"
@@ -107,14 +107,14 @@ const CreateDeal = () => {
                   required
                   value={formData.minBudget}
                   onChange={handleChange}
-                  placeholder="300"
+                  placeholder="100"
                   className="w-full bg-ink-900/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-slate/30 focus:outline-none focus:border-aqua/50 transition-colors"
                 />
              </div>
              <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm font-medium text-slate ml-1">
-                  <Coins size={16} className="text-aqua" />
-                  Max Budget (ALGO)
+                <label className="flex items-center gap-2 text-sm font-medium text-slate ml-1 uppercase tracking-widest text-[10px]">
+                  <Coins size={14} className="text-aqua" />
+                  Max Allocation (XLM)
                 </label>
                 <input 
                   type="number"
@@ -128,11 +128,11 @@ const CreateDeal = () => {
              </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm font-medium text-slate ml-1">
-                  <Calendar size={16} className="text-aqua" />
-                  Deadline
+                <label className="flex items-center gap-2 text-sm font-medium text-slate ml-1 uppercase tracking-widest text-[10px]">
+                  <Calendar size={14} className="text-aqua" />
+                  Settlement Deadline
                 </label>
                 <input 
                   type="date"
@@ -144,24 +144,21 @@ const CreateDeal = () => {
                 />
              </div>
              <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm font-medium text-slate ml-1 text-[11px] uppercase tracking-widest uppercase">
-                  Optimization Priority
+                <label className="flex items-center gap-2 text-sm font-medium text-slate ml-1 text-[10px] uppercase tracking-widest">
+                  Agent Strategy
                 </label>
                 <div className="flex gap-2">
-                   {['Cheap', 'Fast', 'Quality'].map((opt) => (
+                   {['Balanced', 'Efficient', 'Premium'].map((opt) => (
                      <button
                         key={opt}
                         type="button"
                         onClick={() => setFormData(p => ({...p, priority: opt}))}
-                        className={`flex-1 py-3 rounded-xl border text-xs font-bold transition-all ${
+                        className={`flex-1 py-3 rounded-xl border text-[10px] font-bold uppercase transition-all ${
                           formData.priority === opt 
-                          ? 'bg-aqua/10 border-aqua text-aqua transition-transform scale-[1.02]' 
+                          ? 'bg-aqua/20 border-aqua text-aqua scale-[1.02]' 
                           : 'bg-ink-900/50 border-white/5 text-slate/50 hover:border-white/20'
                         }`}
                      >
-                       {opt === 'Cheap' && <ShieldCheck size={14} className="inline mr-1" />}
-                       {opt === 'Fast' && <Zap size={14} className="inline mr-1" />}
-                       {opt === 'Quality' && <Star size={14} className="inline mr-1" />}
                        {opt}
                      </button>
                    ))}
@@ -170,15 +167,15 @@ const CreateDeal = () => {
           </div>
 
           {error && (
-            <div className="text-sm text-blush">{error}</div>
+            <div className="text-xs text-blush font-mono bg-blush/5 p-3 rounded-lg border border-blush/20">{error}</div>
           )}
 
           <button 
             type="submit"
             disabled={submitting}
-            className="w-full py-4 bg-gradient-to-r from-aqua to-blush text-ink-900 font-bold rounded-2xl transition-all hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(94,240,255,0.3)] flex items-center justify-center gap-2 mt-4"
+            className="w-full py-4 bg-gradient-to-r from-aqua to-blush text-ink-900 font-bold rounded-2xl transition-all hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(94,240,255,0.4)] flex items-center justify-center gap-2 mt-4 uppercase tracking-widest"
           >
-            {submitting ? 'Creating...' : 'Start AI Negotiation'}
+            {submitting ? 'Initializing Agents...' : 'Activate Negotiation'}
           </button>
 
         </form>

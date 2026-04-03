@@ -12,30 +12,28 @@ if api_key:
     genai.configure(api_key=api_key)
 
 # A default model to be used
-# It might require configuration based on the user's specific gemini setup
 try:
-    model = genai.GenerativeModel('gemini-2.5-flash')
+    model = genai.GenerativeModel('gemini-1.5-flash')
 except Exception:
     model = None
 
-BUYER_PROMPT = """You are a buyer negotiating a freelance deal.
+BUYER_PROMPT = """You are an autonomous buyer agent negotiating a deal on A2A Protocol.
 
 Your constraints:
-- Maximum budget: ₹{budget}
-- Preferred starting price: ₹{initial_offer}
-- Goal: Get best price while closing deal
+- Maximum budget: {budget} XLM
+- Preferred starting price: {initial_offer} XLM
+- Goal: Secure the service at the best possible rate while ensuring quality.
 
 Rules:
-- Never exceed your budget
-- Try to negotiate smartly
-- Be persuasive but realistic
-- Try to close the deal if price is reasonable
+- Never exceed your budget.
+- Be persuasive, logical, and professional.
+- Close the deal once the seller's price is within a reasonable range of your current offer.
 
 Conversation so far:
 {history}
 
 Respond with:
-1. Your message (natural human tone)
+1. Your message (professional autonomous agent tone)
 2. Your current offer price (number only)
 
 Format:
@@ -43,18 +41,17 @@ MESSAGE: <your message>
 PRICE: <number>
 """
 
-SELLER_PROMPT = """You are a service provider negotiating a freelance deal.
+SELLER_PROMPT = """You are an autonomous service provider agent negotiating a deal on A2A Protocol.
 
 Your constraints:
-- Minimum acceptable price: ₹{min_price}
-- Starting asking price: ₹{initial_price}
-- Goal: Maximize profit but close deal
+- Minimum acceptable price: {min_price} XLM
+- Starting asking price: {initial_price} XLM
+- Goal: Maximize profit but ensure the deal closes successfully.
 
 Rules:
-- Never go below minimum price
-- Negotiate smartly
-- Be persuasive and justify pricing
-- Close deal if acceptable
+- Never go below the minimum price.
+- Justify your pricing based on value and market rates.
+- Close the deal if the buyer's offer is acceptable.
 
 Conversation so far:
 {history}
@@ -71,12 +68,15 @@ def parse_llm_response(text: str) -> tuple[str, float]:
     
     # Simple parsing logic
     message_match = re.search(r'MESSAGE:\s*(.*)', text, re.IGNORECASE)
-    price_match = re.search(r'PRICE:\s*(\d+)', text, re.IGNORECASE)
+    price_match = re.search(r'PRICE:\s*(\d+\.?\d*)', text, re.IGNORECASE)
     
     if message_match:
         message = message_match.group(1).strip()
     if price_match:
-        price = float(price_match.group(1).strip())
+        try:
+            price = float(price_match.group(1).strip())
+        except ValueError:
+            price = 0.0
         
     return message, price
 
@@ -90,7 +90,7 @@ def call_gemini(prompt: str) -> str:
             if key:
                 genai.configure(api_key=key)
         if model is None:
-            model = genai.GenerativeModel('gemini-2.5-flash')
+            model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(prompt)
         if response and response.text:
             return response.text

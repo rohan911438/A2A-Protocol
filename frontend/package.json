@@ -10,9 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@blockshake/defly-connect": "^1.2.1",
-    "@perawallet/connect": "^1.5.2",
-    "algosdk": "^3.5.2",
+    "@stellar/freighter-api": "^6.0.1",
+    "@stellar/stellar-sdk": "^14.6.1",
     "buffer": "^6.0.3",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.7.0",

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Smartphone, Layers, ShieldCheck, ExternalLink, Loader2, AlertCircle } from "lucide-react";
+import { X, Smartphone, Layers, ShieldCheck, ExternalLink, Loader2, AlertCircle, Ship, Rabbit, Zap } from "lucide-react";
 import { useWallet } from "../context/WalletContext";
-import { walletService } from "../services/AlgorandWalletService";
+import { walletService } from "../services/StellarWalletService";
 
 const WalletModal = () => {
   const { isModalOpen, toggleModal, connect, connecting, error } = useWallet();
   const [availableWallets, setAvailableWallets] = useState({
-    pera: { installed: true, name: "Pera Wallet", id: "pera" },
-    defly: { installed: true, name: "Defly Wallet", id: "defly" },
-    algosigner: { installed: false, name: "AlgoSigner", id: "algosigner" }
+    freighter: { installed: false, name: "Freighter" },
+    rabet: { installed: false, name: "Rabet" },
+    albedo: { installed: true, name: "Albedo" }
   });
 
   useEffect(() => {
@@ -24,29 +24,31 @@ const WalletModal = () => {
 
   const wallets = [
     {
-      id: "pera",
-      name: "Pera Wallet",
-      icon: <Smartphone className="w-6 h-6 text-lime" />,
-      description: "Connect via mobile app or extension",
-      color: "bg-lime/10 border-lime/20 hover:border-lime/50",
-      installed: availableWallets.pera.installed
-    },
-    {
-      id: "defly",
-      name: "Defly Wallet",
-      icon: <Layers className="w-6 h-6 text-aqua" />,
-      description: "Algorand's DeFi wallet",
+      id: "freighter",
+      name: "Freighter",
+      icon: <Ship className="w-6 h-6 text-aqua" />,
+      description: "Official Stellar browser extension",
       color: "bg-aqua/10 border-aqua/20 hover:border-aqua/50",
-      installed: availableWallets.defly.installed
+      installed: availableWallets.freighter?.installed,
+      installLink: "https://www.freighter.app/"
     },
     {
-      id: "algosigner",
-      name: "AlgoSigner",
-      icon: <ShieldCheck className="w-6 h-6 text-blush" />,
-      description: "Browser extension wallet",
+      id: "rabet",
+      name: "Rabet",
+      icon: <Rabbit className="w-6 h-6 text-lime" />,
+      description: "Modern Stellar wallet for everyone",
+      color: "bg-lime/10 border-lime/20 hover:border-lime/50",
+      installed: availableWallets.rabet?.installed,
+      installLink: "https://rabet.io/"
+    },
+    {
+      id: "albedo",
+      name: "Albedo",
+      icon: <Zap className="w-6 h-6 text-blush" />,
+      description: "Secure web-based Stellar signer",
       color: "bg-blush/10 border-blush/20 hover:border-blush/50",
-      installed: availableWallets.algosigner.installed,
-      installLink: "https://puresake.io/algosigner/"
+      installed: true,
+      installLink: "https://albedo.link/"
     }
   ];
 
@@ -72,7 +74,10 @@ const WalletModal = () => {
           className="relative w-full max-w-md bg-ink-800 border border-white/10 rounded-3xl shadow-soft overflow-hidden"
         >
           <div className="p-6 border-b border-white/5 flex items-center justify-between">
-            <h2 className="text-xl font-display font-bold text-white">Connect Wallet</h2>
+            <div className="space-y-1">
+              <h2 className="text-xl font-display font-bold text-white">Connect Wallet</h2>
+              <p className="text-xs text-slate">Select a Stellar provider to interact with A2A Protocol</p>
+            </div>
             <button
               onClick={toggleModal}
               className="p-2 hover:bg-white/5 rounded-full transition-colors text-slate hover:text-white"
@@ -142,7 +147,7 @@ const WalletModal = () => {
 
           <div className="p-6 bg-ink-900/50 text-center border-t border-white/5">
             <p className="text-xs text-slate">
-              By connecting, you agree to Agentic Exchange's <br />
+              By connecting, you agree to A2A Protocol's <br />
               <span className="text-aqua cursor-pointer hover:underline">Terms of Service</span> and <span className="text-aqua cursor-pointer hover:underline">Privacy Policy</span>.
             </p>
           </div>

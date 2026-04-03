@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, User, ArrowRight, Zap, CheckCircle2, MoreHorizontal } from 'lucide-react';
+import { Bot, User, ArrowRight, Zap, CheckCircle2, MoreHorizontal, Coins } from 'lucide-react';
 import { getDeal, startNegotiation, acceptDealWithWallet } from '../services/DealService';
 import { useWallet } from '../context/WalletContext';
 
@@ -75,18 +75,16 @@ const NegotiationRoom = () => {
       const convo = result.conversation || [];
       const mappedMessages = mapConversation(convo);
       
-      // Simulate real-time discussion by adding messages one by one
       setMessages([]); 
       for (const msg of mappedMessages) {
         setIsTyping(true);
-        // Random typing delay between 1-2.5 seconds
-        await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1500));
+        await new Promise(resolve => setTimeout(resolve, 1200 + Math.random() * 1000));
         setMessages(prev => [...prev, msg]);
         setIsTyping(false);
       }
       setIsComplete(true);
     } catch (err) {
-      setError(err.message || 'Negotiation failed');
+      setError(err.message || 'Protocol negotiation failed');
     } finally {
       setIsTyping(false);
       setLoading(false);
@@ -95,7 +93,7 @@ const NegotiationRoom = () => {
 
   const handleAccept = async () => {
     if (!connected || !account) {
-      setError('Connect wallet to accept.');
+      setError('Connect wallet to authorize.');
       return;
     }
     if (!dealId) return;
@@ -105,7 +103,7 @@ const NegotiationRoom = () => {
       await acceptDealWithWallet(dealId, account);
       setDealStatus('accepted');
     } catch (err) {
-      setError(err.message || 'Accept failed');
+      setError(err.message || 'Authorization failed');
     } finally {
       setAccepting(false);
     }
@@ -113,16 +111,8 @@ const NegotiationRoom = () => {
 
   return (
     <div className="pt-24 min-h-screen bg-ink-900 flex flex-col items-center relative overflow-hidden">
-      <motion.div 
-        animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-        transition={{ duration: 8, repeat: Infinity }}
-        className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-aqua/5 blur-[120px] rounded-full -z-10" 
-      />
-      <motion.div 
-        animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.4, 0.2] }}
-        transition={{ duration: 10, repeat: Infinity }}
-        className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-blush/5 blur-[120px] rounded-full -z-10" 
-      />
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-aqua/5 blur-[120px] rounded-full -z-10" />
+      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-blush/5 blur-[120px] rounded-full -z-10" />
 
       <div className="w-full max-w-4xl px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-white/5 bg-ink-900/50 backdrop-blur-md z-20">
         <div className="flex items-center gap-4">
@@ -130,18 +120,18 @@ const NegotiationRoom = () => {
             <Zap className="text-aqua animate-pulse" size={24} />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white font-display italic">Negotiation Room</h1>
+            <h1 className="text-xl font-bold text-white font-display italic uppercase">Protocol Room</h1>
             <div className="flex items-center gap-2">
               <span className={`w-2 h-2 rounded-full ${isComplete ? 'bg-lime' : 'bg-aqua animate-ping'}`} />
               <span className="text-[10px] uppercase tracking-[0.2em] font-mono text-slate">
-                {isComplete ? 'Agreement Reached' : (dealStatus === 'accepted' ? 'Seller Accepted' : 'Waiting for seller to accept')}
+                {isComplete ? 'Consensus Reached' : (dealStatus === 'accepted' ? 'Agents Initialized' : 'Awaiting Peer Activation')}
               </span>
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10">
-           <div className="text-[10px] font-mono text-slate uppercase">Deal:</div>
+           <div className="text-[10px] font-mono text-slate uppercase tracking-widest">Context:</div>
            <div className="text-xs font-bold text-white">{dealTitle}</div>
         </div>
       </div>
@@ -154,16 +144,16 @@ const NegotiationRoom = () => {
               animate={{ opacity: 1, y: 0 }}
               className="flex flex-col items-center gap-4 py-10 text-center"
             >
-              <div className="p-6 rounded-[2rem] bg-ink-800/40 border border-white/10 max-w-lg">
-                <div className="text-[10px] uppercase font-mono text-aqua/60 tracking-widest mb-3">Initial Request</div>
-                <p className="text-white/80 italic leading-relaxed">
+              <div className="p-8 rounded-[2rem] bg-ink-800/40 border border-white/10 max-w-lg">
+                <div className="text-[10px] uppercase font-mono text-aqua/60 tracking-widest mb-3">Objective Vector</div>
+                <p className="text-white/80 italic leading-relaxed font-display text-sm">
                   "{dealData?.data?.request?.description || dealData?.data?.description}"
                 </p>
               </div>
               <div className="flex flex-col items-center gap-2">
                 <div className="h-12 w-px bg-gradient-to-b from-white/10 to-transparent" />
                 <p className="text-[10px] uppercase font-mono text-slate tracking-[0.2em] animate-pulse">
-                  {dealStatus === 'created' ? 'Waiting for seller to accept before negotiation begins...' : 'AI agents are initializing...'}
+                  {dealStatus === 'created' ? 'Waiting for participant to authorize the protocol...' : 'Autonomous agents are negotiating terms...'}
                 </p>
               </div>
             </motion.div>
@@ -191,12 +181,14 @@ const NegotiationRoom = () => {
                     <div className={`mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
                       msg.role === 'buyer' ? 'bg-aqua text-ink-900' : 'bg-blush text-ink-900'
                     }`}>
-                      Offer: {msg.price} ALGO
+                      <Coins size={12} className="inline-block" /> {msg.price} XLM
                     </div>
                   )}
                 </div>
-                <div className={`text-[9px] uppercase tracking-widest font-mono text-slate/40 ${msg.role === 'buyer' ? 'text-left' : 'text-right'}`}>
-                  {msg.role === 'buyer' ? 'Buyer Agent' : 'Seller Agent'} • Just now
+                <div className={`text-[9px] uppercase tracking-widest font-mono text-slate/40 flex items-center gap-2 ${msg.role === 'buyer' ? 'text-left' : 'text-right flex-row-reverse'}`}>
+                  <span>{msg.role === 'buyer' ? 'Buyer Agent' : 'Seller Agent'}</span>
+                  <span className="w-1 h-1 rounded-full bg-white/10" />
+                  <span>Verified Logic</span>
                 </div>
               </div>
             </motion.div>
@@ -234,22 +226,21 @@ const NegotiationRoom = () => {
                    </div>
                    <div>
                       <div className="text-[10px] uppercase tracking-[0.2em] font-mono text-slate mb-0.5">
-                        {isComplete ? 'Final Agreement' : (dealStatus === 'accepted' ? 'Agents Ready' : 'Deal Status')}
+                        {isComplete ? 'Protocol Consensus' : (dealStatus === 'accepted' ? 'Ready to Deploy' : 'Peer Authorization')}
                       </div>
-                      <div className="text-lg font-bold text-white font-display">
-                        {isComplete ? 'Negotiation Finished' : (dealStatus === 'accepted' ? 'Start Negotiation' : 'Awaiting Seller')}
+                      <div className="text-lg font-bold text-white font-display uppercase tracking-tight">
+                        {isComplete ? 'Deal Synthesized' : (dealStatus === 'accepted' ? 'Ignite Agents' : 'Awaiting Peer')}
                       </div>
                    </div>
                 </div>
 
                 <div className="flex items-center gap-4 w-full sm:w-auto">
-                  {/* Primary Action Button */}
                   {isComplete ? (
                     <button
                       onClick={() => navigate('/summary', { state: { dealId } })}
-                      className="w-full sm:w-auto px-10 py-3.5 bg-white text-ink-900 font-bold rounded-2xl hover:scale-105 transition-all shadow-lg flex items-center justify-center gap-2"
+                      className="w-full sm:w-auto px-10 py-3.5 bg-white text-ink-900 font-bold rounded-2xl hover:scale-105 transition-all shadow-lg flex items-center justify-center gap-2 uppercase tracking-widest text-[10px]"
                     >
-                      View Summary <ArrowRight size={18} />
+                      Inspect Agreement <ArrowRight size={16} />
                     </button>
                   ) : (
                     <>
@@ -257,9 +248,9 @@ const NegotiationRoom = () => {
                          <button
                             onClick={handleAccept}
                             disabled={accepting}
-                            className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-aqua to-blush text-ink-900 font-bold rounded-2xl hover:scale-105 transition-all flex items-center justify-center gap-2"
+                            className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-aqua to-blush text-ink-900 font-bold rounded-2xl hover:scale-105 transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-[10px]"
                          >
-                            {accepting ? 'Accepting...' : 'Accept & Start'} <Zap size={18} />
+                            {accepting ? 'Authorizing...' : 'Authorize & Launch'} <Zap size={18} />
                          </button>
                       )}
                       
@@ -267,15 +258,15 @@ const NegotiationRoom = () => {
                         <button 
                           onClick={handleStart}
                           disabled={loading}
-                          className="w-full sm:w-auto px-8 py-3.5 bg-white text-ink-900 font-bold rounded-2xl hover:scale-105 transition-all flex items-center justify-center gap-2"
+                          className="w-full sm:w-auto px-8 py-3.5 bg-white text-ink-900 font-bold rounded-2xl hover:scale-105 transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-[10px]"
                         >
-                          {loading ? 'Running agents...' : 'Start Agents'} <ArrowRight size={18} />
+                          {loading ? 'Negotiating...' : 'Start Logic Agents'} <ArrowRight size={18} />
                         </button>
                       )}
 
                       {dealStatus === 'created' && isBuyer && (
-                        <div className="px-8 py-3.5 bg-white/5 border border-white/10 text-slate font-bold rounded-2xl cursor-not-allowed flex items-center gap-2">
-                           Waiting for Seller <MoreHorizontal size={18} className="animate-pulse" />
+                        <div className="px-8 py-3.5 bg-white/5 border border-white/10 text-slate font-bold rounded-2xl cursor-not-allowed flex items-center gap-2 uppercase tracking-widest text-[10px]">
+                           Peer Pending <MoreHorizontal size={18} className="animate-pulse" />
                         </div>
                       )}
                     </>
@@ -287,7 +278,7 @@ const NegotiationRoom = () => {
       </AnimatePresence>
 
       {error && (
-        <div className="text-xs text-blush mb-10">{error}</div>
+        <div className="text-xs text-blush mb-10 bg-blush/5 px-4 py-2 rounded-lg border border-blush/20 uppercase tracking-widest font-mono">{error}</div>
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
-import { walletService } from "../services/AlgorandWalletService";
+import { walletService } from "../services/StellarWalletService";
 
 const WalletContext = createContext();
 
@@ -16,6 +16,8 @@ export const WalletProvider = ({ children }) => {
   const [provider, setProvider] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState(null);
+  const [balances, setBalances] = useState([]);
+  const [network, setNetwork] = useState(import.meta.env.VITE_STELLAR_NETWORK || "TESTNET");
 
   // Sync with localStorage on mount
   useEffect(() => {
@@ -26,12 +28,16 @@ export const WalletProvider = ({ children }) => {
       setAccount(savedAccount);
       setConnected(true);
       setProvider(savedProvider);
-      // Attempt to silently reconnect SDK session in background
+      
+      // Attempt to silently reconnect
       walletService.reconnect(savedProvider)
-        .then((addr) => {
-          if (addr && addr !== savedAccount) {
-            setAccount(addr);
-            localStorage.setItem("wallet_account", addr);
+        .then((pubKey) => {
+          if (pubKey && pubKey !== savedAccount) {
+            setAccount(pubKey);
+            localStorage.setItem("wallet_account", pubKey);
+          }
+          if (pubKey) {
+            fetchBalances(pubKey);
           }
         })
         .catch(err => {
@@ -40,25 +46,42 @@ export const WalletProvider = ({ children }) => {
     }
   }, []);
 
+  const fetchBalances = async (pubKey) => {
+    try {
+      const details = await walletService.getAccountDetails(pubKey);
+      setBalances(details.balances);
+    } catch (err) {
+      console.error("Failed to fetch balances", err);
+    }
+  };
+
   const connect = async (walletType) => {
     setConnecting(true);
     setError(null);
     try {
-      const address = await walletService[`connect${walletType.charAt(0).toUpperCase() + walletType.slice(1)}`]();
+      let publicKey;
+      if (walletType === 'freighter') {
+        publicKey = await walletService.connectFreighter();
+      } else if (walletType === 'rabet') {
+        publicKey = await walletService.connectRabet();
+      } else {
+        throw new Error("Unsupported wallet type.");
+      }
       
-      if (address) {
-        setAccount(address);
+      if (publicKey) {
+        setAccount(publicKey);
         setConnected(true);
         setProvider(walletType);
         localStorage.setItem("wallet_provider", walletType);
-        localStorage.setItem("wallet_account", address);
+        localStorage.setItem("wallet_account", publicKey);
         setIsModalOpen(false);
+        fetchBalances(publicKey);
       } else {
-        throw new Error("No address returned from wallet.");
+        throw new Error("No account shared from wallet.");
       }
     } catch (err) {
       console.error(`Connection failed for ${walletType}:`, err);
-      setError(err.message || "Failed to connect. Please make sure you select an account in your app.");
+      setError(err.message || "Failed to connect. Please make sure the extension is installed.");
     } finally {
       setConnecting(false);
     }
@@ -70,6 +93,7 @@ export const WalletProvider = ({ children }) => {
       setAccount(null);
       setConnected(false);
       setProvider(null);
+      setBalances([]);
       localStorage.removeItem("wallet_provider");
       localStorage.removeItem("wallet_account");
     } catch (err) {
@@ -89,10 +113,13 @@ export const WalletProvider = ({ children }) => {
     provider,
     error,
     isModalOpen,
+    balances,
+    network,
     connect,
     disconnect,
     toggleModal,
-    formatAddress: (addr) => walletService.formatAddress(addr)
+    formatAddress: (addr) => walletService.formatAddress(addr),
+    signTransaction: (xdr) => walletService.signTransaction(xdr, network)
   };
 
   return (
