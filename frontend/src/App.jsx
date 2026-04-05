@@ -16,6 +16,7 @@ import DealSummary from './pages/DealSummary';
 import Dashboard from './pages/Dashboard';
 import ActiveDeal from './pages/ActiveDeal';
 import Completion from './pages/Completion';
+import DemoMode from './pages/DemoMode';
 
 function AppContent() {
   const { connected } = useWallet();
@@ -36,6 +37,7 @@ function AppContent() {
           <Route path="/dashboard" element={connected ? <Dashboard /> : <Navigate to="/" />} />
           <Route path="/active-deal" element={connected ? <ActiveDeal /> : <Navigate to="/" />} />
           <Route path="/completion" element={connected ? <Completion /> : <Navigate to="/" />} />
+          <Route path="/demo" element={<DemoMode />} />
         </Routes>
       </main>
 

@@ -47,6 +47,13 @@ const Hero = () => {
             >
               {connected ? `Connected: ${formatAddress(account)}` : 'Connect Wallet'}
             </button>
+
+            <button
+              onClick={() => navigate('/demo')}
+              className="px-10 py-5 font-black uppercase tracking-widest text-sm rounded-2xl transition-all duration-300 border bg-cyan-400/10 border-cyan-400/40 text-cyan-300 hover:bg-cyan-400/20 hover:scale-105 shadow-[0_0_25px_rgba(34,211,238,0.25)]"
+            >
+              Run Demo
+            </button>
           </div>
 
           <div className="pt-12 flex items-center justify-center lg:justify-start gap-12 opacity-50 animate-fadeInUp delay-500 border-t border-white/5">
