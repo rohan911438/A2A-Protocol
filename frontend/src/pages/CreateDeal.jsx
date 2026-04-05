@@ -31,10 +31,24 @@ const CreateDeal = () => {
     setError('');
 
     try {
+      const budget = Number(formData.maxBudget);
+      const minBudgetRaw = formData.minBudget?.trim();
+      const minPrice = minBudgetRaw ? Number(minBudgetRaw) : budget;
+
+      if (!Number.isFinite(budget) || budget <= 0) {
+        throw new Error('Allocation ceiling must be greater than 0');
+      }
+      if (!Number.isFinite(minPrice) || minPrice <= 0) {
+        throw new Error('Minimum offer must be greater than 0');
+      }
+      if (minPrice > budget) {
+        throw new Error('Minimum offer cannot exceed allocation ceiling');
+      }
+
       const payload = {
         title: formData.title,
-        budget: Number(formData.maxBudget),
-        min_price: Number(formData.minBudget),
+        budget,
+        min_price: minPrice,
         deadline: formData.deadline,
         description: formData.description,
         buyer_wallet: connected ? account : null,

@@ -7,8 +7,20 @@ async function request(path, options = {}) {
   })
 
   if (!response.ok) {
-    const message = await response.text()
-    throw new Error(message || 'Request failed')
+    let message = 'Request failed'
+    try {
+      const data = await response.json()
+      if (Array.isArray(data?.detail) && data.detail.length > 0) {
+        const first = data.detail[0]
+        message = first?.msg || data.detail || message
+      } else {
+        message = data?.detail || data?.message || message
+      }
+    } catch {
+      const text = await response.text()
+      message = text || message
+    }
+    throw new Error(String(message))
   }
 
   return response.json()

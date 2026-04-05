@@ -19,30 +19,37 @@ export const WalletProvider = ({ children }) => {
   const [balances, setBalances] = useState([]);
   const [network, setNetwork] = useState(import.meta.env.VITE_STELLAR_NETWORK || "TESTNET");
 
+  const isStellarAccount = (value) => typeof value === "string" && /^G[A-Z2-7]{55}$/.test(value);
+
   // Sync with localStorage on mount
   useEffect(() => {
     const savedProvider = localStorage.getItem("wallet_provider");
     const savedAccount = localStorage.getItem("wallet_account");
-    
-    if (savedProvider && savedAccount) {
+
+    if (savedProvider && savedAccount && isStellarAccount(savedAccount)) {
       setAccount(savedAccount);
       setConnected(true);
       setProvider(savedProvider);
-      
+
       // Attempt to silently reconnect
       walletService.reconnect(savedProvider)
         .then((pubKey) => {
-          if (pubKey && pubKey !== savedAccount) {
+          if (!pubKey || !isStellarAccount(pubKey)) {
+            disconnect();
+            return;
+          }
+          if (pubKey !== savedAccount) {
             setAccount(pubKey);
             localStorage.setItem("wallet_account", pubKey);
           }
-          if (pubKey) {
-            fetchBalances(pubKey);
-          }
+          fetchBalances(pubKey);
         })
         .catch(err => {
           console.warn("Background reconnect failed", err);
         });
+    } else if (savedProvider || savedAccount) {
+      localStorage.removeItem("wallet_provider");
+      localStorage.removeItem("wallet_account");
     }
   }, []);
 
@@ -69,6 +76,9 @@ export const WalletProvider = ({ children }) => {
       }
       
       if (publicKey) {
+        if (!isStellarAccount(publicKey)) {
+          throw new Error("Wallet returned an invalid Stellar account. Please select a valid account (G...).");
+        }
         setAccount(publicKey);
         setConnected(true);
         setProvider(walletType);
@@ -115,6 +125,7 @@ export const WalletProvider = ({ children }) => {
     isModalOpen,
     balances,
     network,
+    fetchBalances,
     connect,
     disconnect,
     toggleModal,

@@ -50,10 +50,10 @@ def post_start_negotiation(payload: NegotiationRequest) -> NegotiationResponse:
     if not deal_record:
         raise HTTPException(status_code=404, detail="Deal ID not found")
 
-    if not os.getenv("GEMINI_API_KEY"):
+    if not (os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")):
         raise HTTPException(
             status_code=400,
-            detail="GEMINI_API_KEY is not set. Please configure it to enable agents.",
+            detail="GEMINI_API_KEY or GOOGLE_API_KEY is not set. Please configure one to enable agents.",
         )
 
     # Update status to running

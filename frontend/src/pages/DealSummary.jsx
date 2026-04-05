@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, Calendar, ListChecks, ArrowRight, ShieldCheck, Coins, Database, Activity, Terminal, Shield } from 'lucide-react';
+import { CheckCircle, Calendar, ListChecks, ArrowRight, ShieldCheck, Coins, Database, Activity, Terminal, Shield, Zap } from 'lucide-react';
 import { useWallet } from '../context/WalletContext';
 import { getCreateDealTxn, getContractInfo, submitSignedXdr } from '../services/ContractService';
 import { getDeal, approveDeal, rejectDeal, recordOnchainAccept, fundDeal } from '../services/DealService';
@@ -67,29 +67,45 @@ const DealSummary = () => {
     return () => clearInterval(id);
   }, []);
 
-  const isBuyer = useMemo(() => {
-    if (!account) return false;
-    const bAddr = requestData?.buyer_wallet || dealRecord?.data?.buyer_wallet;
-    return bAddr && account.toLowerCase() === bAddr.toLowerCase();
-  }, [account, requestData, dealRecord]);
+  const buyerAddress = requestData?.buyer_wallet || dealRecord?.data?.buyer_wallet || '';
+  const sellerAddress = dealRecord?.data?.seller_wallet || requestData?.seller_wallet || '';
 
-  const isSeller = useMemo(() => {
-    if (!account) return false;
-    const sAddr = dealRecord?.data?.seller_wallet || requestData?.seller_wallet;
-    return sAddr && account.toLowerCase() === sAddr.toLowerCase();
-  }, [account, dealRecord, requestData]);
+  const userRole = useMemo(() => {
+    if (!account) return null;
+    const current = account.toLowerCase();
+    const b = buyerAddress ? buyerAddress.toLowerCase() : '';
+    const s = sellerAddress ? sellerAddress.toLowerCase() : '';
+
+    if (b && current === b) return 'buyer';
+    if (s && current === s) return 'seller';
+
+    // Fallback for flows where seller wallet was not persisted yet.
+    if (b && current !== b) return 'seller';
+    return null;
+  }, [account, buyerAddress, sellerAddress]);
+
+  const isBuyer = userRole === 'buyer';
+  const isSeller = userRole === 'seller';
 
   const handleAuthorize = async () => {
     if (!connected || !account) {
       setTxStatus('Connect wallet to authorize protocol.');
       return;
     }
+    if (!/^G[A-Z2-7]{55}$/.test(account)) {
+      setTxStatus('Invalid wallet account selected. Reconnect wallet and choose a Stellar account (G...).');
+      return;
+    }
     setLoading(true);
     setTxStatus('Initializing A2A Protocol sequence...');
     try {
       if (!dealId) return;
+      if (!userRole) {
+        setTxStatus('Unable to resolve your role for this deal. Reopen from dashboard after connecting wallet.');
+        return;
+      }
       
-      if (isBuyer) {
+      if (userRole === 'buyer') {
         setTxStatus('Generating Stellar Escrow XDR...');
         await approveDeal(dealId, 'buyer');
         const amount = Math.max(Math.round(finalPrice || 0), 0);
@@ -105,7 +121,7 @@ const DealSummary = () => {
         await fundDeal(dealId, tx_hash);
         setTxStatus('Escrow initialized and funded!');
         await fetchBalances();
-      } else if (isSeller) {
+      } else if (userRole === 'seller') {
         await approveDeal(dealId, 'seller');
         setTxStatus('Offer authorized. Waiting for buyer settlement.');
       }
@@ -119,8 +135,8 @@ const DealSummary = () => {
   };
 
   const handleReject = async () => {
-    if (!dealId || !(isBuyer || isSeller)) return;
-    const role = isBuyer ? 'buyer' : 'seller';
+    if (!dealId || !userRole) return;
+    const role = userRole;
     await rejectDeal(dealId, role);
     navigate('/dashboard');
   };
@@ -237,7 +253,7 @@ const DealSummary = () => {
                 <div className="grid grid-cols-1 gap-4">
                   <button 
                     onClick={handleAuthorize}
-                    disabled={loading || !(isBuyer || isSeller) || (isSeller && approvals.seller) || (isBuyer && existsOnChain)}
+                    disabled={loading || !userRole || (isSeller && approvals.seller) || (isBuyer && existsOnChain)}
                     className="w-full py-6 bg-gradient-to-r from-indigo-500 via-purple-600 to-stellar-cyan text-white font-black rounded-3xl hover:scale-[1.02] transition-all shadow-glow flex items-center justify-center gap-4 uppercase tracking-[0.2em] text-xs relative overflow-hidden group/btn"
                   >
                      <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700" />
@@ -246,7 +262,7 @@ const DealSummary = () => {
                   </button>
                   <button 
                     onClick={handleReject}
-                    disabled={loading || !dealId || !(isBuyer || isSeller)}
+                    disabled={loading || !dealId || !userRole}
                     className="w-full py-4 bg-white/5 border border-white/10 text-slate font-black rounded-3xl hover:bg-red-400/10 hover:text-red-400 hover:border-red-400/20 transition-all flex items-center justify-center gap-3 text-[10px] uppercase tracking-[0.3em]"
                   >
                      Terminate Protocol

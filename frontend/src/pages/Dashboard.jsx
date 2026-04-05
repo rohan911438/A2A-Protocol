@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, TrendingUp, CheckCircle2, ArrowRight, Coins, Activity, Shield, Terminal, Cpu, Zap, Search } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, CheckCircle2, ArrowRight, Coins, Activity, Shield, Terminal, Cpu, Zap, Search, Database } from 'lucide-react';
 import { listDeals, approveDeal, rejectDeal, recordOnchainAccept, fundDeal } from '../services/DealService';
 import { useWallet } from '../context/WalletContext';
 import { getCreateDealTxn, getContractInfo, submitSignedXdr } from '../services/ContractService';
@@ -110,6 +110,10 @@ const Dashboard = () => {
     if (!role) return;
     if (!connected || !account) {
       setActionStatus('Connect wallet to sign on Stellar.');
+      return;
+    }
+    if (!/^G[A-Z2-7]{55}$/.test(account)) {
+      setActionStatus('Invalid wallet account selected. Reconnect wallet and choose a Stellar account (G...).');
       return;
     }
 
