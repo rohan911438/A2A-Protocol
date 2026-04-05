@@ -1,11 +1,11 @@
 services:
   - type: web
     name: a2a-protocol-backend
-    runtime: python
-    buildCommand: pip install --only-binary :all: -r requirements.txt
+    runtime: python-3.11
+    buildCommand: pip install --upgrade pip setuptools wheel && pip install --no-cache-dir -r requirements.txt
     startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
     plan: free
-    envVars:
+    env:
       - key: PYTHON_VERSION
         value: 3.11
       - key: CORS_ORIGINS
