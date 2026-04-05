@@ -1,9 +1,21 @@
-venv/
 __pycache__/
 *.pyc
+
+# Python virtual environments
+venv/
+.venv/
+.venv311/
+env/
+
+# Node dependencies and build output
+node_modules/
 frontend/node_modules/
 frontend/dist/
+
+# Environment files
 .env
+.env.*
+
 smart_contract/build/
 .codex
 build

@@ -3,5 +3,6 @@ uvicorn==0.30.6
 pydantic==2.9.2
 google-generativeai
 python-dotenv==1.0.1
-py-stellar-sdk==9.0.0
+stellar-sdk==9.0.0
 pymongo==4.10.1
+fastapi
