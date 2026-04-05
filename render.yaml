@@ -1,9 +1,9 @@
 services:
   - type: web
     name: a2a-protocol-backend
-    runtime: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    runtime: python-3.11
+    buildCommand: pip install --no-cache-dir -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT --workers 4
     plan: free
       - key: CORS_ORIGINS
         value: http://localhost:5173,https://YOUR-NETLIFY-SITE.netlify.app
