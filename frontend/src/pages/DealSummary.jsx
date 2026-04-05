@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, Calendar, ListChecks, ArrowRight, ShieldCheck, Coins, Database, Activity, Terminal, Shield, Zap } from 'lucide-react';
 import { useWallet } from '../context/WalletContext';
 import { getCreateDealTxn, getContractInfo, submitSignedXdr } from '../services/ContractService';
-import { getDeal, approveDeal, rejectDeal, recordOnchainAccept, fundDeal } from '../services/DealService';
+import { getDeal, approveDeal, rejectDeal, recordOnchainAccept, fundDeal, getSmartDealSummary } from '../services/DealService';
+import SmartDealSummary from '../components/SmartDealSummary';
 
 const DealSummary = () => {
   const navigate = useNavigate();
@@ -15,6 +16,10 @@ const DealSummary = () => {
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
   const [refreshTick, setRefreshTick] = useState(0);
+  const [smartSummary, setSmartSummary] = useState(null);
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [summaryError, setSummaryError] = useState('');
+  const [summaryConfirmed, setSummaryConfirmed] = useState(false);
   
   const dealId = location.state?.dealId || null;
   const [dealRecord, setDealRecord] = useState(null);
@@ -72,6 +77,7 @@ const DealSummary = () => {
 
   const buyerAddress = requestData?.buyer_wallet || dealRecord?.data?.buyer_wallet || '';
   const sellerAddress = dealRecord?.data?.seller_wallet || requestData?.seller_wallet || '';
+  const summaryWallet = account || buyerAddress || sellerAddress || '';
 
   const userRole = useMemo(() => {
     if (!account) return null;
@@ -90,6 +96,26 @@ const DealSummary = () => {
   const isBuyer = userRole === 'buyer';
   const isSeller = userRole === 'seller';
 
+  useEffect(() => {
+    setSummaryConfirmed(false);
+  }, [dealId, finalPrice]);
+
+  useEffect(() => {
+    if (!dealId || !summaryWallet) return;
+    setSummaryLoading(true);
+    setSummaryError('');
+    getSmartDealSummary(dealId, summaryWallet)
+      .then((res) => {
+        setSmartSummary(res?.summary || null);
+      })
+      .catch((err) => {
+        setSummaryError(err.message || 'Failed to load smart summary');
+      })
+      .finally(() => {
+        setSummaryLoading(false);
+      });
+  }, [dealId, summaryWallet, refreshTick]);
+
   const handleAuthorize = async () => {
     if (!connected || !account) {
       setTxStatus('Connect wallet to authorize protocol.');
@@ -97,6 +123,10 @@ const DealSummary = () => {
     }
     if (!/^G[A-Z2-7]{55}$/.test(account)) {
       setTxStatus('Invalid wallet account selected. Reconnect wallet and choose a Stellar account (G...).');
+      return;
+    }
+    if (isBuyer && !summaryConfirmed) {
+      setTxStatus('Confirm Smart Deal Summary before escrow authorization.');
       return;
     }
     setLoading(true);
@@ -241,6 +271,15 @@ const DealSummary = () => {
               </div>
            </div>
 
+           <SmartDealSummary
+             summary={smartSummary}
+             loading={summaryLoading}
+             error={summaryError}
+             isBuyer={isBuyer}
+             confirmed={summaryConfirmed}
+             onConfirm={() => setSummaryConfirmed(true)}
+           />
+
            <div className="space-y-5">
               {funded ? (
                 <button
@@ -253,7 +292,7 @@ const DealSummary = () => {
                 <div className="grid grid-cols-1 gap-4">
                   <button 
                     onClick={handleAuthorize}
-                    disabled={loading || !userRole || (isSeller && approvals.seller) || (isBuyer && existsOnChain)}
+                    disabled={loading || !userRole || (isSeller && approvals.seller) || (isBuyer && existsOnChain) || (isBuyer && !summaryConfirmed)}
                     className="w-full py-6 bg-gradient-to-r from-indigo-500 via-purple-600 to-stellar-cyan text-white font-black rounded-3xl hover:scale-[1.02] transition-all shadow-glow flex items-center justify-center gap-4 uppercase tracking-[0.2em] text-xs relative overflow-hidden group/btn"
                   >
                      <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700" />

@@ -71,6 +71,21 @@ def init_db():
         )
     ''')
 
+    # Structured smart summary snapshots used before escrow authorization.
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS smart_deal_summaries (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            wallet_address TEXT NOT NULL,
+            deal_id TEXT NOT NULL,
+            summary_json TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(wallet_address, deal_id),
+            FOREIGN KEY (wallet_address) REFERENCES wallets (address),
+            FOREIGN KEY (deal_id) REFERENCES deals (deal_id)
+        )
+    ''')
+
     conn.commit()
     conn.close()
 
@@ -160,6 +175,60 @@ def get_reasoning_logs(wallet_address: str, deal_id: str) -> list[dict[str, Any]
             }
         )
     return output
+
+
+def save_deal_summary(wallet_address: str, deal_id: str, summary: dict[str, Any]) -> None:
+    """Creates or updates the smart summary snapshot for a wallet and deal."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute('INSERT OR IGNORE INTO wallets (address) VALUES (?)', (wallet_address,))
+    cursor.execute('UPDATE wallets SET last_seen = ? WHERE address = ?', (datetime.utcnow(), wallet_address))
+
+    cursor.execute(
+        '''
+        INSERT INTO smart_deal_summaries (wallet_address, deal_id, summary_json, updated_at)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(wallet_address, deal_id)
+        DO UPDATE SET summary_json = excluded.summary_json, updated_at = excluded.updated_at
+        ''',
+        (wallet_address, deal_id, json.dumps(summary or {}), datetime.utcnow()),
+    )
+
+    conn.commit()
+    conn.close()
+
+
+def get_deal_summary(wallet_address: str, deal_id: str) -> Optional[dict[str, Any]]:
+    """Fetches a previously stored smart summary snapshot."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        '''
+        SELECT summary_json, created_at, updated_at
+        FROM smart_deal_summaries
+        WHERE wallet_address = ? AND deal_id = ?
+        ORDER BY id DESC
+        LIMIT 1
+        ''',
+        (wallet_address, deal_id),
+    )
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        return None
+
+    try:
+        summary = json.loads(row['summary_json']) if row['summary_json'] else {}
+    except Exception:
+        summary = {}
+
+    return {
+        'summary': summary,
+        'created_at': row['created_at'],
+        'updated_at': row['updated_at'],
+    }
 
 # Initialize/migrate on import
 init_db()

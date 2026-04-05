@@ -101,3 +101,8 @@ export async function completeDeal(deal_id) {
     method: 'POST',
   })
 }
+
+export async function getSmartDealSummary(deal_id, wallet_address) {
+  const walletQuery = wallet_address ? `?wallet_address=${encodeURIComponent(wallet_address)}` : ''
+  return request(`/deal/${deal_id}/smart-summary${walletQuery}`)
+}

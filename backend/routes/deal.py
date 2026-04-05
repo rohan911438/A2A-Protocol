@@ -1,7 +1,8 @@
 import os
 import re
 from datetime import datetime
-from fastapi import APIRouter, HTTPException
+from typing import Any
+from fastapi import APIRouter, HTTPException, Query
 from ..models import (
     DealCreateRequest, 
     DealCreateResponse, 
@@ -17,6 +18,8 @@ from ..services import (
     run_negotiation,
     get_wallet_state,
     log_reasoning,
+    save_deal_summary,
+    get_deal_summary,
 )
 
 router = APIRouter()
@@ -29,6 +32,160 @@ DEFAULT_SELLER_WALLET = os.getenv(
 
 def is_stellar_account(value: str | None) -> bool:
     return bool(value and re.fullmatch(r"G[A-Z2-7]{55}", value))
+
+
+def _format_delivery_window(deadline: str | None) -> str:
+    if not deadline:
+        return "Not specified"
+    try:
+        dt = datetime.fromisoformat(str(deadline))
+        now = datetime.utcnow()
+        days = (dt - now).days
+        if days < 0:
+            return f"Past due ({abs(days)} day(s) ago)"
+        return f"{max(days, 0)} day(s) remaining"
+    except Exception:
+        return str(deadline)
+
+
+def _compute_negotiation_volatility(conversation: list[dict[str, Any]]) -> float:
+    if len(conversation) < 2:
+        return 0.0
+
+    midpoints: list[float] = []
+    for turn in conversation:
+        buyer_price = float(turn.get("buyer_price") or 0)
+        seller_price = float(turn.get("seller_price") or 0)
+        if buyer_price > 0 and seller_price > 0:
+            midpoints.append((buyer_price + seller_price) / 2)
+
+    if len(midpoints) < 2:
+        return 0.0
+
+    deltas = [abs(midpoints[i] - midpoints[i - 1]) for i in range(1, len(midpoints))]
+    avg_midpoint = sum(midpoints) / len(midpoints)
+    if avg_midpoint <= 0:
+        return 0.0
+
+    normalized = sum(deltas) / len(deltas) / avg_midpoint
+    return min(max(normalized, 0.0), 1.0)
+
+
+def _normalize_reputation(value: Any) -> float:
+    try:
+        score = float(value)
+    except Exception:
+        score = 0.72
+    return min(max(score, 0.0), 1.0)
+
+
+def _build_payment_structure(milestones: list[float], final_price: float) -> dict[str, Any]:
+    if not milestones:
+        return {
+            "type": "single_settlement",
+            "milestones": [],
+            "note": "Single escrow funding and release path",
+        }
+
+    total = max(float(final_price or 0), 1.0)
+    structured = []
+    for idx, amount in enumerate(milestones, start=1):
+        pct = round((float(amount) / total) * 100, 2)
+        structured.append(
+            {
+                "index": idx,
+                "amount": round(float(amount), 4),
+                "percentage": pct,
+            }
+        )
+
+    return {
+        "type": "milestone",
+        "milestones": structured,
+        "note": "Milestone-gated release schedule",
+    }
+
+
+def _compute_risk_score(
+    seller_reputation: float,
+    volatility: float,
+    rounds: int,
+) -> dict[str, Any]:
+    reputation_risk = 1.0 - seller_reputation
+    round_pressure = min(max(rounds / 6.0, 0.0), 1.0)
+
+    score_0_to_1 = (reputation_risk * 0.5) + (volatility * 0.35) + (round_pressure * 0.15)
+    score = round(min(max(score_0_to_1, 0.0), 1.0) * 100, 2)
+
+    if score >= 70:
+        label = "high"
+    elif score >= 40:
+        label = "medium"
+    else:
+        label = "low"
+
+    return {
+        "score": score,
+        "label": label,
+        "factors": {
+            "seller_reputation": round(seller_reputation, 2),
+            "negotiation_volatility": round(volatility, 4),
+            "round_pressure": round(round_pressure, 4),
+        },
+    }
+
+
+def _build_smart_summary(deal_id: str, deal_record: dict[str, Any]) -> dict[str, Any]:
+    deal_data = deal_record.get("data") or {}
+    request_data = deal_data.get("request") or deal_data
+    result = deal_data.get("result") or {}
+
+    final_price = float(result.get("final_price") or 0)
+    conversation = result.get("conversation") or []
+    rounds = int(result.get("rounds") or len(conversation) or 0)
+
+    milestone_values = result.get("milestones") or []
+    if not milestone_values and final_price > 0:
+        first = round(final_price * 0.4)
+        second = max(final_price - first, 0)
+        milestone_values = [first, second] if second > 0 else [first]
+
+    seller_wallet = deal_data.get("seller_wallet") or request_data.get("seller_wallet") or DEFAULT_SELLER_WALLET
+    buyer_wallet = request_data.get("buyer_wallet") or deal_data.get("buyer_wallet")
+
+    seller_reputation = _normalize_reputation(request_data.get("seller_reputation"))
+    volatility = _compute_negotiation_volatility(conversation)
+
+    payment_structure = _build_payment_structure(milestone_values, final_price)
+    risk = _compute_risk_score(seller_reputation, volatility, rounds)
+
+    return {
+        "deal_id": deal_id,
+        "generated_at": datetime.utcnow().isoformat(),
+        "agreement": {
+            "final_agreed_price": round(final_price, 4),
+            "asset": "XLM",
+            "estimated_delivery": _format_delivery_window(request_data.get("deadline")),
+            "milestones_count": len(payment_structure.get("milestones") or []),
+            "payment_structure": payment_structure,
+        },
+        "participants": {
+            "buyer_agent": {
+                "identity": "Buyer Agent",
+                "wallet_address": buyer_wallet,
+            },
+            "seller_agent": {
+                "identity": "Seller Agent",
+                "wallet_address": seller_wallet,
+            },
+        },
+        "risk_assessment": risk,
+        "negotiation_metrics": {
+            "rounds": rounds,
+            "volatility_index": round(volatility, 4),
+            "status": deal_record.get("status") or "unknown",
+        },
+    }
 
 @router.post("/create-deal", response_model=DealCreateResponse)
 def post_create_deal(payload: DealCreateRequest) -> DealCreateResponse:
@@ -323,6 +480,48 @@ def complete_deal(id: str):
         raise HTTPException(status_code=404, detail="Deal ID not found")
     update_deal(id, status="Completed")
     return {"deal_id": id, "status": "Completed"}
+
+
+@router.get("/deal/{id}/smart-summary")
+def get_smart_deal_summary(id: str, wallet_address: str | None = Query(default=None)):
+    """
+    Generate and persist a structured smart summary from live negotiation data.
+    Returns stored snapshot fallback if generation inputs are unavailable.
+    """
+    deal_record = get_deal(id)
+    if not deal_record:
+        raise HTTPException(status_code=404, detail="Deal ID not found")
+
+    deal_data = deal_record.get("data") or {}
+    request_data = deal_data.get("request") or deal_data
+    effective_wallet = wallet_address or request_data.get("buyer_wallet") or deal_data.get("seller_wallet")
+
+    if not effective_wallet:
+        raise HTTPException(status_code=400, detail="wallet_address is required for summary storage")
+
+    can_generate = bool((deal_data.get("result") or {}).get("final_price") or (deal_data.get("result") or {}).get("conversation"))
+    if can_generate:
+        summary = _build_smart_summary(id, deal_record)
+        save_deal_summary(effective_wallet, id, summary)
+        return {
+            "deal_id": id,
+            "wallet_address": effective_wallet,
+            "source": "live",
+            "summary": summary,
+        }
+
+    existing = get_deal_summary(effective_wallet, id)
+    if existing:
+        return {
+            "deal_id": id,
+            "wallet_address": effective_wallet,
+            "source": "stored",
+            "summary": existing.get("summary") or {},
+            "created_at": existing.get("created_at"),
+            "updated_at": existing.get("updated_at"),
+        }
+
+    raise HTTPException(status_code=404, detail="Smart summary not available yet. Complete negotiation first.")
 
 
 @router.get("/deals")
