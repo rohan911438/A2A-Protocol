@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: a2a-protocol-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: CORS_ORIGINS
+        value: http://localhost:5173,https://YOUR-NETLIFY-SITE.netlify.app
+      - key: VITE_HORIZON_URL
+        value: https://horizon-testnet.stellar.org
+      - key: VITE_NETWORK_PASSPHRASE
+        value: "Test SDF Network ; September 2015"
+      - key: DEFAULT_SELLER_WALLET
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GOOGLE_API_KEY
+        sync: false
