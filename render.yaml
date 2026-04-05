@@ -1,13 +1,10 @@
 services:
   - type: web
     name: a2a-protocol-backend
-    runtime: python-3.11
-    buildCommand: pip install --upgrade pip setuptools wheel && pip install --no-cache-dir -r requirements.txt
+    runtime: python
+    buildCommand: pip install -r requirements.txt
     startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
     plan: free
-    env:
-      - key: PYTHON_VERSION
-        value: 3.11
       - key: CORS_ORIGINS
         value: http://localhost:5173,https://YOUR-NETLIFY-SITE.netlify.app
       - key: VITE_HORIZON_URL
