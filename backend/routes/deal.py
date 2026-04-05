@@ -20,6 +20,9 @@ from ..services import (
     log_reasoning,
     save_deal_summary,
     get_deal_summary,
+    ensure_x402_authorized,
+    record_x402_payment,
+    get_x402_fee,
 )
 
 router = APIRouter()
@@ -186,6 +189,50 @@ def _build_smart_summary(deal_id: str, deal_record: dict[str, Any]) -> dict[str,
             "status": deal_record.get("status") or "unknown",
         },
     }
+
+
+def _resolve_x402_participants(deal_record: dict[str, Any], wallet_address: str | None) -> tuple[str, str]:
+    deal_data = deal_record.get("data") or {}
+    request_data = deal_data.get("request") or deal_data
+    buyer_wallet = wallet_address or request_data.get("buyer_wallet") or deal_data.get("buyer_wallet")
+    seller_wallet = deal_data.get("seller_wallet") or request_data.get("seller_wallet") or DEFAULT_SELLER_WALLET
+    return buyer_wallet or "", seller_wallet or ""
+
+
+def _require_x402_payment(
+    deal_id: str,
+    deal_record: dict[str, Any],
+    wallet_address: str | None,
+    purpose: str,
+) -> tuple[bool, dict[str, Any]]:
+    buyer_wallet, seller_wallet = _resolve_x402_participants(deal_record, wallet_address)
+    effective_wallet = buyer_wallet if is_stellar_account(wallet_address) else wallet_address or buyer_wallet
+    recipient_wallet = seller_wallet
+    if purpose == "payment_release_fee":
+        recipient_wallet = seller_wallet
+    elif purpose == "deal_completion_fee":
+        recipient_wallet = seller_wallet
+    elif purpose == "audit_export_fee":
+        recipient_wallet = seller_wallet
+
+    if not is_stellar_account(effective_wallet):
+        return False, {
+            "status": "payment_required",
+            "purpose": purpose,
+            "amount": get_x402_fee(purpose),
+            "currency": "XLM",
+            "recipient_wallet": recipient_wallet,
+            "wallet_address": effective_wallet,
+            "deal_id": deal_id,
+            "message": "x402 payment authorization required before proceeding",
+        }
+
+    return ensure_x402_authorized(
+        wallet_address=effective_wallet,
+        deal_id=deal_id,
+        purpose=purpose,
+        recipient_wallet=recipient_wallet,
+    )
 
 @router.post("/create-deal", response_model=DealCreateResponse)
 def post_create_deal(payload: DealCreateRequest) -> DealCreateResponse:
@@ -478,8 +525,111 @@ def complete_deal(id: str):
     deal_record = get_deal(id)
     if not deal_record:
         raise HTTPException(status_code=404, detail="Deal ID not found")
+
+    deal_data = deal_record.get("data") or {}
+    buyer_wallet, _ = _resolve_x402_participants(deal_record, None)
+    authorized, payload = _require_x402_payment(id, deal_record, buyer_wallet, "deal_completion_fee")
+    if not authorized:
+        raise HTTPException(status_code=402, detail=payload)
+
     update_deal(id, status="Completed")
     return {"deal_id": id, "status": "Completed"}
+
+
+@router.get("/deal/{id}/audit-export")
+def export_audit_bundle(id: str, wallet_address: str | None = Query(default=None)):
+    """
+    Premium audit export gated by x402 payment authorization.
+    """
+    deal_record = get_deal(id)
+    if not deal_record:
+        raise HTTPException(status_code=404, detail="Deal ID not found")
+
+    authorized, payload = _require_x402_payment(id, deal_record, wallet_address, "audit_export_fee")
+    if not authorized:
+        raise HTTPException(status_code=402, detail=payload)
+
+    summary = _build_smart_summary(id, deal_record)
+    return {
+        "deal_id": id,
+        "audit_summary": summary,
+        "status": deal_record.get("status"),
+        "data": deal_record.get("data"),
+    }
+
+
+@router.get("/deal/{id}/x402-status")
+def get_x402_status(id: str, wallet_address: str = Query(...), purpose: str = Query("escrow_authorization_fee")):
+    """
+    Returns the latest x402 authorization state for a deal + wallet + purpose.
+    """
+    deal_record = get_deal(id)
+    if not deal_record:
+        raise HTTPException(status_code=404, detail="Deal ID not found")
+
+    buyer_wallet, seller_wallet = _resolve_x402_participants(deal_record, wallet_address)
+    recipient_wallet = seller_wallet
+    if purpose in {"deal_completion_fee", "payment_release_fee", "audit_export_fee"}:
+        recipient_wallet = seller_wallet
+
+    from ..services.database_service import get_x402_event
+
+    event = get_x402_event(wallet_address, id, purpose)
+    if event and event.get("status") == "verified":
+        return {
+            "status": "authorized",
+            "purpose": purpose,
+            "amount": event.get("amount") or get_x402_fee(purpose),
+            "currency": "XLM",
+            "recipient_wallet": event.get("recipient_wallet") or recipient_wallet,
+            "wallet_address": wallet_address,
+            "deal_id": id,
+            "tx_hash": event.get("tx_hash"),
+            "source": event.get("source"),
+            "verified_at": event.get("verified_at"),
+        }
+
+    return {
+        "status": event.get("status") if event else "payment_required",
+        "purpose": purpose,
+        "amount": event.get("amount") if event else get_x402_fee(purpose),
+        "currency": "XLM",
+        "recipient_wallet": event.get("recipient_wallet") if event else recipient_wallet,
+        "wallet_address": wallet_address,
+        "deal_id": id,
+        "tx_hash": event.get("tx_hash") if event else None,
+        "source": event.get("source") if event else None,
+        "verified_at": event.get("verified_at") if event else None,
+        "message": "x402 payment authorization required before proceeding",
+    }
+
+
+@router.post("/deal/{id}/x402-payment")
+def record_x402_payment_event(id: str, payload: dict[str, Any]):
+    """
+    Records a Stellar tx hash or local confirmation for a deal-scoped x402 payment.
+    """
+    deal_record = get_deal(id)
+    if not deal_record:
+        raise HTTPException(status_code=404, detail="Deal ID not found")
+
+    wallet_address = payload.get("wallet_address")
+    purpose = payload.get("purpose") or "escrow_authorization_fee"
+    tx_hash = payload.get("tx_hash")
+    confirm_local = bool(payload.get("confirm_local"))
+    if not wallet_address:
+        raise HTTPException(status_code=400, detail="wallet_address is required")
+
+    _, recipient_wallet = _resolve_x402_participants(deal_record, wallet_address)
+    event = record_x402_payment(
+        wallet_address=wallet_address,
+        deal_id=id,
+        purpose=purpose,
+        recipient_wallet=recipient_wallet,
+        tx_hash=tx_hash,
+        confirm_local=confirm_local,
+    )
+    return event
 
 
 @router.get("/deal/{id}/smart-summary")

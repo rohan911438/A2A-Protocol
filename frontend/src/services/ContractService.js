@@ -9,7 +9,9 @@ async function request(path, options = {}) {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ detail: 'Request failed' }));
-    throw new Error(errorData.detail || 'Request failed');
+    const error = new Error(errorData.detail?.message || errorData.detail || 'Request failed');
+    error.payload = errorData;
+    throw error;
   }
 
   return response.json()

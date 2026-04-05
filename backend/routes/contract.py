@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 import os
 
+from ..services import get_deal, ensure_x402_authorized, get_x402_fee
 from ..services.stellar_service import stellar_service
 
 router = APIRouter()
@@ -27,6 +28,34 @@ class ReleaseRequest(SenderRequest):
 class SubmitRequest(BaseModel):
     xdr: str = Field(..., description="Signed transaction XDR")
 
+
+def _resolve_recipient_wallet(deal_id: str) -> str:
+    deal_record = get_deal(deal_id)
+    if not deal_record:
+        return os.getenv(
+            "DEFAULT_SELLER_WALLET",
+            "GC5OZM7AY73DKZMPWU5BMW3EA6BXCYJIIF6UUQQ44XT4DOJQOXQZU2YF",
+        )
+    deal_data = deal_record.get("data") or {}
+    request_data = deal_data.get("request") or deal_data
+    return deal_data.get("seller_wallet") or request_data.get("seller_wallet") or os.getenv(
+        "DEFAULT_SELLER_WALLET",
+        "GC5OZM7AY73DKZMPWU5BMW3EA6BXCYJIIF6UUQQ44XT4DOJQOXQZU2YF",
+    )
+
+
+def _gate_x402(sender: str, deal_id: str, purpose: str):
+    recipient_wallet = _resolve_recipient_wallet(deal_id)
+    authorized, payload = ensure_x402_authorized(
+        wallet_address=sender,
+        deal_id=deal_id,
+        purpose=purpose,
+        recipient_wallet=recipient_wallet,
+        amount=get_x402_fee(purpose),
+    )
+    if not authorized:
+        raise HTTPException(status_code=402, detail=payload)
+
 @router.get("/contract/info")
 def contract_info():
     return {
@@ -39,21 +68,27 @@ def contract_info():
 @router.post("/contract/create-txn")
 def contract_create_txn(payload: CreateDealRequest):
     try:
+        _gate_x402(payload.sender, payload.deal_id, "escrow_authorization_fee")
         xdr = stellar_service.build_create_deal_transaction(
             payload.sender, payload.deal_id, payload.total, payload.milestones
         )
         return {"xdr": xdr}
     except Exception as e:
+        if isinstance(e, HTTPException):
+            raise
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/contract/release-txn")
 def contract_release_txn(payload: ReleaseRequest):
     try:
+        _gate_x402(payload.sender, payload.deal_id, "payment_release_fee")
         xdr = stellar_service.build_release_transaction(
             payload.sender, payload.deal_id, payload.destination, payload.amount
         )
         return {"xdr": xdr}
     except Exception as e:
+        if isinstance(e, HTTPException):
+            raise
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/contract/submit")

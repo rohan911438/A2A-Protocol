@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, Calendar, ListChecks, ArrowRight, ShieldCheck, Coins, Database, Activity, Terminal, Shield, Zap } from 'lucide-react';
 import { useWallet } from '../context/WalletContext';
 import { getCreateDealTxn, getContractInfo, submitSignedXdr } from '../services/ContractService';
-import { getDeal, approveDeal, rejectDeal, recordOnchainAccept, fundDeal, getSmartDealSummary } from '../services/DealService';
+import { getDeal, approveDeal, rejectDeal, recordOnchainAccept, fundDeal, getSmartDealSummary, getDealX402Status, recordDealX402Payment } from '../services/DealService';
 import SmartDealSummary from '../components/SmartDealSummary';
 
 const DealSummary = () => {
@@ -20,6 +20,9 @@ const DealSummary = () => {
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [summaryError, setSummaryError] = useState('');
   const [summaryConfirmed, setSummaryConfirmed] = useState(false);
+  const [x402Status, setX402Status] = useState(null);
+  const [paymentProof, setPaymentProof] = useState('');
+  const [verifyingPayment, setVerifyingPayment] = useState(false);
   
   const dealId = location.state?.dealId || null;
   const [dealRecord, setDealRecord] = useState(null);
@@ -77,7 +80,7 @@ const DealSummary = () => {
 
   const buyerAddress = requestData?.buyer_wallet || dealRecord?.data?.buyer_wallet || '';
   const sellerAddress = dealRecord?.data?.seller_wallet || requestData?.seller_wallet || '';
-  const summaryWallet = account || buyerAddress || sellerAddress || '';
+  const summaryWallet = buyerAddress || account || sellerAddress || '';
 
   const userRole = useMemo(() => {
     if (!account) return null;
@@ -116,6 +119,20 @@ const DealSummary = () => {
       });
   }, [dealId, summaryWallet, refreshTick]);
 
+  useEffect(() => {
+    if (!dealId || !summaryWallet) return;
+    getDealX402Status(dealId, summaryWallet)
+      .then((res) => setX402Status(res))
+      .catch((err) => {
+        const payload = err?.payload?.detail || err?.payload || null;
+        if (payload) {
+          setX402Status(payload);
+          return;
+        }
+        setX402Status({ status: 'payment_required', purpose: 'escrow_authorization_fee', amount: 0, recipient_wallet: sellerAddress });
+      });
+  }, [dealId, summaryWallet, sellerAddress, refreshTick]);
+
   const handleAuthorize = async () => {
     if (!connected || !account) {
       setTxStatus('Connect wallet to authorize protocol.');
@@ -123,6 +140,10 @@ const DealSummary = () => {
     }
     if (!/^G[A-Z2-7]{55}$/.test(account)) {
       setTxStatus('Invalid wallet account selected. Reconnect wallet and choose a Stellar account (G...).');
+      return;
+    }
+    if (isBuyer && x402Status?.status !== 'authorized') {
+      setTxStatus('x402 payment authorization is required before escrow generation.');
       return;
     }
     if (isBuyer && !summaryConfirmed) {
@@ -161,9 +182,57 @@ const DealSummary = () => {
       
       setRefreshTick(t => t + 1);
     } catch (err) {
+      const payload = err?.payload?.detail || err?.payload || null;
+      if (payload) {
+        setX402Status(payload);
+      }
       setTxStatus(`Error: ${err.message || 'Protocol failure.'}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleVerifyPayment = async () => {
+    if (!dealId || !summaryWallet) {
+      setSummaryError('Missing deal or wallet context for payment verification.');
+      return;
+    }
+    setVerifyingPayment(true);
+    setX402Status((current) => ({ ...(current || {}), status: 'verifying_payment' }));
+    try {
+      const result = await recordDealX402Payment(dealId, {
+        wallet_address: summaryWallet,
+        purpose: 'escrow_authorization_fee',
+        tx_hash: paymentProof.trim() || undefined,
+        confirm_local: !paymentProof.trim(),
+      });
+      setX402Status({
+        status: result.status === 'verified' ? 'authorized' : 'payment_required',
+        purpose: result.purpose,
+        amount: result.amount,
+        currency: 'XLM',
+        recipient_wallet: result.recipient_wallet,
+        wallet_address: result.wallet_address,
+        deal_id: result.deal_id,
+        tx_hash: result.tx_hash,
+        source: result.source,
+        verified_at: result.verified_at,
+      });
+      if (result.status === 'verified') {
+        setSummaryConfirmed(true);
+        setTxStatus('x402 payment verified. Escrow authorization unlocked.');
+      } else {
+        setTxStatus('Payment record stored locally. Verification still pending.');
+      }
+      setRefreshTick((t) => t + 1);
+    } catch (err) {
+      const payload = err?.payload?.detail || err?.payload || null;
+      if (payload) {
+        setX402Status(payload);
+      }
+      setTxStatus(err.message || 'Unable to verify x402 payment.');
+    } finally {
+      setVerifyingPayment(false);
     }
   };
 
@@ -278,6 +347,11 @@ const DealSummary = () => {
              isBuyer={isBuyer}
              confirmed={summaryConfirmed}
              onConfirm={() => setSummaryConfirmed(true)}
+             x402Status={x402Status}
+             paymentProof={paymentProof}
+             onPaymentProofChange={setPaymentProof}
+             onVerifyPayment={handleVerifyPayment}
+             verifyingPayment={verifyingPayment}
            />
 
            <div className="space-y-5">
@@ -292,11 +366,11 @@ const DealSummary = () => {
                 <div className="grid grid-cols-1 gap-4">
                   <button 
                     onClick={handleAuthorize}
-                    disabled={loading || !userRole || (isSeller && approvals.seller) || (isBuyer && existsOnChain) || (isBuyer && !summaryConfirmed)}
+                    disabled={loading || !userRole || (isSeller && approvals.seller) || (isBuyer && existsOnChain) || (isBuyer && (!summaryConfirmed || x402Status?.status !== 'authorized'))}
                     className="w-full py-6 bg-gradient-to-r from-indigo-500 via-purple-600 to-stellar-cyan text-white font-black rounded-3xl hover:scale-[1.02] transition-all shadow-glow flex items-center justify-center gap-4 uppercase tracking-[0.2em] text-xs relative overflow-hidden group/btn"
                   >
                      <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700" />
-                     {isBuyer ? (existsOnChain ? 'Escrow Online' : 'Authorize Escrow Logic') : (approvals.seller ? 'Ready for Sync' : 'Authorize Proposal')} 
+                    {isBuyer ? (existsOnChain ? 'Escrow Online' : (x402Status?.status === 'authorized' ? 'Authorize Escrow Logic' : 'Authorize Payment First')) : (approvals.seller ? 'Ready for Sync' : 'Authorize Proposal')} 
                      <Zap size={20} className="relative z-10" />
                   </button>
                   <button 

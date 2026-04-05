@@ -8,8 +8,10 @@ async function request(path, options = {}) {
 
   if (!response.ok) {
     let message = 'Request failed'
+    let payload = null
     try {
       const data = await response.json()
+      payload = data
       if (Array.isArray(data?.detail) && data.detail.length > 0) {
         const first = data.detail[0]
         message = first?.msg || data.detail || message
@@ -20,7 +22,9 @@ async function request(path, options = {}) {
       const text = await response.text()
       message = text || message
     }
-    throw new Error(String(message))
+    const error = new Error(String(message))
+    error.payload = payload
+    throw error
   }
 
   return response.json()
@@ -105,4 +109,16 @@ export async function completeDeal(deal_id) {
 export async function getSmartDealSummary(deal_id, wallet_address) {
   const walletQuery = wallet_address ? `?wallet_address=${encodeURIComponent(wallet_address)}` : ''
   return request(`/deal/${deal_id}/smart-summary${walletQuery}`)
+}
+
+export async function getDealX402Status(deal_id, wallet_address, purpose = 'escrow_authorization_fee') {
+  const query = `?wallet_address=${encodeURIComponent(wallet_address)}&purpose=${encodeURIComponent(purpose)}`
+  return request(`/deal/${deal_id}/x402-status${query}`)
+}
+
+export async function recordDealX402Payment(deal_id, payload) {
+  return request(`/deal/${deal_id}/x402-payment`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
 }

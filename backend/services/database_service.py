@@ -71,6 +71,27 @@ def init_db():
         )
     ''')
 
+    # x402-style payment authorization events for gated actions.
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS x402_events (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            wallet_address TEXT NOT NULL,
+            deal_id TEXT NOT NULL,
+            purpose TEXT NOT NULL,
+            amount REAL NOT NULL,
+            recipient_wallet TEXT NOT NULL,
+            status TEXT NOT NULL,
+            tx_hash TEXT,
+            source TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            verified_at TIMESTAMP,
+            UNIQUE(wallet_address, deal_id, purpose),
+            FOREIGN KEY (wallet_address) REFERENCES wallets (address),
+            FOREIGN KEY (deal_id) REFERENCES deals (deal_id)
+        )
+    ''')
+
     # Structured smart summary snapshots used before escrow authorization.
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS smart_deal_summaries (
@@ -175,6 +196,92 @@ def get_reasoning_logs(wallet_address: str, deal_id: str) -> list[dict[str, Any]
             }
         )
     return output
+
+
+def upsert_x402_event(
+    wallet_address: str,
+    deal_id: str,
+    purpose: str,
+    amount: float,
+    recipient_wallet: str,
+    status: str,
+    tx_hash: Optional[str] = None,
+    source: Optional[str] = None,
+    verified_at: Optional[datetime] = None,
+) -> None:
+    """Creates or updates an x402 payment authorization event."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute('INSERT OR IGNORE INTO wallets (address) VALUES (?)', (wallet_address,))
+    cursor.execute('UPDATE wallets SET last_seen = ? WHERE address = ?', (datetime.utcnow(), wallet_address))
+
+    cursor.execute(
+        '''
+        INSERT INTO x402_events (
+            wallet_address, deal_id, purpose, amount, recipient_wallet, status, tx_hash, source, updated_at, verified_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(wallet_address, deal_id, purpose)
+        DO UPDATE SET
+            amount = excluded.amount,
+            recipient_wallet = excluded.recipient_wallet,
+            status = excluded.status,
+            tx_hash = excluded.tx_hash,
+            source = excluded.source,
+            updated_at = excluded.updated_at,
+            verified_at = excluded.verified_at
+        ''',
+        (
+            wallet_address,
+            deal_id,
+            purpose,
+            amount,
+            recipient_wallet,
+            status,
+            tx_hash,
+            source,
+            datetime.utcnow(),
+            verified_at,
+        ),
+    )
+
+    conn.commit()
+    conn.close()
+
+
+def get_x402_event(wallet_address: str, deal_id: str, purpose: str) -> Optional[dict[str, Any]]:
+    """Fetches the latest x402 authorization event for a wallet, deal, and purpose."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        '''
+        SELECT wallet_address, deal_id, purpose, amount, recipient_wallet, status, tx_hash, source, created_at, updated_at, verified_at
+        FROM x402_events
+        WHERE wallet_address = ? AND deal_id = ? AND purpose = ?
+        ORDER BY id DESC
+        LIMIT 1
+        ''',
+        (wallet_address, deal_id, purpose),
+    )
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        return None
+
+    return {
+        'wallet_address': row['wallet_address'],
+        'deal_id': row['deal_id'],
+        'purpose': row['purpose'],
+        'amount': row['amount'],
+        'recipient_wallet': row['recipient_wallet'],
+        'status': row['status'],
+        'tx_hash': row['tx_hash'],
+        'source': row['source'],
+        'created_at': row['created_at'],
+        'updated_at': row['updated_at'],
+        'verified_at': row['verified_at'],
+    }
 
 
 def save_deal_summary(wallet_address: str, deal_id: str, summary: dict[str, Any]) -> None:
