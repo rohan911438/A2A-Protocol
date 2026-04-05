@@ -197,25 +197,24 @@ Execution strategy:
 
 ## Screenshots
 
-### Homepage UI
 
-![Homepage UI](link-to-homepage-screenshot)
 
-### Agent Negotiation
+<img width="1851" height="906" alt="image" src="https://github.com/user-attachments/assets/4193f6a9-9a4c-4e48-944d-613e5e54445c" />
 
-![Agent Negotiation](link-to-negotiation-screenshot)
+<img width="1696" height="791" alt="image" src="https://github.com/user-attachments/assets/0c7e5a86-d756-4dc3-9ca0-a80753025bb1" />
 
-### Deal Summary
+<img width="1692" height="840" alt="image" src="https://github.com/user-attachments/assets/d9365e69-0b11-404a-8810-1f71d89e376a" />
 
-![Deal Summary](link-to-deal-summary-screenshot)
+<img width="1892" height="849" alt="image" src="https://github.com/user-attachments/assets/8ea4b675-9809-4148-afbe-7337c4dbced9" />
 
-### Payment Flow
+<img width="1815" height="818" alt="image" src="https://github.com/user-attachments/assets/20da93db-f533-4fb0-b163-93b2c2a105f8" />
 
-![Payment Flow](link-to-payment-flow-screenshot)
+<img width="1882" height="786" alt="image" src="https://github.com/user-attachments/assets/2221c505-60e9-4a06-a17c-cc376b724d29" />
 
-### Dashboard
 
-![Dashboard](link-to-dashboard-screenshot)
+
+
+
 
 ## Demo Video
 
