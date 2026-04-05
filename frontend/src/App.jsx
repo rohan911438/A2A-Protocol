@@ -30,7 +30,7 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/create-deal" element={connected ? <CreateDeal /> : <Navigate to="/" />} />
-          <Route path="/negotiation-room" element={connected ? <NegotiationRoom /> : <Navigate to="/" />} />
+          <Route path="/negotiation-room" element={<NegotiationRoom />} />
           <Route path="/summary" element={connected ? <DealSummary /> : <Navigate to="/" />} />
           <Route path="/dashboard" element={connected ? <Dashboard /> : <Navigate to="/" />} />
           <Route path="/active-deal" element={connected ? <ActiveDeal /> : <Navigate to="/" />} />

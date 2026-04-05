@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, User, ArrowRight, Zap, CheckCircle2, MoreHorizontal, Coins, Shield, Terminal, Cpu } from 'lucide-react';
-import { getDeal, startNegotiation, acceptDealWithWallet } from '../services/DealService';
+import { getDeal, startNegotiation, acceptDealWithWallet, listDeals } from '../services/DealService';
 import { useWallet } from '../context/WalletContext';
 import NeuralBackground from '../components/NeuralBackground';
 
@@ -11,7 +11,7 @@ const NegotiationRoom = () => {
   const navigate = useNavigate();
   const scrollRef = useRef(null);
 
-  const dealId = location.state?.dealId || null;
+  const [dealId, setDealId] = useState(location.state?.dealId || localStorage.getItem('last_deal_id') || null);
   const [dealData, setDealData] = useState(null);
   const [dealStatus, setDealStatus] = useState('created');
   const [messages, setMessages] = useState([]);
@@ -21,6 +21,46 @@ const NegotiationRoom = () => {
   const [loading, setLoading] = useState(false);
   const [accepting, setAccepting] = useState(false);
   const { account, connected, formatAddress } = useWallet();
+
+  const isValidStellarAccount = (value) => typeof value === 'string' && /^G[A-Z2-7]{55}$/.test(value);
+
+  useEffect(() => {
+    if (location.state?.dealId) {
+      setDealId(location.state.dealId);
+      localStorage.setItem('last_deal_id', location.state.dealId);
+    }
+  }, [location.state]);
+
+  const resolveDealId = async () => {
+    const allDeals = await listDeals();
+    const entries = Object.entries(allDeals || {});
+    if (!entries.length) return null;
+
+    // Prefer deals still in pre-consensus flow, then fallback to latest entry.
+    const preferred = ['created', 'accepted', 'running', 'negotiated', 'active'];
+    let selected = null;
+    for (const status of preferred) {
+      const match = entries.find(([, rec]) => (rec?.status || '').toLowerCase() === status);
+      if (match) {
+        selected = match[0];
+        break;
+      }
+    }
+    if (!selected) {
+      selected = entries[entries.length - 1][0];
+    }
+
+    setDealId(selected);
+    localStorage.setItem('last_deal_id', selected);
+    return selected;
+  };
+
+  useEffect(() => {
+    if (dealId) return;
+    resolveDealId().catch(() => {
+      setError('No deal found. Create a deal first.');
+    });
+  }, [dealId]);
 
   useEffect(() => {
     if (!dealId) return;
@@ -67,12 +107,19 @@ const NegotiationRoom = () => {
   }, [account, buyerWallet]);
 
   const handleStart = async () => {
-    if (!dealId) return;
+    let targetDealId = dealId;
+    if (!targetDealId) {
+      targetDealId = await resolveDealId();
+      if (!targetDealId) {
+        setError('No deal found. Create a deal first.');
+        return;
+      }
+    }
     setLoading(true);
     setError('');
     setIsTyping(true);
     try {
-      const result = await startNegotiation(dealId);
+      const result = await startNegotiation(targetDealId);
       const convo = result.conversation || [];
       const mappedMessages = mapConversation(convo);
       
@@ -97,12 +144,25 @@ const NegotiationRoom = () => {
       setError('Connect wallet to authorize protocol.');
       return;
     }
-    if (!dealId) return;
+    if (!isValidStellarAccount(account)) {
+      setError('Invalid wallet account. Reconnect wallet and use a Stellar account (G...).');
+      return;
+    }
+    let targetDealId = dealId;
+    if (!targetDealId) {
+      targetDealId = await resolveDealId();
+      if (!targetDealId) {
+        setError('No deal found. Create a deal first.');
+        return;
+      }
+    }
     setAccepting(true);
     setError('');
     try {
-      await acceptDealWithWallet(dealId, account);
+      await acceptDealWithWallet(targetDealId, account);
       setDealStatus('accepted');
+      const refreshed = await getDeal(targetDealId).catch(() => null);
+      if (refreshed) setDealData(refreshed);
     } catch (err) {
       setError(err.message || 'Authorization failed');
     } finally {
@@ -269,6 +329,14 @@ const NegotiationRoom = () => {
                 </div>
 
                 <div className="flex items-center gap-5 w-full sm:w-auto">
+                  {!dealId && (
+                    <button
+                      onClick={() => navigate('/dashboard')}
+                      className="w-full sm:w-auto px-10 py-5 bg-white/10 border border-white/10 text-white font-black rounded-2xl hover:bg-white/20 transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-[11px]"
+                    >
+                      Open Dashboard <ArrowRight size={18} />
+                    </button>
+                  )}
                   {isComplete ? (
                     <button
                       onClick={() => navigate('/summary', { state: { dealId } })}

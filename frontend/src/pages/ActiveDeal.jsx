@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, Clock, CheckCircle2, Circle, ArrowRight, AlertCircle, Coins, Activity, Terminal, Shield, Cpu, Lock, Database } from 'lucide-react';
+import { ShieldCheck, Clock, CheckCircle2, Circle, ArrowRight, AlertCircle, Coins, Activity, Terminal, Shield, Cpu, Lock, Database, Zap } from 'lucide-react';
 import { useWallet } from '../context/WalletContext';
 import { getContractInfo, getReleaseTxn, submitSignedXdr } from '../services/ContractService';
 import { getDeal, recordRelease, completeDeal } from '../services/DealService';
 import NeuralBackground from '../components/NeuralBackground';
+
+const DEFAULT_SELLER_WALLET = 'GC5OZM7AY73DKZMPWU5BMW3EA6BXCYJIIF6UUQQ44XT4DOJQOXQZU2YF';
 
 const ActiveDeal = () => {
   const navigate = useNavigate();
@@ -92,8 +94,11 @@ const ActiveDeal = () => {
   }, [dealRecord]);
 
   const sellerWalletRaw = useMemo(() => {
-    return dealRecord?.data?.seller_wallet || '';
+    const request = dealRecord?.data?.request || dealRecord?.data || {};
+    return dealRecord?.data?.seller_wallet || request?.seller_wallet || DEFAULT_SELLER_WALLET;
   }, [dealRecord]);
+
+  const isValidStellarAccount = (value) => typeof value === 'string' && /^G[A-Z2-7]{55}$/.test(value);
 
   const buyerWallet = useMemo(() => {
     const request = dealRecord?.data?.request || dealRecord?.data || {};
@@ -105,9 +110,20 @@ const ActiveDeal = () => {
     return buyerWallet && account.toLowerCase() === buyerWallet;
   }, [account, buyerWallet]);
 
+  const senderWalletValid = isValidStellarAccount(account || '');
+  const sellerWalletValid = isValidStellarAccount(sellerWalletRaw);
+
   const handleRelease = async (milestone) => {
     if (!connected || !account) {
       setTxStatus('Connect wallet to authorize disbursement.');
+      return;
+    }
+    if (!isValidStellarAccount(account)) {
+      setTxStatus('Invalid sender account. Reconnect wallet and use a Stellar account (G...).');
+      return;
+    }
+    if (!isValidStellarAccount(sellerWalletRaw)) {
+      setTxStatus('Seller wallet is missing or invalid. Set seller wallet before releasing milestone funds.');
       return;
     }
     setLoadingId(milestone.id);
@@ -142,6 +158,24 @@ const ActiveDeal = () => {
             <Cpu className="text-indigo-400" size={24} />
         </div>
         <p className="mt-6 text-mist/60 font-mono text-[10px] uppercase tracking-[0.4em] animate-pulse">Syncing Node State...</p>
+      </div>
+    );
+  }
+
+  if (!dealId) {
+    return (
+      <div className="pt-32 pb-20 px-6 min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+        <NeuralBackground />
+        <div className="max-w-xl w-full text-center space-y-8 glass-morphism border border-white/10 rounded-[3rem] p-12">
+          <h2 className="text-3xl font-display font-black text-white uppercase tracking-tight">No Active Deal Selected</h2>
+          <p className="text-slate/70 text-sm font-medium">Open this page from Dashboard or Summary so a valid deal context is provided.</p>
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="px-10 py-4 bg-white text-ink-900 font-black rounded-2xl hover:scale-105 transition-all shadow-glow uppercase tracking-[0.2em] text-xs"
+          >
+            Return to Dashboard
+          </button>
+        </div>
       </div>
     );
   }
@@ -280,6 +314,14 @@ const ActiveDeal = () => {
               {/* Decorative vertical rail */}
               <div className="absolute top-10 bottom-10 left-[3.25rem] w-px bg-white/5 -z-10" />
            </div>
+
+           {isBuyer && (!senderWalletValid || !sellerWalletValid) && (
+             <div className="text-[10px] font-black text-amber-300 uppercase tracking-[0.25em] bg-amber-300/10 border border-amber-300/20 rounded-2xl px-6 py-4">
+               {senderWalletValid
+                 ? 'Seller wallet is not set yet. Ask seller to accept with wallet from Negotiation Room before releasing.'
+                 : 'Sender wallet is invalid. Reconnect wallet and select a Stellar account (G...).'}
+             </div>
+           )}
         </div>
 
         <AnimatePresence>

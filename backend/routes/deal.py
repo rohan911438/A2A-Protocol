@@ -1,4 +1,5 @@
 import os
+import re
 from datetime import datetime
 from fastapi import APIRouter, HTTPException
 from ..models import (
@@ -19,16 +20,27 @@ from ..services import (
 
 router = APIRouter()
 
+DEFAULT_SELLER_WALLET = os.getenv(
+    "DEFAULT_SELLER_WALLET",
+    "GC5OZM7AY73DKZMPWU5BMW3EA6BXCYJIIF6UUQQ44XT4DOJQOXQZU2YF",
+)
+
+
+def is_stellar_account(value: str | None) -> bool:
+    return bool(value and re.fullmatch(r"G[A-Z2-7]{55}", value))
+
 @router.post("/create-deal", response_model=DealCreateResponse)
 def post_create_deal(payload: DealCreateRequest) -> DealCreateResponse:
     """
     1. Create Deal: Takes parameters and returns a deal_id.
     """
     request_data = payload.model_dump()
+    if is_stellar_account(DEFAULT_SELLER_WALLET):
+        request_data["seller_wallet"] = request_data.get("seller_wallet") or DEFAULT_SELLER_WALLET
     data = {
         "request": request_data,
         "approvals": {"buyer": False, "seller": False},
-        "seller_wallet": None,
+        "seller_wallet": request_data.get("seller_wallet") if is_stellar_account(request_data.get("seller_wallet")) else (DEFAULT_SELLER_WALLET if is_stellar_account(DEFAULT_SELLER_WALLET) else None),
         "onchain_accepts": {"buyer": False, "seller": False},
         "txids": {},
         "releases": {"completed": [], "txids": {}},
@@ -89,6 +101,8 @@ def post_start_negotiation(payload: NegotiationRequest) -> NegotiationResponse:
 
     approvals = deal_data.get("approvals") or request_data.get("approvals") or {"buyer": False, "seller": False}
     seller_wallet = deal_data.get("seller_wallet") or request_data.get("seller_wallet")
+    if not is_stellar_account(seller_wallet) and is_stellar_account(DEFAULT_SELLER_WALLET):
+        seller_wallet = DEFAULT_SELLER_WALLET
 
     # Persist the final result while keeping original request and approvals
     update_deal(
@@ -140,9 +154,9 @@ def accept_deal(id: str, payload: dict):
     deal_record = get_deal(id)
     if not deal_record:
         raise HTTPException(status_code=404, detail="Deal ID not found")
-    seller_wallet = payload.get("seller_wallet")
+    seller_wallet = payload.get("seller_wallet") or deal_record.get("data", {}).get("seller_wallet") or DEFAULT_SELLER_WALLET
     deal_data = deal_record.get("data") or {}
-    if seller_wallet:
+    if is_stellar_account(seller_wallet):
         deal_data["seller_wallet"] = seller_wallet
     update_deal(id, data=deal_data, status="accepted")
     return {"deal_id": id, "status": "accepted"}
