@@ -1,8 +1,8 @@
 fastapi==0.115.0
 uvicorn==0.30.6
 pydantic==2.9.2
-google-generativeai
+pydantic-core==2.27.1
+google-generativeai==0.6.0
 python-dotenv==1.0.1
 stellar-sdk==9.0.0
 pymongo==4.10.1
-fastapi
