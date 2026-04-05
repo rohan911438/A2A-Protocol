@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, User, ArrowRight, Zap, CheckCircle2, MoreHorizontal, Coins, Shield, Terminal, Cpu } from 'lucide-react';
 import { getDeal, startNegotiation, acceptDealWithWallet, listDeals } from '../services/DealService';
 import { useWallet } from '../context/WalletContext';
-import NeuralBackground from '../components/NeuralBackground';
 
 const NegotiationRoom = () => {
   const location = useLocation();
@@ -172,8 +171,6 @@ const NegotiationRoom = () => {
 
   return (
     <div className="pt-20 min-h-screen flex flex-col items-center relative overflow-hidden selection:bg-indigo-500/30 selection:text-stellar-cyan">
-      <NeuralBackground />
-
       {/* Header Panel */}
       <div className="w-full h-24 glass-morphism border-b border-white/5 flex items-center z-20 px-8 relative">
         <div className="max-w-6xl mx-auto w-full flex items-center justify-between">

@@ -5,7 +5,6 @@ import { CheckCircle, Calendar, ListChecks, ArrowRight, ShieldCheck, Coins, Data
 import { useWallet } from '../context/WalletContext';
 import { getCreateDealTxn, getContractInfo, submitSignedXdr } from '../services/ContractService';
 import { getDeal, approveDeal, rejectDeal, recordOnchainAccept, fundDeal } from '../services/DealService';
-import NeuralBackground from '../components/NeuralBackground';
 
 const DealSummary = () => {
   const navigate = useNavigate();
@@ -63,7 +62,11 @@ const DealSummary = () => {
   }, [dealId, refreshTick]);
 
   useEffect(() => {
-    const id = setInterval(() => setRefreshTick((t) => t + 1), 8000);
+    const id = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        setRefreshTick((t) => t + 1);
+      }
+    }, 15000);
     return () => clearInterval(id);
   }, []);
 
@@ -144,7 +147,6 @@ const DealSummary = () => {
   if (loadingData) {
     return (
       <div className="pt-32 pb-20 px-6 min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
-        <NeuralBackground />
         <div className="w-16 h-16 rounded-2xl border-2 border-indigo-500/20 border-t-indigo-500 animate-spin flex items-center justify-center">
             <Database className="text-indigo-400" size={24} />
         </div>
@@ -155,8 +157,6 @@ const DealSummary = () => {
 
   return (
     <div className="pt-32 pb-32 px-6 min-h-screen flex flex-col items-center relative overflow-hidden">
-      <NeuralBackground />
-
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

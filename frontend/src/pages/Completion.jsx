@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, Star, ArrowLeft, Share2, PartyPopper, Trophy, ShieldCheck, Database, Zap, Activity } from 'lucide-react';
 import { getDeal } from '../services/DealService';
-import NeuralBackground from '../components/NeuralBackground';
 
 const Completion = () => {
   const navigate = useNavigate();
@@ -44,7 +43,6 @@ const Completion = () => {
   if (loadingData) {
     return (
       <div className="pt-32 pb-20 px-6 min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
-        <NeuralBackground />
         <div className="w-16 h-16 rounded-2xl border-2 border-indigo-500/20 border-t-indigo-500 animate-spin flex items-center justify-center">
             <Activity className="text-indigo-400" size={24} />
         </div>
@@ -56,7 +54,6 @@ const Completion = () => {
   if (!dealId || !dealRecord) {
     return (
       <div className="pt-32 pb-20 px-6 min-h-screen flex flex-col items-center justify-center text-center space-y-10 relative overflow-hidden">
-        <NeuralBackground />
         <div className="w-24 h-24 rounded-[2.5rem] glass-morphism border border-white/5 flex items-center justify-center mx-auto shadow-2xl">
           <Database size={40} className="text-slate/20" />
         </div>
@@ -76,8 +73,6 @@ const Completion = () => {
 
   return (
     <div className="pt-32 pb-32 px-6 min-h-screen flex flex-col items-center relative overflow-hidden selection:bg-indigo-500/30 selection:text-stellar-cyan">
-      <NeuralBackground />
-
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}

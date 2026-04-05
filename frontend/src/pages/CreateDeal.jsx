@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Briefcase, FileText, Coins, Calendar, ShieldCheck, Zap, Star, Activity, Terminal, Shield, Cpu, Target } from 'lucide-react';
 import { createDeal } from '../services/DealService';
 import { useWallet } from '../context/WalletContext';
-import NeuralBackground from '../components/NeuralBackground';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const CreateDeal = () => {
@@ -65,8 +64,6 @@ const CreateDeal = () => {
 
   return (
     <div className="pt-32 pb-32 px-6 min-h-screen flex flex-col items-center relative overflow-hidden selection:bg-indigo-500/30 selection:text-stellar-cyan">
-      <NeuralBackground />
-
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

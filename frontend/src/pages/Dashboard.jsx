@@ -5,7 +5,6 @@ import { LayoutDashboard, TrendingUp, CheckCircle2, ArrowRight, Coins, Activity,
 import { listDeals, approveDeal, rejectDeal, recordOnchainAccept, fundDeal } from '../services/DealService';
 import { useWallet } from '../context/WalletContext';
 import { getCreateDealTxn, getContractInfo, submitSignedXdr } from '../services/ContractService';
-import NeuralBackground from '../components/NeuralBackground';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('active');
@@ -159,8 +158,6 @@ const Dashboard = () => {
 
   return (
     <div className="pt-28 pb-32 px-6 min-h-screen flex flex-col items-center relative overflow-hidden selection:bg-indigo-500/30 selection:text-stellar-cyan">
-      <NeuralBackground />
-
       <div className="max-w-6xl mx-auto w-full space-y-16 z-10">
         
         {/* Dashboard Header */}

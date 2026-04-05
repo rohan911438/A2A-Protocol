@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { MotionConfig } from 'framer-motion';
 // Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -44,12 +45,26 @@ function AppContent() {
 }
 
 function App() {
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  useEffect(() => {
+    const cores = navigator.hardwareConcurrency || 8;
+    const memory = navigator.deviceMemory || 8;
+    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced || cores <= 4 || memory <= 4) {
+      setReduceMotion(true);
+      document.documentElement.setAttribute('data-perf', 'low');
+    }
+  }, []);
+
   return (
-    <Router>
-      <WalletProvider>
-        <AppContent />
-      </WalletProvider>
-    </Router>
+    <MotionConfig reducedMotion={reduceMotion ? 'always' : 'user'}>
+      <Router>
+        <WalletProvider>
+          <AppContent />
+        </WalletProvider>
+      </Router>
+    </MotionConfig>
   );
 }
 

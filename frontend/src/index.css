@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -21,6 +21,8 @@
   body {
     @apply bg-ink-900 text-mist antialiased selection:bg-indigo-500/30 selection:text-cyan-400;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+    line-height: 1.55;
+    text-rendering: optimizeLegibility;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -30,11 +32,11 @@
 
 @layer components {
   .glass {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
   }
   
   .glass-morphism {
-    @apply bg-ink-850/40 backdrop-blur-2xl border border-white/5 shadow-2xl;
+    @apply bg-ink-850/40 backdrop-blur-md border border-white/5 shadow-2xl;
   }
 
   .neon-border {
@@ -83,4 +85,36 @@
 
 .animate-particle {
   animation: particle-drift 15s ease-in-out infinite;
-}
+}
+
+@keyframes scan-line {
+  0% { top: -10%; }
+  100% { top: 110%; }
+}
+
+.animate-scan-line {
+  animation: scan-line 8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:root[data-perf='low'] .glass,
+:root[data-perf='low'] .glass-morphism {
+  backdrop-filter: blur(4px) !important;
+}
+
+:root[data-perf='low'] .animate-grid-move,
+:root[data-perf='low'] .animate-particle,
+:root[data-perf='low'] .animate-scan-line,
+:root[data-perf='low'] .animate-pulse-glow,
+:root[data-perf='low'] .animate-neural-pulse,
+:root[data-perf='low'] .animate-fadeInUp {
+  animation: none !important;
+}

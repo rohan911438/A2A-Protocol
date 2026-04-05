@@ -5,7 +5,6 @@ import { ShieldCheck, Clock, CheckCircle2, Circle, ArrowRight, AlertCircle, Coin
 import { useWallet } from '../context/WalletContext';
 import { getContractInfo, getReleaseTxn, submitSignedXdr } from '../services/ContractService';
 import { getDeal, recordRelease, completeDeal } from '../services/DealService';
-import NeuralBackground from '../components/NeuralBackground';
 
 const DEFAULT_SELLER_WALLET = 'GC5OZM7AY73DKZMPWU5BMW3EA6BXCYJIIF6UUQQ44XT4DOJQOXQZU2YF';
 
@@ -43,7 +42,11 @@ const ActiveDeal = () => {
         if(mounted) setLoadingData(false);
       });
     fetchDeal();
-    const timer = setInterval(fetchDeal, 5000);
+    const timer = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchDeal();
+      }
+    }, 12000);
     return () => {
       mounted = false;
       clearInterval(timer);
@@ -153,7 +156,6 @@ const ActiveDeal = () => {
   if (loadingData) {
     return (
       <div className="pt-32 pb-20 px-6 min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
-        <NeuralBackground />
         <div className="w-16 h-16 rounded-2xl border-2 border-indigo-500/20 border-t-indigo-500 animate-spin flex items-center justify-center">
             <Cpu className="text-indigo-400" size={24} />
         </div>
@@ -165,7 +167,6 @@ const ActiveDeal = () => {
   if (!dealId) {
     return (
       <div className="pt-32 pb-20 px-6 min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
-        <NeuralBackground />
         <div className="max-w-xl w-full text-center space-y-8 glass-morphism border border-white/10 rounded-[3rem] p-12">
           <h2 className="text-3xl font-display font-black text-white uppercase tracking-tight">No Active Deal Selected</h2>
           <p className="text-slate/70 text-sm font-medium">Open this page from Dashboard or Summary so a valid deal context is provided.</p>
@@ -182,8 +183,6 @@ const ActiveDeal = () => {
 
   return (
     <div className="pt-32 pb-32 px-6 min-h-screen flex flex-col items-center relative overflow-hidden selection:bg-indigo-500/30 selection:text-stellar-cyan">
-      <NeuralBackground />
-
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

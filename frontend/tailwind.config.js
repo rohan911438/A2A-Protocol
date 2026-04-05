@@ -4,9 +4,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ["\"Space Grotesk\"", "sans-serif"],
-        body: ["\"Space Grotesk\"", "sans-serif"],
-        mono: ["\"IBM Plex Mono\"", "monospace"],
+        display: ["\"Sora\"", "sans-serif"],
+        body: ["\"Plus Jakarta Sans\"", "sans-serif"],
+        mono: ["\"JetBrains Mono\"", "monospace"],
       },
       colors: {
         ink: {
