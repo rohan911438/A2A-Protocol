@@ -10,6 +10,7 @@ from .database_service import get_x402_event, upsert_x402_event
 from .stellar_service import stellar_service
 
 DEFAULT_X402_FEE = float(os.getenv("X402_ESCROW_FEE", "0.01"))
+X402_MODE = os.getenv("X402_MODE", "simulate").strip().lower()
 DEFAULT_X402_PURPOSE_FEES = {
     "escrow_authorization_fee": float(os.getenv("X402_ESCROW_FEE", "0.01")),
     "payment_release_fee": float(os.getenv("X402_RELEASE_FEE", "0.01")),
@@ -24,6 +25,10 @@ def get_x402_fee(purpose: str) -> float:
 
 def _is_stellar_account(value: str | None) -> bool:
     return bool(value and value.startswith("G") and len(value) == 56)
+
+
+def _is_simulation_mode() -> bool:
+    return X402_MODE != "enforce"
 
 
 def _verify_stellar_payment(tx_hash: str) -> bool:
@@ -46,6 +51,34 @@ def ensure_x402_authorized(
     """Checks if a wallet has a verified payment event for a given deal/purpose."""
     fee_amount = float(amount if amount is not None else get_x402_fee(purpose))
     existing = get_x402_event(wallet_address, deal_id, purpose)
+
+    if _is_simulation_mode():
+        verified_at = datetime.utcnow()
+        simulated = {
+            "status": "authorized",
+            "purpose": purpose,
+            "amount": fee_amount,
+            "currency": "XLM",
+            "recipient_wallet": recipient_wallet,
+            "wallet_address": wallet_address,
+            "deal_id": deal_id,
+            "tx_hash": existing.get("tx_hash") if existing else "simulated",
+            "source": "simulated",
+            "verified_at": verified_at.isoformat(),
+            "message": "x402 authorization simulated for test/demo mode",
+        }
+        upsert_x402_event(
+            wallet_address=wallet_address,
+            deal_id=deal_id,
+            purpose=purpose,
+            amount=fee_amount,
+            recipient_wallet=recipient_wallet,
+            status="verified",
+            tx_hash=simulated["tx_hash"],
+            source="simulated",
+            verified_at=verified_at,
+        )
+        return True, simulated
 
     if existing and str(existing.get("status")) == "verified":
         return True, existing
@@ -76,7 +109,7 @@ def ensure_x402_authorized(
         "recipient_wallet": recipient_wallet,
         "wallet_address": wallet_address,
         "deal_id": deal_id,
-        "message": "x402 payment authorization required before proceeding",
+        "message": "Protocol authorization required before proceeding",
     }
 
     upsert_x402_event(
@@ -107,10 +140,14 @@ def record_x402_payment(
     verified = False
     source = "local"
 
-    if tx_hash:
+    if _is_simulation_mode():
+        verified = True
+        source = "simulated"
+
+    if tx_hash and not _is_simulation_mode():
         verified = _verify_stellar_payment(tx_hash)
         source = "stellar"
-    elif confirm_local:
+    elif confirm_local and not _is_simulation_mode():
         verified = True
         source = "local"
 
@@ -144,5 +181,7 @@ def record_x402_payment(
     event["verified"] = verified
     event["amount"] = fee_amount
     event["source"] = source
-    event["tx_hash"] = tx_hash
+    event["tx_hash"] = tx_hash or ("simulated" if _is_simulation_mode() else None)
+    if _is_simulation_mode():
+        event["message"] = "x402 authorization simulated for test/demo mode"
     return event

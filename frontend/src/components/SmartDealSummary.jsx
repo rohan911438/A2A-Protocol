@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, ShieldAlert, Clock3, Wallet, Landmark, CheckCircle2, ShieldCheck, Loader2, CreditCard } from 'lucide-react';
+import { FileText, ShieldAlert, Clock3, Wallet, Landmark, CheckCircle2, ShieldCheck, Loader2 } from 'lucide-react';
 
 const RiskBadge = ({ label, score }) => {
   const lower = String(label || 'unknown').toLowerCase();
@@ -54,7 +54,7 @@ const SmartDealSummary = ({ summary, loading, error, isBuyer, confirmed, onConfi
   const risk = summary.risk_assessment || {};
   const payment = agreement.payment_structure || {};
   const milestones = payment.milestones || [];
-  const x402State = String(x402Status?.status || 'payment_required');
+  const x402State = String(x402Status?.status || 'authorized');
   const x402Tone =
     x402State === 'authorized'
       ? 'bg-emerald-500/10 text-emerald-300 border-emerald-400/30'
@@ -63,10 +63,10 @@ const SmartDealSummary = ({ summary, loading, error, isBuyer, confirmed, onConfi
         : 'bg-red-500/10 text-red-300 border-red-400/30';
   const x402Label =
     x402State === 'authorized'
-      ? 'Authorized - Proceeding to Escrow'
+      ? 'Authorization Simulated - Proceeding'
       : x402State === 'verifying_payment'
-        ? 'Verifying Payment'
-        : 'Payment Required';
+        ? 'Verifying Simulation'
+        : 'Authorization Pending';
 
   return (
     <div className="rounded-[2rem] border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] p-8 space-y-6 shadow-2xl">
@@ -88,12 +88,12 @@ const SmartDealSummary = ({ summary, loading, error, isBuyer, confirmed, onConfi
       <div className={`rounded-2xl border px-5 py-4 flex items-center justify-between gap-4 ${x402Tone}`}>
         <div>
           <div className="text-[10px] font-black uppercase tracking-[0.24em] flex items-center gap-2">
-            <ShieldCheck size={12} /> x402 Payment Authorization
+            <ShieldCheck size={12} /> Protocol Authorization
           </div>
           <div className="mt-1 text-sm font-semibold text-white/90">{x402Label}</div>
         </div>
         <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/70">
-          {x402Status?.purpose || 'escrow_authorization_fee'}
+          {x402Status?.purpose || 'simulation'}
         </div>
       </div>
 
@@ -138,7 +138,7 @@ const SmartDealSummary = ({ summary, loading, error, isBuyer, confirmed, onConfi
       {isBuyer && x402State !== 'authorized' && (
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 space-y-4">
           <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-stellar-cyan">
-            <CreditCard size={12} /> x402 Authorization Fee
+            <ShieldCheck size={12} /> Authorization Simulation
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div className="space-y-1">
@@ -151,11 +151,11 @@ const SmartDealSummary = ({ summary, loading, error, isBuyer, confirmed, onConfi
             </div>
           </div>
           <div className="space-y-2">
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate/60">Transaction Hash or Local Confirmation Note</div>
+            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate/60">Simulation Note or Optional Tx Hash</div>
             <input
               value={paymentProof}
               onChange={(event) => onPaymentProofChange?.(event.target.value)}
-              placeholder="Enter Stellar tx hash or leave blank for local confirmation"
+              placeholder="Enter a testnet tx hash or leave blank for simulation"
               className="w-full rounded-2xl bg-ink-900/70 border border-white/10 px-4 py-3 text-sm text-white placeholder:text-slate/40 outline-none focus:border-indigo-400/50"
             />
           </div>
@@ -165,7 +165,7 @@ const SmartDealSummary = ({ summary, loading, error, isBuyer, confirmed, onConfi
             className="w-full py-4 rounded-2xl border border-indigo-400/30 bg-indigo-500/10 text-indigo-100 font-black uppercase tracking-[0.22em] text-xs flex items-center justify-center gap-2 hover:bg-indigo-500/20 transition-all disabled:opacity-60"
           >
             {verifyingPayment ? <Loader2 size={16} className="animate-spin" /> : <ShieldCheck size={16} />}
-            {paymentProof ? 'Verify Stellar Payment' : 'Use Local Confirmation'}
+            {paymentProof ? 'Verify Testnet Proof' : 'Use Simulation Mode'}
           </button>
         </div>
       )}
@@ -180,7 +180,7 @@ const SmartDealSummary = ({ summary, loading, error, isBuyer, confirmed, onConfi
           }`}
         >
           <CheckCircle2 size={16} />
-          {confirmed ? 'Summary Confirmed - Escrow Authorization Enabled' : 'Confirm Summary To Continue'}
+          {confirmed ? 'Summary Confirmed - Escrow Simulation Enabled' : 'Confirm Summary To Continue'}
         </button>
       )}
     </div>

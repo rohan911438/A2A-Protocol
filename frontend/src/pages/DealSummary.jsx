@@ -129,7 +129,7 @@ const DealSummary = () => {
           setX402Status(payload);
           return;
         }
-        setX402Status({ status: 'payment_required', purpose: 'escrow_authorization_fee', amount: 0, recipient_wallet: sellerAddress });
+        setX402Status({ status: 'authorized', purpose: 'simulation', amount: 0, recipient_wallet: sellerAddress, source: 'simulated' });
       });
   }, [dealId, summaryWallet, sellerAddress, refreshTick]);
 
@@ -143,7 +143,7 @@ const DealSummary = () => {
       return;
     }
     if (isBuyer && x402Status?.status !== 'authorized') {
-      setTxStatus('x402 payment authorization is required before escrow generation.');
+      setTxStatus('Authorization simulation is required before escrow generation.');
       return;
     }
     if (isBuyer && !summaryConfirmed) {
@@ -220,9 +220,9 @@ const DealSummary = () => {
       });
       if (result.status === 'verified') {
         setSummaryConfirmed(true);
-        setTxStatus('x402 payment verified. Escrow authorization unlocked.');
+        setTxStatus('Authorization simulated. Escrow flow unlocked.');
       } else {
-        setTxStatus('Payment record stored locally. Verification still pending.');
+        setTxStatus('Simulation record stored locally. Verification still pending.');
       }
       setRefreshTick((t) => t + 1);
     } catch (err) {
@@ -230,7 +230,7 @@ const DealSummary = () => {
       if (payload) {
         setX402Status(payload);
       }
-      setTxStatus(err.message || 'Unable to verify x402 payment.');
+      setTxStatus(err.message || 'Unable to verify authorization simulation.');
     } finally {
       setVerifyingPayment(false);
     }
@@ -370,7 +370,7 @@ const DealSummary = () => {
                     className="w-full py-6 bg-gradient-to-r from-indigo-500 via-purple-600 to-stellar-cyan text-white font-black rounded-3xl hover:scale-[1.02] transition-all shadow-glow flex items-center justify-center gap-4 uppercase tracking-[0.2em] text-xs relative overflow-hidden group/btn"
                   >
                      <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700" />
-                    {isBuyer ? (existsOnChain ? 'Escrow Online' : (x402Status?.status === 'authorized' ? 'Authorize Escrow Logic' : 'Authorize Payment First')) : (approvals.seller ? 'Ready for Sync' : 'Authorize Proposal')} 
+                                {isBuyer ? (existsOnChain ? 'Escrow Online' : (x402Status?.status === 'authorized' ? 'Proceed to Escrow' : 'Continue Simulation')) : (approvals.seller ? 'Ready for Sync' : 'Authorize Proposal')} 
                      <Zap size={20} className="relative z-10" />
                   </button>
                   <button 

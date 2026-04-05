@@ -31,6 +31,7 @@ DEFAULT_SELLER_WALLET = os.getenv(
     "DEFAULT_SELLER_WALLET",
     "GC5OZM7AY73DKZMPWU5BMW3EA6BXCYJIIF6UUQQ44XT4DOJQOXQZU2YF",
 )
+X402_MODE = os.getenv("X402_MODE", "simulate").strip().lower()
 
 
 def is_stellar_account(value: str | None) -> bool:
@@ -215,6 +216,21 @@ def _require_x402_payment(
     elif purpose == "audit_export_fee":
         recipient_wallet = seller_wallet
 
+    if X402_MODE != "enforce":
+        return True, {
+            "status": "authorized",
+            "purpose": purpose,
+            "amount": get_x402_fee(purpose),
+            "currency": "XLM",
+            "recipient_wallet": recipient_wallet,
+            "wallet_address": effective_wallet,
+            "deal_id": deal_id,
+            "tx_hash": "simulated",
+            "source": "simulated",
+            "verified_at": datetime.utcnow().isoformat(),
+            "message": "x402 authorization simulated for test/demo mode",
+        }
+
     if not is_stellar_account(effective_wallet):
         return False, {
             "status": "payment_required",
@@ -224,7 +240,7 @@ def _require_x402_payment(
             "recipient_wallet": recipient_wallet,
             "wallet_address": effective_wallet,
             "deal_id": deal_id,
-            "message": "x402 payment authorization required before proceeding",
+            "message": "Protocol authorization required before proceeding",
         }
 
     return ensure_x402_authorized(
@@ -572,6 +588,21 @@ def get_x402_status(id: str, wallet_address: str = Query(...), purpose: str = Qu
     if purpose in {"deal_completion_fee", "payment_release_fee", "audit_export_fee"}:
         recipient_wallet = seller_wallet
 
+    if X402_MODE != "enforce":
+        return {
+            "status": "authorized",
+            "purpose": purpose,
+            "amount": get_x402_fee(purpose),
+            "currency": "XLM",
+            "recipient_wallet": recipient_wallet,
+            "wallet_address": wallet_address,
+            "deal_id": id,
+            "tx_hash": "simulated",
+            "source": "simulated",
+            "verified_at": datetime.utcnow().isoformat(),
+            "message": "x402 authorization simulated for test/demo mode",
+        }
+
     from ..services.database_service import get_x402_event
 
     event = get_x402_event(wallet_address, id, purpose)
@@ -600,7 +631,7 @@ def get_x402_status(id: str, wallet_address: str = Query(...), purpose: str = Qu
         "tx_hash": event.get("tx_hash") if event else None,
         "source": event.get("source") if event else None,
         "verified_at": event.get("verified_at") if event else None,
-        "message": "x402 payment authorization required before proceeding",
+        "message": "Protocol authorization required before proceeding",
     }
 
 
