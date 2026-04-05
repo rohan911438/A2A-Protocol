@@ -55,6 +55,22 @@ def init_db():
         )
     ''')
 
+    # Explainability logs for each negotiation decision step
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS reasoning_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            wallet_address TEXT,
+            deal_id TEXT,
+            round_number INTEGER,
+            role TEXT,
+            summary TEXT,
+            details TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (wallet_address) REFERENCES wallets (address),
+            FOREIGN KEY (deal_id) REFERENCES deals (deal_id)
+        )
+    ''')
+
     conn.commit()
     conn.close()
 
@@ -76,6 +92,74 @@ def log_activity(wallet_address: str, action_type: str, deal_id: Optional[str] =
     conn.commit()
     conn.close()
 
-# Initialize on import
-if not os.path.exists(DB_PATH):
-    init_db()
+
+def log_reasoning(
+    wallet_address: str,
+    deal_id: str,
+    round_number: int,
+    role: str,
+    summary: str,
+    details: Optional[dict[str, Any]] = None,
+):
+    """Stores explainability details for a negotiation step."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute('INSERT OR IGNORE INTO wallets (address) VALUES (?)', (wallet_address,))
+    cursor.execute('UPDATE wallets SET last_seen = ? WHERE address = ?', (datetime.utcnow(), wallet_address))
+
+    cursor.execute(
+        '''
+        INSERT INTO reasoning_logs (wallet_address, deal_id, round_number, role, summary, details)
+        VALUES (?, ?, ?, ?, ?, ?)
+        ''',
+        (
+            wallet_address,
+            deal_id,
+            round_number,
+            role,
+            summary,
+            json.dumps(details or {}),
+        ),
+    )
+
+    conn.commit()
+    conn.close()
+
+
+def get_reasoning_logs(wallet_address: str, deal_id: str) -> list[dict[str, Any]]:
+    """Fetch explainability logs for a wallet and deal pair."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        '''
+        SELECT round_number, role, summary, details, created_at
+        FROM reasoning_logs
+        WHERE wallet_address = ? AND deal_id = ?
+        ORDER BY round_number ASC, id ASC
+        ''',
+        (wallet_address, deal_id),
+    )
+    rows = cursor.fetchall()
+    conn.close()
+
+    output: list[dict[str, Any]] = []
+    for row in rows:
+        details = row['details']
+        try:
+            parsed = json.loads(details) if details else {}
+        except Exception:
+            parsed = {}
+        output.append(
+            {
+                'round_number': row['round_number'],
+                'role': row['role'],
+                'summary': row['summary'],
+                'details': parsed,
+                'created_at': row['created_at'],
+            }
+        )
+    return output
+
+# Initialize/migrate on import
+init_db()

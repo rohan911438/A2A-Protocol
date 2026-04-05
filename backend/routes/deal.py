@@ -15,7 +15,8 @@ from ..services import (
     update_deal, 
     list_deals, 
     run_negotiation,
-    get_wallet_state
+    get_wallet_state,
+    log_reasoning,
 )
 
 router = APIRouter()
@@ -103,6 +104,7 @@ def post_start_negotiation(payload: NegotiationRequest) -> NegotiationResponse:
     seller_wallet = deal_data.get("seller_wallet") or request_data.get("seller_wallet")
     if not is_stellar_account(seller_wallet) and is_stellar_account(DEFAULT_SELLER_WALLET):
         seller_wallet = DEFAULT_SELLER_WALLET
+    buyer_wallet = request_data.get("buyer_wallet")
 
     # Persist the final result while keeping original request and approvals
     update_deal(
@@ -120,11 +122,39 @@ def post_start_negotiation(payload: NegotiationRequest) -> NegotiationResponse:
         },
         status=status,
     )
+
+    # Store explainability trail by wallet + deal for auditability.
+    reasoning_entries = result.get("reasoning") or []
+    for step in reasoning_entries:
+        round_number = int(step.get("round", 0) or 0)
+        if round_number <= 0:
+            continue
+        factors = step.get("factors") or {}
+
+        if is_stellar_account(buyer_wallet):
+            log_reasoning(
+                wallet_address=buyer_wallet,
+                deal_id=payload.deal_id,
+                round_number=round_number,
+                role="buyer",
+                summary=step.get("buyer_reasoning") or "Buyer decision rationale",
+                details={"decision_basis": step.get("decision_basis"), "factors": factors},
+            )
+        if is_stellar_account(seller_wallet):
+            log_reasoning(
+                wallet_address=seller_wallet,
+                deal_id=payload.deal_id,
+                round_number=round_number,
+                role="seller",
+                summary=step.get("seller_reasoning") or "Seller decision rationale",
+                details={"decision_basis": step.get("decision_basis"), "factors": factors},
+            )
     
     return NegotiationResponse(
         status=status,
         final_price=result.get("final_price"),
         conversation=result.get("conversation"),
+        reasoning=result.get("reasoning") or [],
         rounds=result.get("rounds")
     )
 

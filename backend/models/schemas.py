@@ -28,6 +28,7 @@ class NegotiationResponse(BaseModel):
     status: str
     final_price: Optional[float] = None
     conversation: list[dict[str, Any]] = []
+    reasoning: list[dict[str, Any]] = []
     rounds: int = 0
 
 

@@ -55,7 +55,7 @@ def run_negotiation(task_data: dict[str, Any]) -> dict[str, Any]:
         randomness=0.01,
     )
 
-    engine = NegotiationEngine(buyer=buyer, seller=seller, threshold=20.0)
+    engine = NegotiationEngine(buyer=buyer, seller=seller, threshold=20.0, context=task_data)
     result = engine.run()
     
     # Format the result as requested, including the 'rounds' field
@@ -64,6 +64,7 @@ def run_negotiation(task_data: dict[str, Any]) -> dict[str, Any]:
         "status": result.get("status", "failed"),
         "final_price": result.get("final_price"),
         "conversation": conversation,
+        "reasoning": result.get("reasoning", []),
         "rounds": len(conversation)
     }
     

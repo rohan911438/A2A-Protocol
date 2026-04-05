@@ -19,6 +19,7 @@ const NegotiationRoom = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [accepting, setAccepting] = useState(false);
+  const [reasoningLogs, setReasoningLogs] = useState([]);
   const { account, connected, formatAddress } = useWallet();
 
   const isValidStellarAccount = (value) => typeof value === 'string' && /^G[A-Z2-7]{55}$/.test(value);
@@ -68,10 +69,12 @@ const NegotiationRoom = () => {
         setDealData(res);
         setDealStatus(res?.status || 'created');
         const convo = res?.data?.result?.conversation || res?.data?.conversation || [];
+        const reasoning = res?.data?.result?.reasoning || res?.data?.reasoning || [];
         if (convo.length) {
           setMessages(mapConversation(convo));
           setIsComplete(true);
         }
+        setReasoningLogs(reasoning);
       })
       .catch(() => {});
   }, [dealId]);
@@ -120,7 +123,9 @@ const NegotiationRoom = () => {
     try {
       const result = await startNegotiation(targetDealId);
       const convo = result.conversation || [];
+      const reasoning = result.reasoning || [];
       const mappedMessages = mapConversation(convo);
+      setReasoningLogs(reasoning);
       
       setMessages([]); 
       for (const msg of mappedMessages) {
@@ -208,8 +213,9 @@ const NegotiationRoom = () => {
         </div>
       </div>
 
-      {/* Main Chat Area */}
-      <div className="flex-1 w-full max-w-4xl px-6 py-12 space-y-10 overflow-y-auto no-scrollbar pb-40 z-10" ref={scrollRef}>
+      {/* Main Content */}
+      <div className="flex-1 w-full max-w-7xl px-6 py-12 pb-40 z-10 grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 items-start">
+      <div className="space-y-10 overflow-y-auto no-scrollbar" ref={scrollRef}>
         <AnimatePresence mode="popLayout">
           {messages.length === 0 && dealData && (
              <motion.div
@@ -296,6 +302,37 @@ const NegotiationRoom = () => {
             <span className="text-[10px] font-black text-stellar-cyan uppercase tracking-[0.3em] animate-pulse">Syncing Logic...</span>
           </motion.div>
         )}
+      </div>
+
+      {/* Explainability Panel */}
+      <aside className="glass-morphism border border-white/10 rounded-[2rem] p-6 lg:sticky lg:top-28 max-h-[70vh] overflow-y-auto no-scrollbar">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-[11px] font-black text-white uppercase tracking-[0.35em]">Agent Reasoning</h3>
+          <span className="text-[9px] font-mono font-bold text-indigo-400 uppercase tracking-widest">Why This Decision</span>
+        </div>
+
+        {reasoningLogs.length === 0 ? (
+          <div className="text-[11px] text-slate/70 leading-relaxed">
+            Reasoning entries will appear here once negotiation steps are executed.
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {reasoningLogs.map((step) => (
+              <div key={`reason-${step.round}`} className="rounded-2xl bg-white/[0.02] border border-white/5 p-4 space-y-3">
+                <div className="text-[10px] font-black text-stellar-cyan uppercase tracking-[0.25em]">Round {step.round}</div>
+                <p className="text-xs text-white/90 leading-relaxed"><span className="text-indigo-300 font-bold">Buyer:</span> {step.buyer_reasoning}</p>
+                <p className="text-xs text-white/90 leading-relaxed"><span className="text-cyan-300 font-bold">Seller:</span> {step.seller_reasoning}</p>
+                <div className="pt-2 border-t border-white/10 space-y-1 text-[10px] text-slate/80">
+                  <div>Gap: {step?.factors?.price_adjustment?.price_gap ?? 'N/A'} XLM</div>
+                  <div>Deadline: {step?.factors?.deadline_constraints?.note ?? 'N/A'}</div>
+                  <div>Reputation: {step?.factors?.seller_reputation?.label ?? 'N/A'} ({step?.factors?.seller_reputation?.score ?? 'N/A'})</div>
+                  <div>Risk: {step?.factors?.risk_evaluation?.risk_level ?? 'N/A'}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </aside>
       </div>
 
       {/* Control Navigation Dock */}

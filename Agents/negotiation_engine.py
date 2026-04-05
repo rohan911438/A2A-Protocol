@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 from buyer_agent import BuyerAgent
 from seller_agent import SellerAgent
 from strategy import is_within_threshold
@@ -15,14 +16,123 @@ from llm_negotiator import (
 
 
 class NegotiationEngine:
-    def __init__(self, buyer: BuyerAgent, seller: SellerAgent, threshold: float = 20.0) -> None:
+    def __init__(
+        self,
+        buyer: BuyerAgent,
+        seller: SellerAgent,
+        threshold: float = 20.0,
+        context: dict | None = None,
+    ) -> None:
         self.buyer = buyer
         self.seller = seller
         self.threshold = threshold
+        self.context = context or {}
+
+    def _deadline_days_remaining(self) -> int | None:
+        deadline = self.context.get("deadline")
+        if not deadline:
+            return None
+        try:
+            dt = datetime.fromisoformat(str(deadline)).replace(tzinfo=timezone.utc)
+            now = datetime.now(timezone.utc)
+            return (dt - now).days
+        except Exception:
+            return None
+
+    def _risk_label(self, gap_ratio: float, rounds_left: int) -> str:
+        if gap_ratio >= 0.25 and rounds_left <= 1:
+            return "high"
+        if gap_ratio >= 0.10:
+            return "medium"
+        return "low"
+
+    def _reputation_label(self, score: float) -> str:
+        if score >= 0.85:
+            return "excellent"
+        if score >= 0.70:
+            return "good"
+        if score >= 0.50:
+            return "moderate"
+        return "limited"
+
+    def _build_reasoning(
+        self,
+        round_number: int,
+        max_rounds: int,
+        buyer_prev: float,
+        seller_prev: float,
+        buyer_now: float,
+        seller_now: float,
+    ) -> dict:
+        rounds_left = max(max_rounds - round_number, 0)
+        deadline_days = self._deadline_days_remaining()
+        seller_reputation = float(self.context.get("seller_reputation", 0.72))
+
+        buyer_delta = round(buyer_now - buyer_prev, 4)
+        seller_delta = round(seller_prev - seller_now, 4)
+        price_gap = round(max(seller_now - buyer_now, 0), 4)
+        gap_ratio = price_gap / max(seller_now, 1)
+        risk_level = self._risk_label(gap_ratio, rounds_left)
+        reputation_label = self._reputation_label(seller_reputation)
+
+        if deadline_days is None:
+            deadline_note = "deadline unavailable"
+        elif deadline_days <= 2:
+            deadline_note = f"deadline in {deadline_days} day(s), high urgency"
+        elif deadline_days <= 7:
+            deadline_note = f"deadline in {deadline_days} day(s), moderate urgency"
+        else:
+            deadline_note = f"deadline in {deadline_days} day(s), low urgency"
+
+        buyer_summary = (
+            f"Buyer adjusted by {buyer_delta:+.4f} XLM after comparing previous offers "
+            f"({buyer_prev:.4f} vs seller {seller_prev:.4f}); current gap is {price_gap:.4f} XLM."
+        )
+        seller_summary = (
+            f"Seller adjusted by {seller_delta:+.4f} XLM while protecting minimum value; "
+            f"reputation considered {reputation_label} ({seller_reputation:.2f})."
+        )
+
+        factors = {
+            "price_adjustment": {
+                "buyer_delta": buyer_delta,
+                "seller_delta": seller_delta,
+                "price_gap": price_gap,
+            },
+            "deadline_constraints": {
+                "days_remaining": deadline_days,
+                "note": deadline_note,
+            },
+            "seller_reputation": {
+                "score": round(seller_reputation, 2),
+                "label": reputation_label,
+            },
+            "risk_evaluation": {
+                "gap_ratio": round(gap_ratio, 4),
+                "risk_level": risk_level,
+                "rounds_left": rounds_left,
+            },
+            "previous_offers": {
+                "buyer_previous": round(buyer_prev, 4),
+                "seller_previous": round(seller_prev, 4),
+            },
+        }
+
+        return {
+            "round": round_number,
+            "buyer_reasoning": buyer_summary,
+            "seller_reasoning": seller_summary,
+            "factors": factors,
+            "decision_basis": (
+                "logic-based negotiation using offer history, deadline pressure, reputation signal, "
+                "and round-level risk tolerance"
+            ),
+        }
 
     def run(self) -> dict:
         max_rounds = min(self.buyer.max_rounds, self.seller.max_rounds)
         conversation: list[dict] = []
+        reasoning: list[dict] = []
         
         # We will keep a textual history to feed into the prompt
         format_history = ""
@@ -32,6 +142,9 @@ class NegotiationEngine:
         current_seller_price = self.seller.initial_price
 
         for round_number in range(1, max_rounds + 1):
+            buyer_prev = current_buyer_price
+            seller_prev = current_seller_price
+
             # Formulate prompts
             buyer_prompt = BUYER_PROMPT.format(
                 budget=self.buyer.budget,
@@ -74,6 +187,17 @@ class NegotiationEngine:
                 "seller_price": current_seller_price
             })
 
+            reasoning.append(
+                self._build_reasoning(
+                    round_number=round_number,
+                    max_rounds=max_rounds,
+                    buyer_prev=buyer_prev,
+                    seller_prev=seller_prev,
+                    buyer_now=current_buyer_price,
+                    seller_now=current_seller_price,
+                )
+            )
+
             log_round(round_number, current_buyer_price, current_seller_price)
 
             # 🛡️ Agent-Driven Finalization Logic
@@ -84,13 +208,15 @@ class NegotiationEngine:
                 return {
                     "status": "closed",
                     "final_price": current_seller_price,
-                    "conversation": conversation
+                    "conversation": conversation,
+                    "reasoning": reasoning,
                 }
 
         return {
             "status": "failed",
             "final_price": None,
-            "conversation": conversation
+            "conversation": conversation,
+            "reasoning": reasoning,
         }
 
 
