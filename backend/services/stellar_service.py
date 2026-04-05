@@ -1,5 +1,6 @@
 import os
 from typing import List, Optional
+from decimal import Decimal, ROUND_DOWN, InvalidOperation
 from stellar_sdk import Server, Keypair, TransactionBuilder, Network, Asset, Operation
 from stellar_sdk.exceptions import NotFoundError
 
@@ -33,6 +34,17 @@ class StellarService:
             print(f"Transaction submission failed: {e}")
             raise RuntimeError(f"Stellar submission error: {str(e)}")
 
+    def _format_stellar_amount(self, amount: float) -> str:
+        """Format amount for Stellar payment ops (max 7 decimal places)."""
+        try:
+            value = Decimal(str(amount)).quantize(Decimal("0.0000001"), rounding=ROUND_DOWN)
+        except (InvalidOperation, ValueError, TypeError):
+            raise RuntimeError("Invalid amount value")
+
+        # Remove trailing zeros while keeping plain decimal notation.
+        text = format(value, "f").rstrip("0").rstrip(".")
+        return text if text else "0"
+
     def build_create_deal_transaction(self, sender: str, deal_id: str, total_amount: float, milestones: List[float]) -> str:
         """
         Builds a transaction to initialize a deal on Stellar.
@@ -58,13 +70,14 @@ class StellarService:
     def build_release_transaction(self, sender: str, deal_id: str, destination: str, amount: float) -> str:
         """Builds a payment transaction to release funds from escrow."""
         source_account = self.server.load_account(sender)
+        payment_amount = self._format_stellar_amount(amount)
         builder = (
             TransactionBuilder(
                 source_account=source_account,
                 network_passphrase=self.network_passphrase,
                 base_fee=self.base_fee,
             )
-            .append_payment_op(destination, Asset.native(), str(amount))
+            .append_payment_op(destination, Asset.native(), payment_amount)
             .append_manage_data_op(f"rel_{deal_id[:10]}", "released")
             .set_timeout(300)
         )
