@@ -4,6 +4,14 @@
 
 A2A Protocol is a hackathon project for an emerging agent economy: AI agents that can negotiate, authorize payment, settle through escrow, and complete work with on-chain trust guarantees. The product combines autonomous negotiation, Stellar Soroban escrow, x402-style payment gating, and explainable deal summaries so users can define the task while agents handle execution.
 
+## At A Glance
+
+- Define a task once.
+- Let agents negotiate the deal.
+- Lock funds in on-chain escrow.
+- Verify completion before release.
+- Keep every critical action auditable.
+
 ## Live Deployment
 
 - Frontend: https://a2aprotocol.netlify.app/
@@ -45,6 +53,23 @@ The core idea is simple: users express intent, while agents negotiate, transact,
 
 ## Architecture Overview
 
+```mermaid
+flowchart TD
+   U[User / Client] --> F[Frontend Dashboard]
+   F --> B[FastAPI Backend]
+   B --> N[Negotiation Engine]
+   N --> BA[Buyer Agent]
+   N --> SA[Seller Agents]
+   N --> V[Verifier Agent]
+   B --> X[x402 Payment Gate]
+   X --> S[Soroban Escrow Contract]
+   S --> T[Settlement on Stellar Testnet]
+   B --> DB[(SQLite + JSON deal state)]
+   V --> B
+   S --> B
+   DB --> B
+```
+
 ### 1. User Layer
 
 Users submit tasks, connect a Stellar wallet, and define deal preferences such as budget, deadline, and seller criteria.
@@ -78,6 +103,15 @@ Soroban smart contracts hold funds and enforce escrow rules so settlement can ha
 9. Verifier agent validates completion.
 10. Payment is released from escrow.
 
+## Architectural Diagram Notes
+
+The architecture is intentionally modular so each layer can evolve independently.
+
+- The frontend focuses on user intent, wallet connection, and deal visibility.
+- The backend coordinates negotiation, persistence, and payment gating.
+- The agent layer handles offer generation, bargaining, and verification.
+- The trust layer is enforced by Soroban escrow rather than by a central operator.
+
 ## Tech Stack
 
 - Frontend: React (Vite), Tailwind CSS
@@ -94,7 +128,13 @@ Soroban smart contracts hold funds and enforce escrow rules so settlement can ha
 - Network: Stellar Testnet
 - RPC endpoint: `https://soroban-testnet.stellar.org:443`
 
-Contract link placeholder: Insert contract link here
+Testnet verification links:
+
+- Escrow contract explorer: https://stellar.expert/explorer/testnet/contract/CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU
+- Token contract explorer: https://stellar.expert/explorer/testnet/contract/CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI
+- Soroban RPC endpoint: https://soroban-testnet.stellar.org:443
+
+Contract verification note: open the escrow contract explorer link above to confirm the deployed contract exists on Stellar Testnet and matches the on-chain address used by the app.
 
 Escrow logic overview:
 
@@ -105,7 +145,25 @@ Escrow logic overview:
 
 ## Go-To-Market Strategy
 
-A2A Protocol starts with a clear wedge: freelance-style work coordination where trust, payment, and delivery are the main pain points.
+A2A Protocol starts with a clear wedge: freelance-style work coordination where trust, payment, and delivery are the main pain points. The GTM strategy is designed to prove value early, then expand into broader agent commerce.
+
+### Phase 1: Prove the Wedge
+
+- Target freelance-style tasks where payment disputes are common.
+- Demonstrate fast negotiation plus escrow-backed settlement.
+- Use Demo Mode to show the full flow in under three minutes.
+
+### Phase 2: Expand Usage
+
+- Extend from one-off freelance tasks to repeatable service requests.
+- Introduce more structured deal templates and agent reputation history.
+- Make the protocol useful for startups outsourcing small, high-trust tasks.
+
+### Phase 3: Open the Agent Economy
+
+- Expose the negotiation and escrow workflow as an API.
+- Let external agents plug into the protocol.
+- Enable recurring, machine-to-machine economic activity.
 
 Target users:
 
@@ -114,11 +172,28 @@ Target users:
 - AI developers building agent workflows
 - Web3 users already comfortable with wallet-based execution
 
-Adoption strategy:
+Execution strategy:
 
-1. Start with a simple freelance negotiation and escrow use case.
-2. Expand into API and service marketplaces.
-3. Open the protocol to an agent economy where autonomous systems can transact repeatedly.
+1. Lead with a clear demo that shows negotiation, escrow, and settlement end to end.
+2. Convert the demo into a repeatable workflow for freelancers and clients.
+3. Use integrations and partnerships to move from a project demo to a protocol layer.
+
+## Comparison
+
+| Capability | Traditional Marketplace | Generic AI Agent | A2A Protocol |
+|---|---|---|---|
+| Negotiation | Manual messaging | Can draft responses | Autonomous agent-to-agent negotiation |
+| Payment | Off-chain or manual | No native payment flow | x402-style payment gating + on-chain escrow |
+| Trust | Platform-mediated | No trust layer | Verifier agent + Soroban settlement |
+| Completion | Human review | Best-effort reasoning | Explicit completion path before release |
+| Auditability | Fragmented records | Limited traceability | Structured summaries and on-chain state |
+| Economic agency | Human-only | Advisory only | Agents participate directly in workflow |
+
+### Why It Is Different
+
+- Traditional marketplaces coordinate humans.
+- Generic AI agents can assist, but they do not settle value safely.
+- A2A Protocol combines negotiation, payment authorization, and escrow into one workflow so agents can actually operate in the economy.
 
 ## Screenshots
 
@@ -238,6 +313,15 @@ Team: Brotherhood
 - Add member name, role, and GitHub profile here.
 - Add member name, role, and GitHub profile here.
 - Add member name, role, and GitHub profile here.
+
+## Members And Roles
+
+If you want the README to compare the project across team members, list the responsibilities here:
+
+- Member 1: Frontend, product flow, and demo UX.
+- Member 2: Backend, negotiation logic, and API design.
+- Member 3: Smart contracts, escrow, and Stellar integration.
+- Member 4: AI reasoning, verifier logic, and GTM narrative.
 
 ## Why It Matters
 
