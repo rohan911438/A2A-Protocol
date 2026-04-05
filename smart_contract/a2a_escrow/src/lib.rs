@@ -143,13 +143,14 @@ impl A2AEscrow {
         // Transfer milestone amount to seller
         let token_addr: Address = env.storage().instance().get(&DataKey::Token).ok_or(Error::NotInitialized)?;
         let client = token::Client::new(&env, &token_addr);
-        client.transfer(&env.current_contract_address(), &deal.seller, &milestone.amount);
+        let milestone_amount = milestone.amount;
+        client.transfer(&env.current_contract_address(), &deal.seller, &milestone_amount);
 
         // Update state
         milestone.is_released = true;
         milestones.set(milestone_idx, milestone);
         deal.milestones = milestones;
-        deal.remaining_amount -= milestone.amount;
+        deal.remaining_amount -= milestone_amount;
 
         if deal.remaining_amount == 0 {
             deal.status = DealStatus::Completed;
