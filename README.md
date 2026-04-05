@@ -1,58 +1,90 @@
-# Agentic Exchange
+# A2A Protocol
 
-An autonomous agent negotiation platform built on Algorand. This project consists of a FastAPI backend and a React (Vite) frontend.
+Autonomous agent-to-agent negotiation platform with a FastAPI backend and a React (Vite) frontend, integrated with Stellar testnet flows.
+
+## Live Deployment
+
+- Frontend URL: https://a2aprotocol.netlify.app/
+- Backend URL: https://a2a-protocol-rn62.onrender.com
+- Backend health check: https://a2a-protocol-rn62.onrender.com/
+
+## Stellar Contract Configuration
+
+- Escrow contract (CONTRACT_ID): `CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU`
+- Token contract (TOKEN_CONTRACT_ID): `CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI`
+- Network: Stellar Testnet (`Test SDF Network ; September 2015`)
 
 ## Prerequisites
 
-- **Python 3.8+**
-- **Node.js 18+**
-- **npm** (comes with Node.js)
+- Python 3.11
+- Node.js 20+
+- npm
 
-## Getting Started
+## Local Backend Setup
 
-### 1. Backend Setup
-
-The backend handles the core logic, agent negotiations, and data persistence.
-
-1. **Install dependencies**:
+1. Install dependencies:
    ```bash
-   pip install -r requirements.txt
+   python -m pip install -r requirements.txt
    ```
-
-2. **Environment Variables**:
-   Create a `.env` file in the root directory (parent of `backend/`) if needed for API keys or database connections.
-
-3. **Run the server**:
-   From the project root directory, run:
+2. Configure environment in root `.env` (API keys, contract IDs, wallets).
+3. Run backend:
    ```bash
    python -m backend.main
    ```
-   The backend will be available at `http://127.0.0.1:8000`.
+4. Local API base URL:
+   ```text
+   http://127.0.0.1:8000
+   ```
 
-### 2. Frontend Setup
+## Frontend Setup (Local)
 
-The frontend provides the user interface for interacting with the platform.
-
-1. **Navigate to the frontend directory**:
+1. Move to frontend:
    ```bash
    cd frontend
    ```
-
-2. **Install dependencies**:
+2. Install dependencies:
    ```bash
    npm install
    ```
-
-3. **Run the development server**:
+3. Create `frontend/.env` with:
+   ```env
+   VITE_API_BASE=http://127.0.0.1:8000
+   VITE_HORIZON_URL=https://horizon-testnet.stellar.org
+   VITE_NETWORK_PASSPHRASE=Test SDF Network ; September 2015
+   VITE_STELLAR_NETWORK=TESTNET
+   ```
+4. Run frontend:
    ```bash
    npm run dev
    ```
-   The frontend will be available at the URL provided in the console (usually `http://localhost:5173`).
+
+## Frontend Deployment (Netlify)
+
+The repository already includes `netlify.toml` configured with:
+- Base directory: `frontend`
+- Build command: `npm ci && npm run build`
+- Publish directory: `dist`
+
+Set these Netlify environment variables:
+
+```env
+VITE_API_BASE=https://a2a-protocol-rn62.onrender.com
+VITE_HORIZON_URL=https://horizon-testnet.stellar.org
+VITE_NETWORK_PASSPHRASE=Test SDF Network ; September 2015
+VITE_STELLAR_NETWORK=TESTNET
+```
+
+After deploy, add your Netlify domain to backend CORS (`CORS_ORIGINS`) in Render.
+
+Current production frontend domain:
+
+```text
+https://a2aprotocol.netlify.app/
+```
 
 ## Project Structure
 
-- `backend/`: FastAPI application containing routes, models, and services.
-- `frontend/`: React application built with Vite and Tailwind CSS.
-- `smart_contract/`: Algorand smart contracts (PyTeal).
-- `Agents/`: Agent-specific logic and configurations.
-# Stellar
+- `backend/`: FastAPI routes, services, persistence, Stellar integration.
+- `frontend/`: React + Vite UI.
+- `smart_contract/`: Soroban contract code.
+- `Agents/`: negotiation and strategy agents.
