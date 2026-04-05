@@ -309,18 +309,7 @@ After deployment, add the Netlify domain to backend CORS settings in Render.
 
 Team: Brotherhood
 
-- Add member name, role, and GitHub profile here.
-- Add member name, role, and GitHub profile here.
-- Add member name, role, and GitHub profile here.
-
-## Members And Roles
-
-If you want the README to compare the project across team members, list the responsibilities here:
-
-- Member 1: Frontend, product flow, and demo UX.
-- Member 2: Backend, negotiation logic, and API design.
-- Member 3: Smart contracts, escrow, and Stellar integration.
-- Member 4: AI reasoning, verifier logic, and GTM narrative.
+- Rohan Kumar (@rohan911438) - Solo founder, product, backend, frontend, and smart contract integration.
 
 ## Why It Matters
 
