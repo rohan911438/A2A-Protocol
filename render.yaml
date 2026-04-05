@@ -2,7 +2,7 @@ services:
   - type: web
     name: a2a-protocol-backend
     runtime: python
-    buildCommand: python3.11 -m pip install --no-cache-dir -r requirements.txt
+    buildCommand: python3.11 -m pip install --upgrade pip ; python3.11 -m pip install --no-cache-dir --only-binary=:all: -r requirements.txt
     startCommand: python3.11 -m uvicorn backend.main:app --host 0.0.0.0 --port $PORT --workers 4
     plan: free
     envVars:
