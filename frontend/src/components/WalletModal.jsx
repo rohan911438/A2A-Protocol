@@ -111,7 +111,7 @@ const WalletModal = () => {
                  <button
                    key={wallet.id}
                    disabled={connecting}
-                   onClick={() => wallet.installed ? connect(wallet.id) : null}
+                   onClick={() => (wallet.id === "freighter" || wallet.installed) ? connect(wallet.id) : null}
                    className={`w-full group relative flex items-center gap-5 p-5 rounded-[2rem] border transition-all duration-500 ${
                      wallet.color
                    } ${!wallet.installed ? 'opacity-40 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-95'}`}

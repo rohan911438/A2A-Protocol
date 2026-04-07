@@ -1,8 +1,8 @@
 import {
-  getPublicKey,
+  getAddress,
   signTransaction,
   isConnected,
-  getNetwork
+  requestAccess
 } from "@stellar/freighter-api";
 import { Horizon, Networks } from "@stellar/stellar-sdk";
 
@@ -18,7 +18,7 @@ class StellarWalletService {
    * Detects available Stellar wallets.
    */
   async detectWallets() {
-    const freighterInstalled = await isConnected();
+    const { isConnected: freighterInstalled } = await isConnected();
     const rabetInstalled = typeof window !== 'undefined' && !!window.rabet;
     const albedoInstalled = true; // Albedo is web-based, always "available"
 
@@ -49,7 +49,17 @@ class StellarWalletService {
    */
   async connectFreighter() {
     try {
-      const publicKey = await getPublicKey();
+      const access = await requestAccess();
+      if (access?.error) {
+        throw new Error(access.error.message || "Freighter could not grant access.");
+      }
+
+      const addressResult = await getAddress();
+      if (addressResult?.error) {
+        throw new Error(addressResult.error.message || "Unable to read address from Freighter.");
+      }
+
+      const publicKey = access.publicKey || addressResult.address;
       if (!publicKey) {
         throw new Error("User declined connection or no account found.");
       }
@@ -86,7 +96,7 @@ class StellarWalletService {
    */
   async reconnect(savedProvider) {
     if (savedProvider === 'freighter') {
-      const connected = await isConnected();
+      const { isConnected: connected } = await isConnected();
       if (connected) {
         return await this.connectFreighter();
       }
