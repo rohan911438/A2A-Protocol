@@ -132,10 +132,23 @@ class StellarWalletService {
    */
   async signTransaction(xdr, network = "TESTNET") {
     if (this.selectedWallet === "freighter") {
-      const signedXdr = await signTransaction(xdr, {
-        network: network.toUpperCase()
+      const networkLabel = String(network || "").toUpperCase();
+      const networkPassphrase =
+        networkLabel === "PUBLIC" || networkLabel === "MAINNET"
+          ? Networks.PUBLIC
+          : networkLabel === "TESTNET"
+            ? Networks.TESTNET
+            : this.networkPassphrase;
+
+      const result = await signTransaction(xdr, {
+        networkPassphrase,
       });
-      return signedXdr;
+
+      if (result?.error) {
+        throw new Error(result.error.message || "Freighter failed to sign the transaction.");
+      }
+
+      return result?.signedTxXdr || result;
     }
 
     if (this.selectedWallet === "rabet") {

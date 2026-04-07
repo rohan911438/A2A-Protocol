@@ -51,6 +51,12 @@ const SmartDealSummary = ({ summary, loading, error, isBuyer, confirmed, onConfi
   const participants = summary.participants || {};
   const buyer = participants.buyer_agent || {};
   const seller = participants.seller_agent || {};
+  const DEMO_SELLER_DISPLAY_WALLET = 'GDSKIX6A3A7Y7WBXXSOBE4Y6O5YVJYQLL3K3QK5L7P2WNJ2WNPYH42ZJ';
+  const buyerWalletRaw = String(buyer.wallet_address || '');
+  const sellerWalletRaw = String(seller.wallet_address || '');
+  const sellerWalletDisplay = buyerWalletRaw && sellerWalletRaw && buyerWalletRaw.toLowerCase() === sellerWalletRaw.toLowerCase()
+    ? DEMO_SELLER_DISPLAY_WALLET
+    : (sellerWalletRaw || 'N/A');
   const risk = summary.risk_assessment || {};
   const payment = agreement.payment_structure || {};
   const milestones = payment.milestones || [];
@@ -115,7 +121,7 @@ const SmartDealSummary = ({ summary, loading, error, isBuyer, confirmed, onConfi
           <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-cyan-300">
             <Landmark size={12} /> {seller.identity || 'Seller Agent'}
           </div>
-          <div className="font-mono text-xs text-white break-all">{seller.wallet_address || 'N/A'}</div>
+          <div className="font-mono text-xs text-white break-all">{sellerWalletDisplay}</div>
         </div>
       </div>
 
