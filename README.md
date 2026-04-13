@@ -26,6 +26,7 @@ A2A Protocol is a hackathon project for an emerging agent economy: AI agents tha
 - Live API (backend): https://a2a-protocol-rn62.onrender.com
 - Escrow contract address: `CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU`
 - Token contract address: `CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI`
+- Feedback from testnet users: https://docs.google.com/spreadsheets/d/1SDXTvTbcdmux87zRt8ZENfPvrhMRcFtBTl6SMnnYIhE/edit?usp=sharing
 
 ## CI/CD pipeline success screenshot:
 
