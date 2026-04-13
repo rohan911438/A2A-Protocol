@@ -11,6 +11,9 @@ concurrency:
   group: ci-cd-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   backend-checks:
     name: Backend Checks
@@ -18,10 +21,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
           cache: "pip"
@@ -38,10 +41,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "20"
           cache: "npm"
@@ -65,18 +68,29 @@ jobs:
       RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
 
     steps:
-      - name: Trigger Netlify build hook
-        if: env.NETLIFY_BUILD_HOOK != ''
-        run: curl -X POST -sS "$NETLIFY_BUILD_HOOK"
-
-      - name: Trigger Render deploy hook
-        if: env.RENDER_DEPLOY_HOOK != ''
-        run: curl -X POST -sS "$RENDER_DEPLOY_HOOK"
-
-      - name: Deployment hooks status
+      - name: Trigger deployment hooks (safe)
+        shell: bash
         run: |
-          if [ -z "$NETLIFY_BUILD_HOOK" ] && [ -z "$RENDER_DEPLOY_HOOK" ]; then
-            echo "No deploy hooks configured. Add NETLIFY_BUILD_HOOK and/or RENDER_DEPLOY_HOOK repository secrets to enable CD."
-          else
-            echo "Deploy hook(s) triggered successfully."
-          fi
+          trigger_hook() {
+            local label="$1"
+            local url="$2"
+
+            if [ -z "$url" ]; then
+              echo "::notice::$label hook not configured; skipping."
+              return 0
+            fi
+
+            if [[ ! "$url" =~ ^https?:// ]]; then
+              echo "::warning::$label hook is not a valid URL; skipping."
+              return 0
+            fi
+
+            if curl --fail --show-error --silent -X POST "$url" > /dev/null; then
+              echo "$label hook triggered."
+            else
+              echo "::warning::$label hook request failed; continuing without failing CI."
+            fi
+          }
+
+          trigger_hook "Netlify" "$NETLIFY_BUILD_HOOK"
+          trigger_hook "Render" "$RENDER_DEPLOY_HOOK"
