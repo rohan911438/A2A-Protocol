@@ -32,6 +32,10 @@ A2A Protocol is a hackathon project for an emerging agent economy: AI agents tha
 - Inter-contract call tx hash: add this if your implementation uses inter-contract calls
 - Mobile responsive screenshot: add at least one mobile viewport screenshot in the Screenshots section before resubmission
 
+CI/CD pipeline success screenshot:
+
+![CI/CD pipeline success](docs/images/ci-cd-success.png)
+
 ### CI/CD Note (Important)
 
 - For `NETLIFY_BUILD_HOOK` and `RENDER_DEPLOY_HOOK`, store only the webhook URL in GitHub Actions secrets.
