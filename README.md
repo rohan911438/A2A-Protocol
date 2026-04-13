@@ -36,11 +36,6 @@ CI/CD pipeline success screenshot:
 
 ![CI/CD pipeline success](docs/images/ci-cd-success.png)
 
-### CI/CD Note (Important)
-
-- For `NETLIFY_BUILD_HOOK` and `RENDER_DEPLOY_HOOK`, store only the webhook URL in GitHub Actions secrets.
-- Do not paste a full curl command in the secret value.
-- Valid example format: `https://api.netlify.com/build_hooks/<hook_id>`
 
 
 ## Problem Statement
