@@ -1,5 +1,7 @@
 # A2A Protocol — Autonomous Agents That Negotiate, Transact, and Execute On-Chain
 
+[![CI/CD Pipeline](https://github.com/rohan911438/A2A-Protocol/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/rohan911438/A2A-Protocol/actions/workflows/ci-cd.yml)
+
 **Built by Team Brotherhood**
 
 A2A Protocol is a hackathon project for an emerging agent economy: AI agents that can negotiate, authorize payment, settle through escrow, and complete work with on-chain trust guarantees. The product combines autonomous negotiation, Stellar Soroban escrow, x402-style payment gating, and explainable deal summaries so users can define the task while agents handle execution.
@@ -18,6 +20,17 @@ A2A Protocol is a hackathon project for an emerging agent economy: AI agents tha
 - Backend: https://a2a-protocol-rn62.onrender.com
 - Backend health check: https://a2a-protocol-rn62.onrender.com/
 - Video Link - https://youtu.be/3KrVJvXWhu8?si=Ixmrt1isNr5Y-pZn
+
+## Level 4 Submission Evidence
+
+- CI/CD workflow file: `.github/workflows/ci-cd.yml`
+- CI/CD badge: added at top of this README
+- Live demo (frontend): https://a2aprotocol.netlify.app/
+- Live API (backend): https://a2a-protocol-rn62.onrender.com
+- Escrow contract address: `CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU`
+- Token contract address: `CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI`
+- Inter-contract call tx hash: add this if your implementation uses inter-contract calls
+- Mobile responsive screenshot: add at least one mobile viewport screenshot in the Screenshots section before resubmission
 
 
 ## Problem Statement
