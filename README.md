@@ -32,6 +32,12 @@ A2A Protocol is a hackathon project for an emerging agent economy: AI agents tha
 - Inter-contract call tx hash: add this if your implementation uses inter-contract calls
 - Mobile responsive screenshot: add at least one mobile viewport screenshot in the Screenshots section before resubmission
 
+### CI/CD Note (Important)
+
+- For `NETLIFY_BUILD_HOOK` and `RENDER_DEPLOY_HOOK`, store only the webhook URL in GitHub Actions secrets.
+- Do not paste a full curl command in the secret value.
+- Valid example format: `https://api.netlify.com/build_hooks/<hook_id>`
+
 
 ## Problem Statement
 
