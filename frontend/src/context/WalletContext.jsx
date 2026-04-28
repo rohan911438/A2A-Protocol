@@ -71,6 +71,8 @@ export const WalletProvider = ({ children }) => {
         publicKey = await walletService.connectFreighter();
       } else if (walletType === 'rabet') {
         publicKey = await walletService.connectRabet();
+      } else if (walletType === 'albedo') {
+        publicKey = await walletService.connectAlbedo();
       } else {
         throw new Error("Unsupported wallet type.");
       }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Smartphone, Layers, ShieldCheck, ExternalLink, Loader2, AlertCircle, Ship, Rabbit, Zap } from "lucide-react";
+import { X, Smartphone, Layers, ShieldCheck, ExternalLink, Loader2, AlertCircle, Ship, Rabbit, Zap, Sparkles } from "lucide-react";
 import { useWallet } from "../context/WalletContext";
 import { walletService } from "../services/StellarWalletService";
 
@@ -44,7 +44,7 @@ const WalletModal = () => {
     {
       id: "albedo",
       name: "Albedo",
-      icon: <Zap className="w-6 h-6 text-purple-400" />,
+      icon: <Sparkles className="w-6 h-6 text-purple-400" />,
       description: "Secure web-based Stellar signer",
       color: "bg-purple-500/5 border-purple-500/20 hover:border-purple-500/50",
       installed: true,

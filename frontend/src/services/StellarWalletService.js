@@ -4,6 +4,7 @@ import {
   isConnected,
   requestAccess
 } from "@stellar/freighter-api";
+import albedo from "@albedo-link/intent";
 import { Horizon, Networks } from "@stellar/stellar-sdk";
 
 class StellarWalletService {
@@ -92,6 +93,25 @@ class StellarWalletService {
   }
 
   /**
+   * Connects to Albedo Wallet.
+   */
+  async connectAlbedo() {
+    try {
+      const result = await albedo.publicKey({
+        token: 'a2a-protocol-auth'
+      });
+      if (result && result.pubkey) {
+        this.selectedWallet = 'albedo';
+        return result.pubkey;
+      }
+      throw new Error("Failed to get public key from Albedo.");
+    } catch (error) {
+      console.error("Albedo connection failed:", error);
+      throw error;
+    }
+  }
+
+  /**
    * Reconnects to an existing session.
    */
   async reconnect(savedProvider) {
@@ -104,6 +124,8 @@ class StellarWalletService {
       if (typeof window.rabet !== 'undefined') {
         return await this.connectRabet();
       }
+    } else if (savedProvider === 'albedo') {
+      return await this.connectAlbedo();
     }
     return null;
   }
@@ -154,6 +176,14 @@ class StellarWalletService {
     if (this.selectedWallet === "rabet") {
       const result = await window.rabet.sign(xdr, network.toLowerCase());
       return result.xdr;
+    }
+
+    if (this.selectedWallet === "albedo") {
+      const result = await albedo.tx({
+        xdr,
+        network: network.toLowerCase()
+      });
+      return result.signed_envelope_xdr;
     }
 
     throw new Error("No wallet connected or wallet does not support signing.");
