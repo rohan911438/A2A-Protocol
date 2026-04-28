@@ -1,0 +1,21 @@
+{
+  "name": "a2a-protocol-backend",
+  "version": "0.1.0",
+  "description": "FastAPI Backend for A2A Protocol",
+  "main": "main.py",
+  "scripts": {
+    "start": "cd .. && py -3.11 -m backend.main",
+    "dev": "cd .. && py -3.11 -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload",
+    "install-python": "py -3.11 -m pip install -r ../requirements.txt"
+  },
+  "keywords": [
+    "fastapi",
+    "python",
+    "agents",
+    "stellar"
+  ],
+  "author": "Team Brotherhood",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}
