@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 import { walletService } from "../services/StellarWalletService";
 
 const WalletContext = createContext();
@@ -118,7 +118,7 @@ export const WalletProvider = ({ children }) => {
     setIsModalOpen(prev => !prev);
   }, []);
 
-  const value = {
+  const value = useMemo(() => ({
     account,
     connected,
     connecting,
@@ -133,7 +133,7 @@ export const WalletProvider = ({ children }) => {
     toggleModal,
     formatAddress: (addr) => walletService.formatAddress(addr),
     signTransaction: (xdr) => walletService.signTransaction(xdr, network)
-  };
+  }), [account, connected, connecting, provider, error, isModalOpen, balances, network, fetchBalances, connect, disconnect, toggleModal]);
 
   return (
     <WalletContext.Provider value={value}>{children}</WalletContext.Provider>
