@@ -332,13 +332,13 @@ After deployment, add the Netlify domain to backend CORS settings in Render.
 
 | User Name | User Email | User Wallet Address | User Feedback | Commit ID |
 | :--- | :--- | :--- | :--- | :--- |
-| Debojyoti De Majumder | ddmpersonalworkspace@gmail.com | GDJZ7VECTBHR72UMNVI2M7KYJ7NMUD4BM25HE6LIW3BCDBUUO6L4TI2U | Albedo wallet support, fixed lag, better UX | `d9eb4c1` |
-| Punit | founder@builderbase.xyz | GD7UFEHE4J3RKQ25ZDGGJ4VBUWATV645UUMN4JYDIBMSFCSFOWXSQ6LM | All good, no issues reported | `43eda6e` |
-| Shashwat Shukla | shash.hashed@gmail.com | GBVC7GUZZDXSVMJ6VFHRGMDDDZQJTVSF4WKKNHHLGOSM2QJJVAHEQSUG | Addressed lag issues, confirmed great UX | `f4ac214` |
-| Harsh Jain | harshjainhp15s@gmail.com | GAYC3UV3PT7HPPAXC5YLYJHUSX6VKFVBYZ5JX6SOJOCJPI76VQN64RYQ | Fixed agent conversation errors, improved speed | `fb60f82` |
-| Abhishek singh | abhisheksingh4928@gmail.com | GBBJTJPZOLVQNBHZ2TEIFWR4V62ULDY7LETCCVOAA3IBDPPDRUHTM3UQ | Everything works fine | `3bb512b` |
-| Sriz Debnath | srizd449@gmail.com | GC5OZM7AY73DKZMPWU5BMW3EA6BXCYJIIF6UUQQ44XT4DOJQOXQZU2YF | UI improvements and general polishing | `d9eb4c1` |
-| Mannu | mannusingh4678@gmail.com | GBZ44OAWEQMKHQ5H4SOZOSM5I6G6RXMJ5JYOG2ODYJPLFWUKYV3XCM4Y | Infrastructure level changes for better agent convo | `43eda6e` |
+| Debojyoti De Majumder | ddmpersonalworkspace@gmail.com | GDJZ7VECTBHR72UMNVI2M7KYJ7NMUD4BM25HE6LIW3BCDBUUO6L4TI2U | Albedo wallet support, fixed lag, better UX | `152cc8f` |
+| Punit | founder@builderbase.xyz | GD7UFEHE4J3RKQ25ZDGGJ4VBUWATV645UUMN4JYDIBMSFCSFOWXSQ6LM | All good, no issues reported | `b9fde95` |
+| Shashwat Shukla | shash.hashed@gmail.com | GBVC7GUZZDXSVMJ6VFHRGMDDDZQJTVSF4WKKNHHLGOSM2QJJVAHEQSUG | Addressed lag issues, confirmed great UX | `cbba947` |
+| Harsh Jain | harshjainhp15s@gmail.com | GAYC3UV3PT7HPPAXC5YLYJHUSX6VKFVBYZ5JX6SOJOCJPI76VQN64RYQ | Fixed agent conversation errors, improved speed | `152cc8f` |
+| Abhishek singh | abhisheksingh4928@gmail.com | GBBJTJPZOLVQNBHZ2TEIFWR4V62ULDY7LETCCVOAA3IBDPPDRUHTM3UQ | Everything works fine | `b9fde95` |
+| Sriz Debnath | srizd449@gmail.com | GC5OZM7AY73DKZMPWU5BMW3EA6BXCYJIIF6UUQQ44XT4DOJQOXQZU2YF | UI improvements and general polishing | `cbba947` |
+| Mannu | mannusingh4678@gmail.com | GBZ44OAWEQMKHQ5H4SOZOSM5I6G6RXMJ5JYOG2ODYJPLFWUKYV3XCM4Y | Infrastructure level changes for better agent convo | `cbba947` |
 
 ## Future Scope
 
