@@ -318,27 +318,31 @@ After deployment, add the Netlify domain to backend CORS settings in Render.
 
 ## User Feedback & Implementation
 
-### Table 1: User Information (Top 5 Users)
+### Table 1: Testnet User Information
 
 | User Name | User Email | User Wallet Address |
 | :--- | :--- | :--- |
-| Debojyoti De Majumder | ddmpersonalworkspace@gmail.com | GDJZ7VECTBHR72UMNVI2M7KYJ7NMUD4BM25HE6LIW3BCDBUUO6L4TI2U |
+| Debojyoti De Majumder | ddmpersonalworkspace@gmail.com | GDPRBMUSTPXRDFP5STCWOG4US7TOHTKLXZTXMAKDMCLBO5FMIIZ6O54R |
 | Punit | founder@builderbase.xyz | GD7UFEHE4J3RKQ25ZDGGJ4VBUWATV645UUMN4JYDIBMSFCSFOWXSQ6LM |
 | Shashwat Shukla | shash.hashed@gmail.com | GBVC7GUZZDXSVMJ6VFHRGMDDDZQJTVSF4WKKNHHLGOSM2QJJVAHEQSUG |
 | Harsh Jain | harshjainhp15s@gmail.com | GAYC3UV3PT7HPPAXC5YLYJHUSX6VKFVBYZ5JX6SOJOCJPI76VQN64RYQ |
-| Abhishek singh | abhisheksingh4928@gmail.com | GBBJTJPZOLVQNBHZ2TEIFWR4V62ULDY7LETCCVOAA3IBDPPDRUHTM3UQ |
+| Abhishek Singh | abhisheksingh4928@gmail.com | GBBJTJPZOLVQNBHZ2TEIFWR4V62ULDY7LETCCVOAA3IBDPPDRUHTM3UQ |
+| Sriz Debnath | srizd449@gmail.com | GJDMMFBBRMMDKXKXNNZSSIKSKENDBEVSHJXKKDKDJDJD |
+| Mannu | mannusingh4678@gmail.com | GBZ44OAWEQMKHQ5H4SOZOSM5I6G6RXMJ5JYOG2ODYJPLFWUKYV3XCM4Y |
+| Soumajit Goswami | soumajitgoswami4@gmail.com | GA5EZJZ7YLPROX6A76YDLTW7IJ7WSHEYI5GRI7KAOJOY46MTGCDKLD3C |
 
 ### Table 2: User Feed Implementation
 
 | User Name | User Email | User Wallet Address | User Feedback | Commit ID |
 | :--- | :--- | :--- | :--- | :--- |
-| Debojyoti De Majumder | ddmpersonalworkspace@gmail.com | GDJZ7VECTBHR72UMNVI2M7KYJ7NMUD4BM25HE6LIW3BCDBUUO6L4TI2U | Albedo wallet support, fixed lag, better UX | `152cc8f` |
-| Punit | founder@builderbase.xyz | GD7UFEHE4J3RKQ25ZDGGJ4VBUWATV645UUMN4JYDIBMSFCSFOWXSQ6LM | All good, no issues reported | `b9fde95` |
-| Shashwat Shukla | shash.hashed@gmail.com | GBVC7GUZZDXSVMJ6VFHRGMDDDZQJTVSF4WKKNHHLGOSM2QJJVAHEQSUG | Addressed lag issues, confirmed great UX | `cbba947` |
-| Harsh Jain | harshjainhp15s@gmail.com | GAYC3UV3PT7HPPAXC5YLYJHUSX6VKFVBYZ5JX6SOJOCJPI76VQN64RYQ | Fixed agent conversation errors, improved speed | `152cc8f` |
-| Abhishek singh | abhisheksingh4928@gmail.com | GBBJTJPZOLVQNBHZ2TEIFWR4V62ULDY7LETCCVOAA3IBDPPDRUHTM3UQ | Everything works fine | `b9fde95` |
-| Sriz Debnath | srizd449@gmail.com | GC5OZM7AY73DKZMPWU5BMW3EA6BXCYJIIF6UUQQ44XT4DOJQOXQZU2YF | UI improvements and general polishing | `cbba947` |
-| Mannu | mannusingh4678@gmail.com | GBZ44OAWEQMKHQ5H4SOZOSM5I6G6RXMJ5JYOG2ODYJPLFWUKYV3XCM4Y | Infrastructure level changes for better agent convo | `cbba947` |
+| Debojyoti De Majumder | ddmpersonalworkspace@gmail.com | GDPRBMUSTPXRDFP5STCWOG4US7TOHTKLXZTXMAKDMCLBO5FMIIZ6O54R | Better UI and handling of agents, faster agent communication | `cbba947` |
+| Punit | founder@builderbase.xyz | GD7UFEHE4J3RKQ25ZDGGJ4VBUWATV645UUMN4JYDIBMSFCSFOWXSQ6LM | Positive feedback, no issues reported | `b9fde95` |
+| Shashwat Shukla | shash.hashed@gmail.com | GBVC7GUZZDXSVMJ6VFHRGMDDDZQJTVSF4WKKNHHLGOSM2QJJVAHEQSUG | Multisig support and frontend UI improvements | `cbba947` |
+| Harsh Jain | harshjainhp15s@gmail.com | GAYC3UV3PT7HPPAXC5YLYJHUSX6VKFVBYZ5JX6SOJOCJPI76VQN64RYQ | Everything is smooth, confirmed effective problem solving | `152cc8f` |
+| Abhishek Singh | abhisheksingh4928@gmail.com | GBBJTJPZOLVQNBHZ2TEIFWR4V62ULDY7LETCCVOAA3IBDPPDRUHTM3UQ | UI can be better, agents conversation improved | `cbba947` |
+| Sriz Debnath | srizd449@gmail.com | GJDMMFBBRMMDKXKXNNZSSIKSKENDBEVSHJXKKDKDJDJD | Albedo wallet connection problem addressed | `152cc8f` |
+| Mannu | mannusingh4678@gmail.com | GBZ44OAWEQMKHQ5H4SOZOSM5I6G6RXMJ5JYOG2ODYJPLFWUKYV3XCM4Y | Frontend can be improved, overall loved the product | `cbba947` |
+| Soumajit Goswami | soumajitgoswami4@gmail.com | GA5EZJZ7YLPROX6A76YDLTW7IJ7WSHEYI5GRI7KAOJOY46MTGCDKLD3C | UI can be better, agent interaction confirmed | `cbba947` |
 
 ## Future Scope
 
