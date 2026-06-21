@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/logo.png" width="120" height="120" alt="A2A Protocol Logo" />
+  <img src="docs/images/logo.png" width="320" height="320" alt="A2A Protocol Logo" />
 </p>
 
 # A2A Protocol — Autonomous Agents That Negotiate, Transact, and Execute On-Chain

@@ -52,6 +52,10 @@
     text-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
   }
 
+  .text-glow-white {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+  }
+
   .text-glow-cyan {
     text-shadow: 0 0 20px rgba(34, 211, 238, 0.6);
   }
