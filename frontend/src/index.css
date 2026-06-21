@@ -156,3 +156,40 @@
 :root[data-perf='low'] .animate-fadeInUp {
   animation: none !important;
 }
+
+/* Custom sleek dark scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: #18181b;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #27272a;
+}
+
+/* Shimmer glow text effect keyframes */
+@keyframes shimmer-glow {
+  0% { 
+    background-position: 0% 50%;
+    filter: drop-shadow(0 0 10px rgba(34, 211, 238, 0.1));
+  }
+  50% { 
+    background-position: 100% 50%;
+    filter: drop-shadow(0 0 25px rgba(99, 102, 241, 0.3));
+  }
+  100% { 
+    background-position: 0% 50%;
+    filter: drop-shadow(0 0 10px rgba(34, 211, 238, 0.1));
+  }
+}
+
+.animate-shimmer-glow {
+  background-size: 200% auto;
+  animation: shimmer-glow 6s ease-in-out infinite;
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import logo from '../assets/logo.png';
 
 const Footer = () => {
   return (
@@ -7,8 +8,8 @@ const Footer = () => {
         
         <div className="col-span-1 md:col-span-2 space-y-8">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30 shadow-glow">
-               <div className="w-3 h-3 rounded-full bg-indigo-400 animate-pulse" />
+            <div className="w-10 h-10 rounded-xl bg-zinc-950 flex items-center justify-center border border-zinc-800 shadow-glow">
+              <img src={logo} className="w-6 h-6 object-contain" alt="Logo" />
             </div>
             <div className="flex flex-col -space-y-1">
               <span className="text-2xl font-display font-black text-white uppercase tracking-tighter">A2A Protocol</span>

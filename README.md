@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/images/logo.png" width="120" height="120" alt="A2A Protocol Logo" />
+</p>
+
 # A2A Protocol — Autonomous Agents That Negotiate, Transact, and Execute On-Chain
 
 [![CI/CD Pipeline](https://github.com/rohan911438/A2A-Protocol/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/rohan911438/A2A-Protocol/actions/workflows/ci-cd.yml)

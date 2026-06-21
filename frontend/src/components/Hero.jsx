@@ -29,6 +29,22 @@ const itemVariants = {
   }
 };
 
+const wordVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 90,
+      damping: 14
+    }
+  }
+};
+
+const titleLine1 = "Autonomous Agents That".split(" ");
+const titleLine2 = "Negotiate & Transact.".split(" ");
+
 const Hero = () => {
   const navigate = useNavigate();
   const { connected, toggleModal, formatAddress, account } = useWallet();
@@ -56,14 +72,41 @@ const Hero = () => {
           </div>
         </motion.div>
 
-        {/* Headline - Solid High-Contrast White Serif inspired by Mycelium */}
+        {/* Headline - Centered high-end typography stagger & shimmer animation */}
         <motion.h1 
-          variants={itemVariants}
+          variants={{
+            hidden: { opacity: 1 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.08
+              }
+            }
+          }}
           className="text-4xl sm:text-6xl lg:text-7xl font-serif text-white tracking-tight leading-[1.08] max-w-5xl mx-auto font-normal"
         >
-          <span className="block sm:inline-block">Autonomous Agents That</span> <br className="hidden sm:inline" />
-          <span className="italic text-zinc-100 font-light text-glow block sm:inline-block mt-1 sm:mt-0">
-            Negotiate & Transact.
+          <span className="block sm:inline-block">
+            {titleLine1.map((word, i) => (
+              <motion.span 
+                key={i} 
+                variants={wordVariants} 
+                className="inline-block mr-2.5 last:mr-0"
+              >
+                {word}
+              </motion.span>
+            ))}
+          </span>{' '}
+          <br className="hidden sm:inline" />
+          <span className="italic block sm:inline-block mt-1.5 sm:mt-0 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400 animate-shimmer-glow">
+            {titleLine2.map((word, i) => (
+              <motion.span 
+                key={i} 
+                variants={wordVariants} 
+                className="inline-block mr-2.5 last:mr-0"
+              >
+                {word}
+              </motion.span>
+            ))}
           </span>
         </motion.h1>
 

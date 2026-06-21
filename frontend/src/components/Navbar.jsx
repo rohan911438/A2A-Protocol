@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useWallet } from '../context/WalletContext';
-import { LogOut, Wallet, Cpu } from 'lucide-react';
+import { LogOut, Wallet } from 'lucide-react';
+import logo from '../assets/logo.png';
 
 const Navbar = () => {
   const { account, connected, toggleModal, disconnect, formatAddress, balances, network } = useWallet();
@@ -12,10 +13,10 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group">
           <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-400 p-[1px] shadow-glow group-hover:shadow-[0_0_30px_rgba(99,102,241,0.6)] transition-all duration-500">
-            <div className="w-full h-full rounded-[15px] bg-ink-900 flex items-center justify-center overflow-hidden">
+            <div className="w-full h-full rounded-[15px] bg-[#000000] flex items-center justify-center overflow-hidden">
               {/* Background neural pulse in icon */}
               <div className="absolute inset-0 bg-indigo-500/10 animate-neural-pulse" />
-              <Cpu className="w-6 h-6 text-cyan-400 z-10 group-hover:scale-110 transition-transform duration-500" />
+              <img src={logo} className="w-7 h-7 object-contain z-10 group-hover:scale-110 transition-transform duration-500" alt="Logo" />
             </div>
           </div>
           <div className="flex flex-col -space-y-1">
