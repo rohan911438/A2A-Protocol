@@ -1,34 +1,61 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useWallet } from '../context/WalletContext';
+import { ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const CTA = () => {
-   return (
-      <section className="py-52 px-6 overflow-hidden relative">
-         {/* Holographic Background */}
-         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl h-[500px] bg-indigo-500/20 blur-[150px] rounded-full opacity-40 -z-10 animate-neural-pulse" />
-         
-         <div className="max-w-5xl mx-auto text-center space-y-12 animate-fadeInUp z-10 relative">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-[10px] font-black uppercase tracking-[0.4em] text-purple-400 mb-4">
-               Protocol Genesis
-            </div>
-            <h2 className="text-6xl lg:text-9xl font-display font-black text-white leading-[0.85] tracking-tighter uppercase">
-               The Swarm <br />
-               <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">Never Sleeps.</span>
-            </h2>
-            <p className="text-xl text-slate max-w-2xl mx-auto leading-relaxed font-medium opacity-60">
-               Join the A2A Protocol ecosystem. Deploy autonomous neural agents secured by the high-fidelity Stellar network.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-8 pt-8">
-               <button className="group relative px-12 py-6 bg-white text-ink-900 font-black uppercase tracking-widest text-sm rounded-[2rem] hover:scale-105 transition-all shadow-[0_0_50px_rgba(255,255,255,0.3)] overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/0 via-indigo-500/5 to-indigo-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-                  <span className="relative z-10">Initialize Swarm</span>
-               </button>
-               <button className="px-12 py-6 bg-ink-850/40 border border-white/10 text-white font-black uppercase tracking-widest text-sm rounded-[2rem] hover:bg-white/5 transition-all hover:border-indigo-500/50 backdrop-blur-xl">
-                  Analyze Network
-               </button>
-            </div>
-         </div>
-      </section>
-   );
+  const navigate = useNavigate();
+  const { connected, toggleModal } = useWallet();
+
+  return (
+    <section className="py-44 px-6 overflow-hidden relative bg-black border-t border-zinc-950">
+      {/* Visual glowing aura behind panel */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl h-[380px] bg-gradient-to-r from-indigo-500/5 via-purple-500/5 to-cyan-500/5 blur-[160px] rounded-full pointer-events-none -z-10 animate-neural-pulse" />
+      
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, type: "spring", stiffness: 50 }}
+        className="max-w-4xl mx-auto text-center space-y-10 z-10 relative"
+      >
+        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-zinc-950/80 border border-zinc-800 text-[10px] font-mono uppercase tracking-[0.2em] text-purple-400">
+          Genesis Node
+        </div>
+        
+        <h2 className="text-5xl lg:text-[6.5rem] font-display font-black text-white leading-none uppercase tracking-tight">
+          The Swarm <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">Never Sleeps</span>
+        </h2>
+        
+        <p className="text-sm text-slate-400 max-w-xl mx-auto leading-relaxed font-body font-medium">
+          Deploy your first autonomous negotiating agent today. Secure contract rules, automate payment releases, and run economic transactions trustlessly on Stellar.
+        </p>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-5 pt-6">
+          <motion.button
+            onClick={() => connected ? navigate('/dashboard') : toggleModal()}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-full sm:w-auto group relative px-8 py-4 bg-white text-black font-black uppercase tracking-widest text-[10px] rounded-xl transition-all shadow-[0_0_40px_rgba(255,255,255,0.08)] flex items-center justify-center gap-2"
+          >
+            <span>Launch Controller</span>
+            <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
+          </motion.button>
+          
+          <motion.button
+            onClick={() => window.open('https://github.com/rohan911438/A2A-Protocol', '_blank')}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-full sm:w-auto px-8 py-4 bg-zinc-950/80 border border-zinc-800 text-white font-mono uppercase tracking-wider text-[10px] rounded-xl hover:bg-zinc-900 transition-all hover:border-zinc-700"
+          >
+            Inspect GitHub Node
+          </motion.button>
+        </div>
+      </motion.div>
+    </section>
+  );
 };
 
 export default CTA;

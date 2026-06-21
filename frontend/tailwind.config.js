@@ -10,10 +10,16 @@ export default {
       },
       colors: {
         ink: {
-          900: "#030408", // Space black
-          850: "#060914", // Deep navy
-          800: "#0a0e1a",
-          700: "#141b2d",
+          900: "#000000", // True pure black
+          850: "#050505", // Rich deep black
+          800: "#0a0a0a", // Border-friendly pitch black
+          700: "#121212", // Card dark grey
+        },
+        zinc: {
+          950: "#09090b",
+          900: "#18181b",
+          800: "#27272a",
+          700: "#3f3f46",
         },
         indigo: {
           500: "#6366f1", // Electric indigo
@@ -37,10 +43,10 @@ export default {
         blush: "#a855f7",
       },
       boxShadow: {
-        soft: "0 20px 60px rgba(0, 0, 0, 0.5)",
-        card: "0 10px 40px rgba(0, 0, 0, 0.4)",
-        glow: "0 0 20px rgba(99, 102, 241, 0.3)",
-        'cyan-glow': "0 0 20px rgba(34, 211, 238, 0.4)",
+        soft: "0 20px 60px rgba(0, 0, 0, 0.8)",
+        card: "0 10px 40px rgba(0, 0, 0, 0.7)",
+        glow: "0 0 25px rgba(99, 102, 241, 0.25)",
+        'cyan-glow': "0 0 25px rgba(34, 211, 238, 0.3)",
       },
       backgroundImage: {
         "grid-fade": "radial-gradient(circle at 1px 1px, rgba(99, 102, 241, 0.15) 1px, transparent 0)",

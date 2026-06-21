@@ -13,8 +13,8 @@ const Navbar = () => {
         <Link to="/" className="flex items-center gap-3 group">
           <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-400 p-[1px] shadow-glow group-hover:shadow-[0_0_30px_rgba(99,102,241,0.6)] transition-all duration-500">
             <div className="w-full h-full rounded-[15px] bg-ink-900 flex items-center justify-center overflow-hidden">
-               {/* Background neural pulse in icon */}
-               <div className="absolute inset-0 bg-indigo-500/10 animate-neural-pulse" />
+              {/* Background neural pulse in icon */}
+              <div className="absolute inset-0 bg-indigo-500/10 animate-neural-pulse" />
               <Cpu className="w-6 h-6 text-cyan-400 z-10 group-hover:scale-110 transition-transform duration-500" />
             </div>
           </div>
@@ -62,8 +62,8 @@ const Navbar = () => {
               onMouseEnter={() => connected && setShowBalance(true)}
               onMouseLeave={() => setShowBalance(false)}
               className={`px-8 py-2.5 rounded-xl font-black uppercase tracking-widest text-xs transition-all duration-500 flex items-center gap-3 ${connected
-                  ? 'bg-indigo-500/10 text-cyan-300 border border-cyan-400/30 cursor-default shadow-[inset_0_0_20px_rgba(34,211,238,0.1)]'
-                  : 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:shadow-[0_0_40px_rgba(99,102,241,0.5)] hover:scale-105 active:scale-95'
+                ? 'bg-indigo-500/10 text-cyan-300 border border-cyan-400/30 cursor-default shadow-[inset_0_0_20px_rgba(34,211,238,0.1)]'
+                : 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:shadow-[0_0_40px_rgba(99,102,241,0.5)] hover:scale-105 active:scale-95'
                 }`}
             >
               <Wallet className="w-4 h-4" />

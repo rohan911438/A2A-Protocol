@@ -1,89 +1,155 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '../context/WalletContext';
-import { Ship, Rabbit } from 'lucide-react';
+import { Terminal, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 import ChatDemo from './ChatDemo';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.18,
+      delayChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 75,
+      damping: 16
+    }
+  }
+};
 
 const Hero = () => {
   const navigate = useNavigate();
   const { connected, toggleModal, formatAddress, account } = useWallet();
   
   return (
-    <section className="relative min-h-screen pt-32 pb-20 px-6 flex items-center justify-center overflow-hidden">
-      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center z-10">
-        {/* Left Content */}
-        <div className="space-y-10 text-center lg:text-left">
-          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-[10px] font-black uppercase tracking-[0.4em] text-cyan-400 animate-fadeInUp shadow-[0_0_20px_rgba(99,102,241,0.2)]">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse-glow" />
-            Neural Economic Layer
+    <section className="relative min-h-screen pt-36 pb-24 px-6 flex flex-col items-center justify-center overflow-hidden bg-black">
+      {/* 
+        Removed all colored glow background coordinates to ensure the theme is complete pitch black.
+        Retained the interactive mouse canvas background behind this section.
+      */}
+
+      {/* Main Container - Framer Motion Centered Flow */}
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="max-w-5xl w-full mx-auto text-center space-y-10 z-10"
+      >
+        
+        {/* Status Badge */}
+        <motion.div variants={itemVariants}>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-950 border border-zinc-800 text-[9px] font-mono uppercase tracking-[0.2em] text-white shadow-[0_0_15px_rgba(255,255,255,0.02)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+            A2A_CORE_NODE_V1.0.4 // TESTNET:ACTIVE
           </div>
+        </motion.div>
 
-          <h1 className="text-6xl lg:text-8xl font-display font-black text-white leading-[0.95] tracking-tighter animate-fadeInUp delay-100">
-            Autonomous Agents <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">Negotiate, Transact,</span> <br/>
-            <span className="text-slate/40">& Execute.</span>
-          </h1>
+        {/* Headline - Solid High-Contrast White Serif inspired by Mycelium */}
+        <motion.h1 
+          variants={itemVariants}
+          className="text-4xl sm:text-6xl lg:text-7xl font-serif text-white tracking-tight leading-[1.08] max-w-5xl mx-auto font-normal"
+        >
+          <span className="block sm:inline-block">Autonomous Agents That</span> <br className="hidden sm:inline" />
+          <span className="italic text-zinc-100 font-light text-glow block sm:inline-block mt-1 sm:mt-0">
+            Negotiate & Transact.
+          </span>
+        </motion.h1>
 
-          <p className="text-xl text-slate max-w-xl mx-auto lg:mx-0 leading-relaxed animate-fadeInUp delay-200 font-medium opacity-80">
-            A2A Protocol enables AI agents to interact and perform real economic transactions using Stellar-based payments. Secure, autonomous, and lightning-fast.
-          </p>
+        {/* Centered Spec Divider Row */}
+        <motion.div 
+          variants={itemVariants}
+          className="flex items-center justify-center gap-4 text-[9px] font-mono text-zinc-400 uppercase tracking-[0.25em] font-black"
+        >
+          <span>A2A Swarm Protocol</span>
+          <span className="text-zinc-800 font-normal">•</span>
+          <span>Stellar Soroban Escrow</span>
+          <span className="text-zinc-800 font-normal">•</span>
+          <span>v1.0.4-Alpha</span>
+        </motion.div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 animate-fadeInUp delay-300">
-            <button
-              onClick={() => connected ? navigate('/dashboard') : toggleModal()}
-              className="group relative px-10 py-5 bg-indigo-500 text-white font-black uppercase tracking-widest text-sm rounded-2xl transition-all duration-500 hover:scale-105 shadow-glow hover:shadow-[0_0_50px_rgba(99,102,241,0.6)] overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-              <span className="relative z-10">Launch Agent</span>
-            </button>
-            
-            <button 
-              onClick={connected ? undefined : toggleModal}
-              className={`px-10 py-5 font-black uppercase tracking-widest text-sm rounded-2xl transition-all duration-300 border ${
-                connected 
-                ? 'bg-white/10 border-cyan-400/30 text-cyan-400 cursor-default shadow-[inset_0_0_20px_rgba(34,211,238,0.1)]' 
-                : 'bg-white/5 border-white/10 text-white hover:bg-white/10 hover:border-indigo-500/50'
-              }`}
-            >
-              {connected ? `Connected: ${formatAddress(account)}` : 'Connect Wallet'}
-            </button>
+        {/* Centered Tagline - Bright White Writing */}
+        <motion.p 
+          variants={itemVariants}
+          className="text-base sm:text-lg text-white max-w-2xl mx-auto leading-relaxed font-body font-medium"
+        >
+          A2A Protocol enables AI agents to coordinate, negotiate Pareto-optimal agreements, deploy Soroban-based smart escrows, and execute payments automatically on Stellar.
+        </motion.p>
 
-            <button
-              onClick={() => navigate('/demo')}
-              className="px-10 py-5 font-black uppercase tracking-widest text-sm rounded-2xl transition-all duration-300 border bg-cyan-400/10 border-cyan-400/40 text-cyan-300 hover:bg-cyan-400/20 hover:scale-105 shadow-[0_0_25px_rgba(34,211,238,0.25)]"
-            >
-              Run Demo
-            </button>
-          </div>
+        {/* CTA Buttons */}
+        <motion.div 
+          variants={itemVariants}
+          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+        >
+          <button
+            onClick={() => connected ? navigate('/dashboard') : toggleModal()}
+            className="w-full sm:w-auto group px-8 py-4 bg-white text-black font-black uppercase tracking-widest text-[10px] rounded-xl transition-all duration-300 hover:bg-zinc-100 hover:scale-105 active:scale-95 shadow-[0_0_35px_rgba(255,255,255,0.08)] flex items-center justify-center gap-2"
+          >
+            <span>Launch Swarm Controller</span>
+            <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
+          </button>
+          
+          <button 
+            onClick={connected ? undefined : toggleModal}
+            className={`w-full sm:w-auto px-8 py-4 font-mono uppercase tracking-wider text-[10px] rounded-xl transition-all duration-300 border ${
+              connected 
+              ? 'bg-zinc-950 border-white/20 text-white cursor-default shadow-[inset_0_0_15px_rgba(255,255,255,0.03)]' 
+              : 'bg-zinc-950 border-zinc-850 text-white hover:bg-zinc-900 hover:border-zinc-700'
+            }`}
+          >
+            {connected ? `Connected: ${formatAddress(account)}` : 'Initiate Handshake'}
+          </button>
 
-          <div className="pt-12 flex items-center justify-center lg:justify-start gap-12 opacity-50 animate-fadeInUp delay-500 border-t border-white/5">
-            <div className="flex items-center gap-4 group cursor-default">
-               <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-indigo-500/30 transition-all">
-                  <Ship className="w-5 h-5 text-indigo-400" />
-               </div>
-               <div>
-                  <div className="text-xl font-display font-black text-white uppercase tracking-tighter">Freighter</div>
-                  <div className="text-[8px] uppercase tracking-[0.3em] text-slate font-bold">Supported</div>
-               </div>
+          <button
+            onClick={() => navigate('/demo')}
+            className="w-full sm:w-auto px-8 py-4 font-mono uppercase tracking-wider text-[10px] rounded-xl transition-all duration-300 border bg-zinc-950 border-zinc-850 text-white hover:bg-zinc-900 hover:border-zinc-700 flex items-center justify-center gap-2"
+          >
+            <Terminal size={12} />
+            <span>Run Demo Mode</span>
+          </button>
+        </motion.div>
+
+        {/* Technical Specs Columns - High Contrast White text */}
+        <motion.div 
+          variants={itemVariants}
+          className="pt-8 border-t border-zinc-900 grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-xl mx-auto"
+        >
+          <div className="space-y-1 flex flex-col items-center">
+            <div className="text-[9px] font-mono text-zinc-500 uppercase tracking-widest font-bold">SEC_AUDIT_STATUS</div>
+            <div className="text-xs font-mono font-bold text-white flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-white" />
+              Soroban Escrow Immutability
             </div>
-            <div className="flex items-center gap-4 group cursor-default">
-               <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-cyan-400/30 transition-all">
-                  <Rabbit className="w-5 h-5 text-cyan-400" />
-               </div>
-               <div>
-                  <div className="text-xl font-display font-black text-white uppercase tracking-tighter">Rabet</div>
-                  <div className="text-[8px] uppercase tracking-[0.3em] text-slate font-bold">Supported</div>
-               </div>
+          </div>
+          <div className="space-y-1 sm:border-l sm:border-zinc-900 sm:pl-6 flex flex-col items-center">
+            <div className="text-[9px] font-mono text-zinc-500 uppercase tracking-widest font-bold">NETWORK_GAS_LIMIT</div>
+            <div className="text-xs font-mono font-bold text-white flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-white" />
+              ~0.0001 XLM / Contract
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Right Content - Chat Demo */}
-        <div className="flex justify-center lg:justify-end animate-fadeInUp delay-400 relative">
-          <div className="absolute inset-0 bg-indigo-500/20 blur-[150px] rounded-full -z-10 animate-neural-pulse" />
+        {/* Centered Terminal Simulator */}
+        <motion.div 
+          variants={itemVariants}
+          className="pt-16 w-full max-w-2xl mx-auto flex justify-center"
+        >
           <ChatDemo />
-        </div>
-      </div>
+        </motion.div>
+
+      </motion.div>
     </section>
   );
 };
