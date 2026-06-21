@@ -220,7 +220,7 @@ Execution strategy:
 
 
 
-<img width="1851" height="906" alt="image" src="https://github.com/user-attachments/assets/4193f6a9-9a4c-4e48-944d-613e5e54445c" />
+<img width="1829" height="832" alt="image" src="https://github.com/user-attachments/assets/30f78e03-ab7c-42ce-9c4b-edc4c94f9a4d" />
 
 <img width="1696" height="791" alt="image" src="https://github.com/user-attachments/assets/0c7e5a86-d756-4dc3-9ca0-a80753025bb1" />
 
