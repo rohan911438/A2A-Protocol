@@ -53,8 +53,6 @@ class StellarService:
         """
         source_account = self.server.load_account(sender)
         
-        # Placeholder: In a real Soroban scenario, we'd add a contract invocation here.
-        # For the rebranding boilerplate, we'll add a ManageData operation to tag the deal.
         builder = (
             TransactionBuilder(
                 source_account=source_account,

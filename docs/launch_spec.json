@@ -1,0 +1,230 @@
+{
+  "schema_version": "1.0",
+  "submission_type": "hacd_incubator",
+  "submitted_at": "2026-06-29",
+
+  "project": {
+    "name": "A2A Protocol",
+    "slug": "a2a-protocol",
+    "tagline": "The infrastructure layer for autonomous agent commerce",
+    "one_liner": "AI agents that negotiate, transact, and settle on-chain — no human intermediation required.",
+    "category": "DeFi Infrastructure / AI × Web3",
+    "stage": "Testnet Live",
+    "ecosystem": "Stellar",
+    "team": "Brotherhood",
+    "founder": "Rohan Kumar",
+    "github": "https://github.com/rohan911438/A2A-Protocol",
+    "frontend_url": "https://a2aprotocol.netlify.app/",
+    "backend_url": "https://a2a-protocol-rn62.onrender.com",
+    "demo_video": "https://youtu.be/3KrVJvXWhu8",
+    "workflow_video": "https://youtu.be/r3UFY5QrDqk"
+  },
+
+  "contracts": {
+    "network": "stellar_testnet",
+    "rpc_endpoint": "https://soroban-testnet.stellar.org:443",
+    "escrow_contract": {
+      "address": "CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU",
+      "explorer": "https://stellar.expert/explorer/testnet/contract/CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU",
+      "language": "Rust",
+      "framework": "Soroban SDK 20",
+      "audited": false,
+      "functions": ["initialize", "create_deal", "release_milestone", "complete_deal", "request_refund", "get_deal"]
+    },
+    "token_contract": {
+      "address": "CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI",
+      "explorer": "https://stellar.expert/explorer/testnet/contract/CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI",
+      "ticker": "A2AT",
+      "name": "A2A Protocol Token",
+      "standard": "SEP-0041 (Soroban Token Interface)"
+    }
+  },
+
+  "stack_asset": {
+    "ticker": "A2AT",
+    "name": "A2A Protocol Token",
+    "total_supply": 100000000,
+    "decimals": 7,
+    "network": "stellar_testnet",
+    "contract_address": "CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI",
+    "utility": [
+      "protocol_fee_discount",
+      "verifier_staking",
+      "governance_voting",
+      "reputation_bonding",
+      "developer_grants",
+      "premium_features"
+    ],
+    "fee_discount_pct": 50,
+    "governance_model": "token_weighted_voting",
+    "staking_required_for_verifier": true
+  },
+
+  "tokenomics": {
+    "total_supply": 100000000,
+    "distribution": [
+      {
+        "category": "Community Ecosystem",
+        "allocation_pct": 35,
+        "tokens": 35000000,
+        "vesting": "4-year linear, no cliff",
+        "purpose": "Protocol incentives, staking rewards, user grants"
+      },
+      {
+        "category": "Team & Contributors",
+        "allocation_pct": 20,
+        "tokens": 20000000,
+        "vesting": "1-year cliff, 3-year linear vesting",
+        "purpose": "Founder and future team compensation"
+      },
+      {
+        "category": "Treasury",
+        "allocation_pct": 20,
+        "tokens": 20000000,
+        "vesting": "DAO-controlled release",
+        "purpose": "Protocol operations, emergency reserve, buybacks"
+      },
+      {
+        "category": "Launchpad (HACD Treasale)",
+        "allocation_pct": 10,
+        "tokens": 10000000,
+        "vesting": "Per HACD launchpad schedule",
+        "purpose": "Public sale via HACD incubator launchpad"
+      },
+      {
+        "category": "Developer Grants",
+        "allocation_pct": 8,
+        "tokens": 8000000,
+        "vesting": "Milestone-gated, 2-year program",
+        "purpose": "Grants for integrations, agent SDK builders, tooling"
+      },
+      {
+        "category": "Liquidity Provision",
+        "allocation_pct": 5,
+        "tokens": 5000000,
+        "vesting": "1-year lock, then LP deployment",
+        "purpose": "DEX liquidity on Stellar-native AMMs"
+      },
+      {
+        "category": "Advisors",
+        "allocation_pct": 2,
+        "tokens": 2000000,
+        "vesting": "6-month cliff, 2-year linear",
+        "purpose": "Strategic advisors and ecosystem partners"
+      }
+    ],
+    "emission_model": "fixed_supply",
+    "buyback_mechanism": {
+      "enabled": true,
+      "source": "25% of protocol x402 fee revenue",
+      "destination": "Treasury"
+    }
+  },
+
+  "launch_details": {
+    "treasale_allocation_pct": 10,
+    "treasale_tokens": 10000000,
+    "raise_target_usd": 50000,
+    "implied_token_price_usd": 0.005,
+    "implied_fdv_usd": 500000,
+    "accepted_currencies": ["XLM", "USDC"],
+    "network": "Stellar",
+    "kyc_required": false,
+    "whitelist_required": false
+  },
+
+  "tech_stack": {
+    "frontend": "React 18 + Vite + Tailwind CSS",
+    "backend": "Python 3.11 + FastAPI + Pydantic v2",
+    "ai_engine": "Google Gemini (google-generativeai 0.6.0)",
+    "blockchain": "Stellar + Soroban",
+    "wallets": ["Freighter", "Rabet"],
+    "database": "SQLite (upgrade path: PostgreSQL)",
+    "ci_cd": "GitHub Actions",
+    "hosting": "Netlify + Render"
+  },
+
+  "key_metrics": {
+    "testnet_users": 8,
+    "deployed_contracts": 2,
+    "live_since": "2026-06",
+    "ci_cd_passing": true,
+    "demo_video_available": true,
+    "open_source": true,
+    "license": "MIT"
+  },
+
+  "risk_disclosures": [
+    "Smart contracts are deployed on Stellar Testnet, not Mainnet. Mainnet deployment pending audit.",
+    "LLM negotiation depends on Gemini API availability. Fallback rule-based negotiation is implemented.",
+    "x402 payment gating is in simulate mode by default. Production enforcement requires X402_MODE=enforce.",
+    "SQLite database is not persistent across Render free-tier redeploys. Production requires persistent storage.",
+    "A2AT is a utility token. It is not marketed as a financial investment.",
+    "No formal third-party smart contract audit has been completed at this stage.",
+    "The negotiation engine uses probabilistic LLM outputs; offer bounds are enforced via rule-based constraints to prevent invalid states."
+  ],
+
+  "roadmap": [
+    {
+      "phase": 1,
+      "title": "Protocol Foundation",
+      "status": "complete",
+      "milestones": [
+        "Soroban escrow contract deployed",
+        "LLM negotiation engine operational",
+        "x402 payment gating implemented",
+        "Milestone-based release",
+        "Live frontend + backend deployment",
+        "8 testnet users onboarded"
+      ]
+    },
+    {
+      "phase": 2,
+      "title": "Agent Economy Expansion",
+      "status": "planned",
+      "target": "Q3 2026",
+      "milestones": [
+        "Multi-seller competitive bidding",
+        "A2AT reputation staking",
+        "Agent SDK public release",
+        "Mainnet contract deployment",
+        "A2AT token launch on HACD"
+      ]
+    },
+    {
+      "phase": 3,
+      "title": "Protocol Interoperability",
+      "status": "planned",
+      "target": "Q4 2026",
+      "milestones": [
+        "Cross-chain escrow (USDC, bridged assets)",
+        "External marketplace REST API",
+        "Decentralized agent identity",
+        "Streaming milestone payments"
+      ]
+    },
+    {
+      "phase": 4,
+      "title": "Autonomous Economy Infrastructure",
+      "status": "planned",
+      "target": "2027",
+      "milestones": [
+        "Machine-to-machine deal initiation",
+        "Recurring deal subscriptions",
+        "Agent-operated DAO support",
+        "Governance-controlled agent policies"
+      ]
+    }
+  ],
+
+  "links": {
+    "github": "https://github.com/rohan911438/A2A-Protocol",
+    "frontend": "https://a2aprotocol.netlify.app/",
+    "backend_api": "https://a2a-protocol-rn62.onrender.com",
+    "demo_video": "https://youtu.be/3KrVJvXWhu8",
+    "workflow_video": "https://youtu.be/r3UFY5QrDqk",
+    "escrow_explorer": "https://stellar.expert/explorer/testnet/contract/CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU",
+    "token_explorer": "https://stellar.expert/explorer/testnet/contract/CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI",
+    "testnet_feedback": "https://docs.google.com/spreadsheets/d/1SDXTvTbcdmux87zRt8ZENfPvrhMRcFtBTl6SMnnYIhE/edit"
+  }
+}
