@@ -1,0 +1,95 @@
+{
+  "schema_version": "1.0",
+
+  "project": {
+    "name": "A2A Protocol",
+    "ticker": "A2AT",
+    "category": "ai_agent",
+    "description": "A decentralized infrastructure layer enabling AI agents to negotiate, authorize payment, and settle work agreements on-chain without human intermediation. Combines LLM-driven autonomous negotiation, Soroban escrow, and x402 payment gating on Stellar.",
+    "website": "https://a2aprotocol.netlify.app/",
+    "github": "https://github.com/rohan911438/A2A-Protocol",
+    "x_handle": "@A2AProtocol",
+    "contact": "123131rkorohan@gmail.com",
+    "team": "Brotherhood",
+    "founder": "Rohan Kumar"
+  },
+
+  "asset": {
+    "type": "FT",
+    "total_supply": 100000000,
+    "decimals": 7,
+    "unit_name": "A2AT",
+    "utility_summary": "Protocol fee discount (live), verifier staking (planned), governance voting (planned), reputation bonding (planned), developer grants (planned), premium feature access (planned)."
+  },
+
+  "stack": {
+    "total_hacd_lots": 100,
+    "units_per_hacd_lot": 1000000,
+    "supply_check": "100 × 1000000 = 100000000 ✓",
+    "stack_cost_hac_per_hacd": 50,
+    "formation_cost_reference_hac": 5000,
+    "formation_cost_note": "Formation cost reference only. Does not establish or imply any price for A2AT tokens. Stack cost is non-refundable upon removal.",
+    "network_fee_buffer_hac": 10,
+    "removal_effect": "burn",
+    "removal_note": "Removing a Stack releases the HACD to the participant and destroys the A2AT from that lot.",
+    "phase_allocations": {
+      "phase_1_designated_first": {
+        "hacd_lots": 90,
+        "a2at_produced": 90000000,
+        "participant": "Issuer (Rohan Kumar / Team Brotherhood)",
+        "purpose": "Community ecosystem, team, treasury, developer grants, liquidity, advisors"
+      },
+      "phase_2_public": {
+        "hacd_lots": 10,
+        "a2at_produced": 10000000,
+        "participant": "Open — any HACD holder via HACD Launchpad",
+        "per_participant_lot_limit": 1,
+        "a2at_per_lot": 1000000
+      },
+      "phase_check": "90 + 10 = 100 lots ✓ | 90000000 + 10000000 = 100000000 A2AT ✓"
+    },
+    "lot_distribution": [
+      { "allocation": "Community ecosystem", "lots": 35, "a2at": 35000000, "pct": 35, "vesting": "4-year linear, no cliff" },
+      { "allocation": "Team & contributors",  "lots": 20, "a2at": 20000000, "pct": 20, "vesting": "1-year cliff, 3-year linear" },
+      { "allocation": "Treasury",             "lots": 20, "a2at": 20000000, "pct": 20, "vesting": "DAO-controlled release" },
+      { "allocation": "HACD Launchpad",       "lots": 10, "a2at": 10000000, "pct": 10, "vesting": "Per HACD Launchpad schedule" },
+      { "allocation": "Developer grants",     "lots":  8, "a2at":  8000000, "pct":  8, "vesting": "Milestone-gated, 2-year" },
+      { "allocation": "Liquidity provision",  "lots":  5, "a2at":  5000000, "pct":  5, "vesting": "1-year lock, then LP" },
+      { "allocation": "Advisors",             "lots":  2, "a2at":  2000000, "pct":  2, "vesting": "6-month cliff, 2-year linear" }
+    ],
+    "lot_distribution_check": "35+20+20+10+8+5+2 = 100 lots ✓"
+  },
+
+  "launch": {
+    "status": "draft",
+    "launchpad_url": "https://hacd.it/incubator",
+    "phase_model": "designated_first",
+    "network": "hacash_mainnet",
+    "stellar_testnet_contracts": {
+      "escrow_contract": "CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU",
+      "token_contract": "CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI"
+    },
+    "participation_requirements": {
+      "min_hacd_per_participant": 1,
+      "min_hac_per_participant": 60,
+      "min_hac_note": "50 HAC formation cost reference + ~10 HAC network fee buffer"
+    }
+  },
+
+  "copy": {
+    "headline": "A2AT — The coordination token for autonomous agent commerce",
+    "subheadline": "AI agents that negotiate, transact, and settle on-chain. Built on Stellar. Launched on HACD.",
+    "short_description": "A2A Protocol is a decentralized infrastructure layer for the agent economy. AI agents negotiate deals autonomously, Soroban smart contracts hold funds in escrow, and verifier agents confirm delivery before release. A2AT powers the protocol's fee discounts, staking, and governance.",
+    "risk_disclosure": "A2AT is a utility token for participation in the A2A Protocol ecosystem. It is not marketed as a financial investment or security instrument. Holding or acquiring A2AT does not guarantee any financial return. Formation cost is a reference only and does not imply any price floor. Smart contracts are deployed on Stellar Testnet; mainnet deployment is planned but not yet complete. The x402 payment mechanism operates in simulate mode by default. Five of six planned token utilities are not yet implemented. This is not financial advice."
+  },
+
+  "review": {
+    "issuer_confirmed": false,
+    "hacd_labs_reviewed": false,
+    "legal_reviewed": false,
+    "supply_math_verified": true,
+    "prohibited_language_check": "passed",
+    "utility_honesty_check": "passed",
+    "review_notes": "Draft for issuer confirmation. All supply math verified. No prohibited language detected. Future utilities correctly labeled as planned."
+  }
+}
