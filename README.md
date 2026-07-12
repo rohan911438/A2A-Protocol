@@ -375,6 +375,24 @@ After deployment, add the Netlify domain to backend CORS settings in Render.
 | Sriz Debnath | srizd449@gmail.com | GJDMMFBBRMMDKXKXNNZSSIKSKENDBEVSHJXKKDKDJDJD |
 | Mannu | mannusingh4678@gmail.com | GBZ44OAWEQMKHQ5H4SOZOSM5I6G6RXMJ5JYOG2ODYJPLFWUKYV3XCM4Y |
 | Soumajit Goswami | soumajitgoswami4@gmail.com | GA5EZJZ7YLPROX6A76YDLTW7IJ7WSHEYI5GRI7KAOJOY46MTGCDKLD3C |
+| Sylvia Barick | taniabarick15@gmail.com | GBYOEY63WVKXY5KTSQZG4FGCDYY2CV7K3SH4ZSVN6IFDWJ464HPFIEIQ |
+| Habib Davy | habib@slyky.app | GDZM6BQSZDJXMZ6ACVUDL244S2GTRRCF547F5IYOKBQNMVYQTQREITSU |
+| Rimanshu Patel | rimanshupatel3@gmail.com | GCVE5QXJ33NFGVMUCGUTTUVJQ7F6O4G6OPLCIU5O6OQXPYNORGDP3UIY |
+| Ahir Sarkar | ahirsarkar2022@gmail.com | GAA6SY6UZDJVSXTJ6MKJKPL6CCRQCO2R74T3LDIVYMBPBZT6CTW63YWK |
+| Sahil gupta | sahilgupta7191@gmail.com | GDALHZQE7ZCFRHF262TCHV6MR2FNLOGIF4JA54LOXFW6VBEL2TI3QJWR |
+| Prakhar | prakharshrivastav21@gmail.com | GAYC3UV3PT7HPPAXC5YLYJHUSX6VKFVBYZ5JX6SOJOCJPI76VQN64RYQ |
+| Shashwat singh | indianstandard648@gmail.com | GBZ44OAWEQMKHQ5H4SOZOSM5I6G6RXMJ5JYOG2ODYJPLFWUKYV3XCM4Y |
+| Roan | rohan-kumar-br24-2032@gcect.ac.in | GDJZ7VECTBHR72UMNVI2M7KYJ7NMUD4BM25HE6LIW3BCDBUUO6L4TI2U |
+| Samman Das | sammandas234@gmail.com | GAAF4UHWQANTZ6IAPG2NAADHQLAYUZSIOD46ZW7U7NQIAUSYGFY7RAGO |
+| Shubhodeep Mondal | mondalshubhodeep30924@gmail.com | GD7UFEHE4J3RKQ25ZDGGJ4VBUWATV645UUMN4JYDIBMSFCSFOWXSQ6LM |
+| Shadow_MMN | nnajimakuochukwu4@gmail.com | GDUDJVYNWOB72KBT6HOXJNBO3KHWBDMNHLPL54EDIKAWW4CKHPBKS2WA |
+| Ankush Shaw | ankushshaw764@gmail.com | GBBIG4HLPGTLG6BH6YREVWJXEQ4NX74HTD444JD6A6XYS7DOFL2J6DEI |
+| Hüseyin Taşkın | huseyintaskinn023@gmail.com | GBMXYR5FRWAWD4CMECCIMCBK2RTPTDQSIILHPQ6ZPK6UXLNX3ZLX2BVG |
+| Rudra Pratap Singh | anonyxz03@gmail.com | GBIXBS4PMUKO3AZ3NON6P4YS33UZ3BK6CBFMUFEPZXHRYPBSLHP6VXPE |
+| Vinayak | vahi1310@gmail.com | GDT6TJAJIXR3W5WRQS3MVNR6Q63BUX5OR4LIBAWXCYQHCWYLNSSZVN7Q |
+| ARYA BHAGAT | aryabhagat249@gmail.com | GBVU7MVAI5O4NTO3WQZDQ5BFSJGIMA6Z2HNJ7QEBRSZ3GS2BWZEJ2VB4 |
+| Sadiya Mulani | sadiyamulani03@gmail.com | GBTCGV43NLHEEBMCA5DWFZT6GOJYYCPHXNOEALTBQ7TREIQKQQAVLYT4 |
+| Harrison | harystylesdev@gmail.com | GBVKN7TNSZZZW55US75LTO3COWVC5G3XOTRVJ5PKYVUBRPFGNUF2RG6Y |
 
 ### Table 2: User Feed Implementation
 
@@ -388,6 +406,24 @@ After deployment, add the Netlify domain to backend CORS settings in Render.
 | Sriz Debnath | srizd449@gmail.com | GJDMMFBBRMMDKXKXNNZSSIKSKENDBEVSHJXKKDKDJDJD | Albedo wallet connection problem addressed | `152cc8f` |
 | Mannu | mannusingh4678@gmail.com | GBZ44OAWEQMKHQ5H4SOZOSM5I6G6RXMJ5JYOG2ODYJPLFWUKYV3XCM4Y | Frontend can be improved, overall loved the product | `cbba947` |
 | Soumajit Goswami | soumajitgoswami4@gmail.com | GA5EZJZ7YLPROX6A76YDLTW7IJ7WSHEYI5GRI7KAOJOY46MTGCDKLD3C | UI can be better, agent interaction confirmed | `cbba947` |
+| Sylvia Barick | taniabarick15@gmail.com | GBYOEY63WVKXY5KTSQZG4FGCDYY2CV7K3SH4ZSVN6IFDWJ464HPFIEIQ | Requested better documentation, resolved with comprehensive docs & launch spec | `b2468df` |
+| Habib Davy | habib@slyky.app | GDZM6BQSZDJXMZ6ACVUDL244S2GTRRCF547F5IYOKBQNMVYQTQREITSU | Requested comprehensive documentation, walkthrough guides, and real-world case studies | `836c79c` |
+| Rimanshu Patel | rimanshupatel3@gmail.com | GCVE5QXJ33NFGVMUCGUTTUVJQ7F6O4G6OPLCIU5O6OQXPYNORGDP3UIY | Positive feedback, no major issues reported | `b9fde95` |
+| Ahir Sarkar | ahirsarkar2022@gmail.com | GAA6SY6UZDJVSXTJ6MKJKPL6CCRQCO2R74T3LDIVYMBPBZT6CTW63YWK | Suggested step-by-step guides, addressed in documentation package | `836c79c` |
+| Sahil gupta | sahilgupta7191@gmail.com | GDALHZQE7ZCFRHF262TCHV6MR2FNLOGIF4JA54LOXFW6VBEL2TI3QJWR | Requested better onboarding, clearer explanation of agent actions, and UX improvements | `ac7e114` |
+| Prakhar | prakharshrivastav21@gmail.com | GAYC3UV3PT7HPPAXC5YLYJHUSX6VKFVBYZ5JX6SOJOCJPI76VQN64RYQ | Positive feedback, all functions working smoothly | `b9fde95` |
+| Shashwat singh | indianstandard648@gmail.com | GBZ44OAWEQMKHQ5H4SOZOSM5I6G6RXMJ5JYOG2ODYJPLFWUKYV3XCM4Y | Positive feedback, confirmed effective economic coordination | `b9fde95` |
+| Roan | rohan-kumar-br24-2032@gcect.ac.in | GDJZ7VECTBHR72UMNVI2M7KYJ7NMUD4BM25HE6LIW3BCDBUUO6L4TI2U | Positive feedback, great product execution | `b9fde95` |
+| Samman Das | sammandas234@gmail.com | GAAF4UHWQANTZ6IAPG2NAADHQLAYUZSIOD46ZW7U7NQIAUSYGFY7RAGO | Suggested improvements for agentic interaction flow | `cbba947` |
+| Shubhodeep Mondal | mondalshubhodeep30924@gmail.com | GD7UFEHE4J3RKQ25ZDGGJ4VBUWATV645UUMN4JYDIBMSFCSFOWXSQ6LM | Reported hero section text glitch, resolved with updated homepage design | `ac7e114` |
+| Shadow_MMN | nnajimakuochukwu4@gmail.com | GDUDJVYNWOB72KBT6HOXJNBO3KHWBDMNHLPL54EDIKAWW4CKHPBKS2WA | Reported black-on-black date picker visibility bug, requested onboarding instructions | `cbba947` |
+| Ankush Shaw | ankushshaw764@gmail.com | GBBIG4HLPGTLG6BH6YREVWJXEQ4NX74HTD444JD6A6XYS7DOFL2J6DEI | Reported calendar/date picker text color glitch, suggested clearer user onboarding | `cbba947` |
+| Hüseyin Taşkın | huseyintaskinn023@gmail.com | GBMXYR5FRWAWD4CMECCIMCBK2RTPTDQSIILHPQ6ZPK6UXLNX3ZLX2BVG | Reported Expiration Epoch text visibility glitch, suggested adding i18n support | `cbba947` |
+| Rudra Pratap Singh | anonyxz03@gmail.com | GBIXBS4PMUKO3AZ3NON6P4YS33UZ3BK6CBFMUFEPZXHRYPBSLHP6VXPE | Requested further UI/UX and visual interaction improvements | `cbba947` |
+| Vinayak | vahi1310@gmail.com | GDT6TJAJIXR3W5WRQS3MVNR6Q63BUX5OR4LIBAWXCYQHCWYLNSSZVN7Q | Requested refined frontend layouts and improved overall UX | `cbba947` |
+| ARYA BHAGAT | aryabhagat249@gmail.com | GBVU7MVAI5O4NTO3WQZDQ5BFSJGIMA6Z2HNJ7QEBRSZ3GS2BWZEJ2VB4 | Reported protocol loading latency after inputs, addressed in optimization fixes | `cbba947` |
+| Sadiya Mulani | sadiyamulani03@gmail.com | GBTCGV43NLHEEBMCA5DWFZT6GOJYYCPHXNOEALTBQ7TREIQKQQAVLYT4 | Suggested adding human oversight, spending limits, and transparent audit trails | `cbba947` |
+| Harrison | harystylesdev@gmail.com | GBVKN7TNSZZZW55US75LTO3COWVC5G3XOTRVJ5PKYVUBRPFGNUF2RG6Y | Reported demo transaction processing delay, addressed in performance updates | `cbba947` |
 
 ## Future Scope
 
