@@ -140,6 +140,7 @@ Implied FDV at raise price: **500,000 USD**
 | GitHub | https://github.com/rohan911438/A2A-Protocol |
 | Demo Video | https://youtu.be/3KrVJvXWhu8 |
 | Workflow Video | https://youtu.be/r3UFY5QrDqk |
+| Pitch Deck | https://docs.google.com/presentation/d/1iOp4BNFtgHi1xr0aV76iWBP2igbsvbwzLLiuLD3UAFY/edit?usp=sharing |
 | Whitepaper | [docs/WHITEPAPER.md](WHITEPAPER.md) |
 | Launch Spec | [docs/launch_spec.json](launch_spec.json) |
 | Escrow Contract | https://stellar.expert/explorer/testnet/contract/CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU |
