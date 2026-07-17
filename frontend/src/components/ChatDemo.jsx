@@ -87,50 +87,50 @@ const ChatDemo = () => {
   };
 
   return (
-    <div className="w-full max-w-xl bg-[#030303] border border-zinc-900 rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.9)] overflow-hidden font-mono select-none">
+    <div className="w-full max-w-xl bg-black border border-white/5 rounded-2xl shadow-[0_30px_70px_rgba(0,0,0,0.95)] overflow-hidden font-mono select-none">
       {/* Terminal Title Bar */}
-      <div className="px-6 py-4 bg-zinc-950/80 border-b border-zinc-900/60 flex items-center justify-between">
+      <div className="px-6 py-3.5 bg-zinc-950/80 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
             <span className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
             <span className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
           </div>
-          <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.2em] flex items-center gap-1.5">
-            <Terminal size={10} className="text-zinc-600 animate-pulse" />
+          <span className="text-[10px] text-zinc-550 font-bold uppercase tracking-[0.2em] flex items-center gap-1.5 opacity-80">
+            <Terminal size={10} className="text-zinc-650 animate-pulse" />
             a2a-swarm-protocol ~ main-session
           </span>
         </div>
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsRunning(!isRunning)}
-            className="p-1 rounded bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-white transition-colors"
+            className="p-1 rounded bg-zinc-950 border border-white/5 hover:border-white/10 text-zinc-400 hover:text-white transition-colors"
             title={isRunning ? "Pause Swarm Simulation" : "Resume Swarm Simulation"}
           >
             {isRunning ? <Square size={10} fill="currentColor" /> : <Play size={10} fill="currentColor" />}
           </button>
-          <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse shadow-[0_0_10px_#06b6d4]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_#06b6d4]" />
         </div>
       </div>
 
       {/* Terminal Tabs */}
-      <div className="flex border-b border-zinc-900/60 bg-zinc-950/30 text-[9px] font-bold uppercase tracking-wider">
+      <div className="flex border-b border-white/5 bg-zinc-950/30 text-[9px] font-bold uppercase tracking-wider">
         <button
           onClick={() => setActiveTab('logs')}
-          className={`flex-1 py-3 border-r border-zinc-900 transition-all duration-300 ${
+          className={`flex-1 py-3 border-r border-white/5 transition-all duration-300 ${
             activeTab === 'logs' 
-              ? 'bg-black/40 text-cyan-400 border-b-2 border-b-cyan-400 font-black shadow-[inset_0_-10px_20px_rgba(34,211,238,0.02)]' 
-              : 'text-zinc-500 hover:bg-zinc-900/10 hover:text-zinc-300'
+              ? 'bg-black/40 text-cyan-400 border-b-2 border-b-cyan-400 font-bold shadow-[inset_0_-10px_20px_rgba(34,211,238,0.02)]' 
+              : 'text-zinc-500 hover:bg-zinc-900/10 hover:text-zinc-350'
           }`}
         >
           Bargain Logs
         </button>
         <button
           onClick={() => setActiveTab('escrow')}
-          className={`flex-1 py-3 border-r border-zinc-900 transition-all duration-300 ${
+          className={`flex-1 py-3 border-r border-white/5 transition-all duration-300 ${
             activeTab === 'escrow' 
-              ? 'bg-black/40 text-indigo-400 border-b-2 border-b-indigo-500 font-black shadow-[inset_0_-10px_20px_rgba(99,102,241,0.02)]' 
-              : 'text-zinc-500 hover:bg-zinc-900/10 hover:text-zinc-300'
+              ? 'bg-black/40 text-indigo-400 border-b-2 border-b-indigo-500 font-bold shadow-[inset_0_-10px_20px_rgba(99,102,241,0.02)]' 
+              : 'text-zinc-500 hover:bg-zinc-900/10 hover:text-zinc-350'
           }`}
         >
           Smart Escrow (Rust)
@@ -139,8 +139,8 @@ const ChatDemo = () => {
           onClick={() => setActiveTab('telemetry')}
           className={`flex-1 py-3 transition-all duration-300 ${
             activeTab === 'telemetry' 
-              ? 'bg-black/40 text-purple-400 border-b-2 border-b-purple-500 font-black shadow-[inset_0_-10px_20px_rgba(168,85,247,0.02)]' 
-              : 'text-zinc-500 hover:bg-zinc-900/10 hover:text-zinc-300'
+              ? 'bg-black/40 text-purple-400 border-b-2 border-b-purple-500 font-bold shadow-[inset_0_-10px_20px_rgba(168,85,247,0.02)]' 
+              : 'text-zinc-500 hover:bg-zinc-900/10 hover:text-zinc-350'
           }`}
         >
           State Telemetry
@@ -152,8 +152,8 @@ const ChatDemo = () => {
         {activeTab === 'logs' && (
           <div className="space-y-2">
             {logs.map((log, i) => (
-              <div key={i} className="hover:bg-zinc-900/35 p-1.5 px-2 rounded transition-all font-mono text-[11px] leading-relaxed text-zinc-300 select-text">
-                <span className="text-zinc-600 select-none mr-2 font-semibold">[{log.time}]</span>
+              <div key={i} className="hover:bg-zinc-900/15 p-1.5 px-2 rounded transition-all font-mono text-[11px] leading-relaxed text-zinc-350 select-text">
+                <span className="text-zinc-650 select-none mr-2 font-semibold">[{log.time}]</span>
                 <span className={`font-bold mr-2 uppercase tracking-wider ${
                   log.type === 'buyer' ? 'text-cyan-400' :
                   log.type === 'seller' ? 'text-purple-400' :
@@ -181,7 +181,7 @@ const ChatDemo = () => {
           <div className="relative group">
             <button
               onClick={copyCode}
-              className="absolute top-0 right-0 p-1.5 rounded bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-white transition-all opacity-0 group-hover:opacity-100 flex items-center gap-1.5 text-[9px] uppercase tracking-wider font-bold"
+              className="absolute top-0 right-0 p-1.5 rounded bg-zinc-900 border border-white/5 hover:border-white/10 text-zinc-400 hover:text-white transition-all opacity-0 group-hover:opacity-100 flex items-center gap-1.5 text-[9px] uppercase tracking-wider font-bold"
             >
               {copied ? <Check size={10} className="text-green-400" /> : <Copy size={10} />}
               {copied ? 'Copied' : 'Copy'}
@@ -195,15 +195,15 @@ const ChatDemo = () => {
         {activeTab === 'telemetry' && (
           <div className="space-y-6 select-text selection:bg-purple-500/20">
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl bg-zinc-950/70 border border-zinc-900">
-                <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold mb-1">Target Object</div>
+              <div className="p-4 rounded-xl bg-zinc-950/40 border border-white/5">
+                <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold mb-1 opacity-70">Target Object</div>
                 <div className="text-sm text-zinc-200 font-bold flex items-center gap-2">
                   <Cpu size={14} className="text-cyan-400" />
                   Cluster_Node_0x7
                 </div>
               </div>
-              <div className="p-4 rounded-xl bg-zinc-950/70 border border-zinc-900">
-                <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold mb-1">Escrow Finality</div>
+              <div className="p-4 rounded-xl bg-zinc-950/40 border border-white/5">
+                <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold mb-1 opacity-70">Escrow Finality</div>
                 <div className="text-sm text-green-400 font-bold flex items-center gap-2">
                   <Shield size={14} className="text-green-400" />
                   Soroban On-Chain
@@ -211,7 +211,7 @@ const ChatDemo = () => {
               </div>
             </div>
 
-            <div className="space-y-3 p-4 rounded-xl bg-zinc-950/40 border border-zinc-900/50">
+            <div className="space-y-3 p-4 rounded-xl bg-zinc-950/20 border border-white/5">
               <div className="flex justify-between items-center text-[11px]">
                 <span className="text-zinc-500">Pareto Optimization Target:</span>
                 <span className="text-zinc-300 font-bold">Uptime & Cost Bounds</span>
@@ -228,12 +228,12 @@ const ChatDemo = () => {
                 <span className="text-zinc-500">Settled Transaction Price:</span>
                 <span className="text-cyan-400 font-bold font-mono">950.00 USDC</span>
               </div>
-              <div className="h-1.5 w-full bg-zinc-900 rounded-full overflow-hidden mt-3">
+              <div className="h-1 w-full bg-zinc-950 rounded-full overflow-hidden mt-3">
                 <div className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400 rounded-full w-[95%]" />
               </div>
             </div>
 
-            <div className="flex items-center gap-2 text-[10px] text-zinc-500 bg-zinc-950/80 p-3 rounded-lg border border-zinc-900/40">
+            <div className="flex items-center gap-2 text-[10px] text-zinc-500 bg-zinc-950/30 p-3 rounded-lg border border-white/5">
               <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
               <span>Consensus reached in 4 negotiation rounds (Total Delta convergence rate: 98.4%)</span>
             </div>

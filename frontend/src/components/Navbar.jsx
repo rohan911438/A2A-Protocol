@@ -9,23 +9,23 @@ const Navbar = () => {
   const [showBalance, setShowBalance] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#000000]/95 border-b border-zinc-900/60 backdrop-blur-md">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 border-b border-white/5 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="relative w-12 h-12 rounded-2xl bg-zinc-950 border border-zinc-900 p-[1px] shadow-[0_0_20px_rgba(255,255,255,0.02)] group-hover:shadow-[0_0_25px_rgba(255,255,255,0.08)] group-hover:border-zinc-800 transition-all duration-500">
-            <div className="w-full h-full rounded-[15px] bg-[#000000] flex items-center justify-center overflow-hidden">
+          <div className="relative w-11 h-11 rounded-xl bg-zinc-950 border border-white/5 p-[1px] shadow-[0_0_20px_rgba(255,255,255,0.01)] group-hover:shadow-[0_0_25px_rgba(255,255,255,0.05)] group-hover:border-zinc-800 transition-all duration-500">
+            <div className="w-full h-full rounded-[10px] bg-[#000000] flex items-center justify-center overflow-hidden">
               {/* Background neural pulse in icon */}
-              <div className="absolute inset-0 bg-white/[0.02] animate-neural-pulse" />
-              <img src={logo} className="w-9 h-9 object-contain z-10 group-hover:scale-110 transition-transform duration-500" alt="Logo" />
+              <div className="absolute inset-0 bg-white/[0.01] animate-neural-pulse" />
+              <img src={logo} className="w-8 h-8 object-contain z-10 group-hover:scale-105 transition-transform duration-500" alt="Logo" />
             </div>
           </div>
           <div className="flex flex-col -space-y-1">
-            <span className="text-2xl font-display font-bold text-white tracking-tighter uppercase group-hover:text-glow-white transition-all">
+            <span className="text-xl font-display font-bold text-white tracking-tighter uppercase group-hover:text-glow-white transition-all">
               A2A <span className="text-zinc-500 font-normal group-hover:text-zinc-400 transition-colors">PROTOCOL</span>
             </span>
-            <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.3em]">Neural Swarm Intelligence</span>
+            <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-[0.3em]">Neural Swarm Intelligence</span>
           </div>
-          <div className="ml-2 px-2.5 py-1 rounded-full bg-zinc-950 border border-zinc-900 text-[10px] font-mono font-bold text-zinc-400 uppercase tracking-tighter shadow-[0_0_15px_rgba(255,255,255,0.02)]">
+          <div className="ml-2 px-2 py-0.5 rounded-full bg-zinc-950 border border-white/5 text-[9px] font-mono font-bold text-zinc-400 uppercase tracking-tighter shadow-[0_0_15px_rgba(255,255,255,0.01)]">
             {network}
           </div>
         </Link>
@@ -34,7 +34,7 @@ const Navbar = () => {
           {!connected ? (
             <NavLink
               to="/"
-              className={({ isActive }) => `text-sm font-bold uppercase tracking-widest transition-all duration-300 ${isActive ? 'text-white text-glow-white font-black' : 'text-zinc-500 hover:text-white'}`}
+              className={({ isActive }) => `text-[11px] font-bold uppercase tracking-widest transition-all duration-300 ${isActive ? 'text-white text-glow-white font-extrabold' : 'text-zinc-500 hover:text-white'}`}
             >
               Nexus
             </NavLink>
@@ -42,14 +42,14 @@ const Navbar = () => {
             <div className="flex items-center gap-10">
               <NavLink
                 to="/dashboard"
-                className={({ isActive }) => `text-sm font-bold uppercase tracking-widest transition-all duration-300 relative group ${isActive ? 'text-white font-black' : 'text-zinc-500 hover:text-white'}`}
+                className={({ isActive }) => `text-[11px] font-bold uppercase tracking-widest transition-all duration-300 relative group ${isActive ? 'text-white font-extrabold' : 'text-zinc-500 hover:text-white'}`}
               >
                 Control Center
                 <span className="absolute -bottom-2 left-0 w-0 h-0.5 bg-white transition-all duration-500 group-hover:w-full shadow-[0_0_10px_rgba(255,255,255,0.4)]"></span>
               </NavLink>
               <NavLink
                 to="/create-deal"
-                className={({ isActive }) => `text-sm font-bold uppercase tracking-widest transition-all duration-300 relative group ${isActive ? 'text-white font-black' : 'text-zinc-500 hover:text-white'}`}
+                className={({ isActive }) => `text-[11px] font-bold uppercase tracking-widest transition-all duration-300 relative group ${isActive ? 'text-white font-extrabold' : 'text-zinc-500 hover:text-white'}`}
               >
                 Assemble Agent
                 <span className="absolute -bottom-2 left-0 w-0 h-0.5 bg-white transition-all duration-500 group-hover:w-full shadow-[0_0_10px_rgba(255,255,255,0.4)]"></span>
@@ -62,12 +62,12 @@ const Navbar = () => {
               onClick={connected ? undefined : toggleModal}
               onMouseEnter={() => connected && setShowBalance(true)}
               onMouseLeave={() => setShowBalance(false)}
-              className={`px-8 py-2.5 rounded-xl font-black uppercase tracking-widest text-xs transition-all duration-500 flex items-center gap-3 ${connected
+              className={`px-6 py-2 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all duration-500 flex items-center gap-2.5 ${connected
                   ? 'bg-zinc-950 border border-zinc-800 text-white cursor-default shadow-[inset_0_0_15px_rgba(255,255,255,0.03)]'
-                  : 'bg-white text-black hover:bg-zinc-100 hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.08)]'
+                  : 'bg-white text-black hover:bg-zinc-100 hover:scale-102 active:scale-98 shadow-[0_0_20px_rgba(255,255,255,0.05)]'
                 }`}
             >
-              <Wallet className="w-4 h-4" />
+              <Wallet className="w-3.5 h-3.5" />
               {connected ? `${formatAddress(account)}` : 'Initiate Handshake'}
             </button>
 

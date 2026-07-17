@@ -31,7 +31,7 @@ const steps = [
 
 const HowItWorks = () => {
   return (
-    <section id="how-it-works" className="py-36 px-6 relative overflow-hidden bg-black border-t border-zinc-950">
+    <section id="how-it-works" className="py-36 px-6 relative overflow-hidden bg-black border-t border-white/5">
       {/* Background glow highlights */}
       <div className="absolute top-1/2 left-1/4 w-[400px] h-[400px] bg-indigo-500/5 blur-[150px] rounded-full pointer-events-none -z-10" />
 
@@ -45,13 +45,13 @@ const HowItWorks = () => {
           transition={{ duration: 0.7 }}
           className="text-center max-w-3xl mx-auto mb-28 space-y-6"
         >
-          <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-zinc-950/80 border border-zinc-800 text-[10px] font-mono uppercase tracking-[0.2em] text-indigo-400">
+          <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-zinc-950/80 border border-white/5 text-[10px] font-mono uppercase tracking-[0.2em] text-indigo-400">
             Execution Lifecycle
           </div>
           <h2 className="text-4xl lg:text-[4.5rem] font-display font-black text-white leading-none uppercase tracking-tight">
             Operational Flow
           </h2>
-          <p className="text-md text-slate-400 font-body font-medium max-w-xl mx-auto leading-relaxed">
+          <p className="text-sm text-slate-400 font-body font-medium max-w-xl mx-auto leading-relaxed opacity-80">
             A2A Protocol abstracts the friction of multi-agent commerce into a highly organized four-phase transaction lifecycle.
           </p>
         </motion.div>
@@ -60,7 +60,7 @@ const HowItWorks = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
           
           {/* Horizontal Connector Line for Desktop */}
-          <div className="hidden lg:block absolute top-[68px] left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-cyan-500/20 -z-10" />
+          <div className="hidden lg:block absolute top-[68px] left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-cyan-500/10 -z-10" />
 
           {steps.map((step, i) => (
             <motion.div
@@ -70,16 +70,16 @@ const HowItWorks = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.15 }}
               whileHover={{ y: -6, transition: { duration: 0.2 } }}
-              className="group p-8 rounded-[2rem] bg-zinc-950/60 border border-zinc-900/60 hover:border-zinc-850 hover:bg-zinc-900/20 transition-all duration-500 shadow-2xl relative flex flex-col justify-between min-h-[300px] cursor-default"
+              className="group p-8 rounded-2xl bg-zinc-950/40 border border-white/5 hover:border-white/10 hover:bg-zinc-900/10 transition-all duration-500 shadow-2xl relative flex flex-col justify-between min-h-[300px] cursor-default"
             >
               {/* Step counter tag */}
-              <div className="absolute top-6 right-8 text-[40px] font-mono font-black text-zinc-900 group-hover:text-zinc-800 transition-colors">
+              <div className="absolute top-6 right-8 text-[32px] font-mono font-bold text-zinc-900/40 group-hover:text-zinc-800 transition-colors duration-500 select-none">
                 {step.number}
               </div>
 
               <div>
                 {/* Icon wrapper */}
-                <div className="w-14 h-14 rounded-2xl bg-black border border-zinc-900 flex items-center justify-center mb-10 group-hover:border-zinc-700 transition-all duration-300">
+                <div className="w-12 h-12 rounded-xl bg-black border border-white/5 flex items-center justify-center mb-10 group-hover:border-white/10 transition-all duration-300">
                   {step.icon}
                 </div>
                 
@@ -88,12 +88,12 @@ const HowItWorks = () => {
                   Phase {step.number}
                 </span>
 
-                <h3 className="text-xl font-bold uppercase tracking-tight text-white mb-4">
+                <h3 className="text-lg font-bold uppercase tracking-tight text-white mb-4">
                   {step.title}
                 </h3>
               </div>
 
-              <p className="text-xs text-slate-400 leading-relaxed font-light">
+              <p className="text-xs text-slate-400 leading-relaxed font-light opacity-95">
                 {step.description}
               </p>
 

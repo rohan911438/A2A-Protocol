@@ -83,14 +83,14 @@ const Hero = () => {
               }
             }
           }}
-          className="text-4xl sm:text-6xl lg:text-7xl font-serif text-white tracking-tight leading-[1.08] max-w-5xl mx-auto font-normal"
+          className="text-4xl sm:text-6xl lg:text-7xl font-display text-white tracking-tight leading-[1.08] max-w-5xl mx-auto font-black uppercase"
         >
           <span className="block sm:inline-block">
             {titleLine1.map((word, i) => (
               <motion.span 
                 key={i} 
                 variants={wordVariants} 
-                className="inline-block mr-2.5 last:mr-0"
+                className="inline-block mr-2.5 last:mr-0 text-glow-white"
               >
                 {word}
               </motion.span>
@@ -113,7 +113,7 @@ const Hero = () => {
         {/* Centered Spec Divider Row */}
         <motion.div 
           variants={itemVariants}
-          className="flex items-center justify-center gap-4 text-[9px] font-mono text-zinc-400 uppercase tracking-[0.25em] font-black"
+          className="flex items-center justify-center gap-4 text-[9px] font-mono text-zinc-400 uppercase tracking-[0.25em] font-bold"
         >
           <span>A2A Swarm Protocol</span>
           <span className="text-zinc-800 font-normal">•</span>
@@ -125,7 +125,7 @@ const Hero = () => {
         {/* Centered Tagline - Bright White Writing */}
         <motion.p 
           variants={itemVariants}
-          className="text-base sm:text-lg text-white max-w-2xl mx-auto leading-relaxed font-body font-medium"
+          className="text-sm sm:text-base text-zinc-450 max-w-2xl mx-auto leading-relaxed font-body font-medium opacity-80"
         >
           A2A Protocol enables AI agents to coordinate, negotiate Pareto-optimal agreements, deploy Soroban-based smart escrows, and execute payments automatically on Stellar.
         </motion.p>
@@ -133,22 +133,22 @@ const Hero = () => {
         {/* CTA Buttons */}
         <motion.div 
           variants={itemVariants}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2"
         >
           <button
             onClick={() => connected ? navigate('/dashboard') : toggleModal()}
-            className="w-full sm:w-auto group px-8 py-4 bg-white text-black font-black uppercase tracking-widest text-[10px] rounded-xl transition-all duration-300 hover:bg-zinc-100 hover:scale-105 active:scale-95 shadow-[0_0_35px_rgba(255,255,255,0.08)] flex items-center justify-center gap-2"
+            className="w-full sm:w-auto group px-6 py-3.5 bg-white text-black font-bold uppercase tracking-widest text-[10px] rounded-xl transition-all duration-300 hover:bg-zinc-100 hover:scale-102 active:scale-98 shadow-[0_0_35px_rgba(255,255,255,0.06)] flex items-center justify-center gap-2"
           >
             <span>Launch Swarm Controller</span>
-            <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
+            <ArrowRight size={11} className="group-hover:translate-x-0.5 transition-transform" />
           </button>
           
           <button 
             onClick={connected ? undefined : toggleModal}
-            className={`w-full sm:w-auto px-8 py-4 font-mono uppercase tracking-wider text-[10px] rounded-xl transition-all duration-300 border ${
+            className={`w-full sm:w-auto px-6 py-3.5 font-mono uppercase tracking-wider text-[10px] rounded-xl transition-all duration-300 border ${
               connected 
-              ? 'bg-zinc-950 border-white/20 text-white cursor-default shadow-[inset_0_0_15px_rgba(255,255,255,0.03)]' 
-              : 'bg-zinc-950 border-zinc-850 text-white hover:bg-zinc-900 hover:border-zinc-700'
+              ? 'bg-zinc-950 border-white/10 text-white cursor-default shadow-[inset_0_0_15px_rgba(255,255,255,0.02)]' 
+              : 'bg-zinc-950 border-white/5 text-white hover:bg-zinc-900 hover:border-white/20'
             }`}
           >
             {connected ? `Connected: ${formatAddress(account)}` : 'Initiate Handshake'}
@@ -156,9 +156,9 @@ const Hero = () => {
 
           <button
             onClick={() => navigate('/demo')}
-            className="w-full sm:w-auto px-8 py-4 font-mono uppercase tracking-wider text-[10px] rounded-xl transition-all duration-300 border bg-zinc-950 border-zinc-850 text-white hover:bg-zinc-900 hover:border-zinc-700 flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-6 py-3.5 font-mono uppercase tracking-wider text-[10px] rounded-xl transition-all duration-300 border bg-zinc-950 border-white/5 text-white hover:bg-zinc-900 hover:border-white/20 flex items-center justify-center gap-2"
           >
-            <Terminal size={12} />
+            <Terminal size={11} />
             <span>Run Demo Mode</span>
           </button>
         </motion.div>
