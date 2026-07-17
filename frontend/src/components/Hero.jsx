@@ -29,21 +29,36 @@ const itemVariants = {
   }
 };
 
-const wordVariants = {
+const charVariants = {
   hidden: { opacity: 0, y: 15 },
   visible: { 
     opacity: 1, 
     y: 0,
     transition: {
       type: "spring",
-      stiffness: 90,
+      stiffness: 120,
       damping: 14
     }
   }
 };
 
-const titleLine1 = "Autonomous Agents That".split(" ");
-const titleLine2 = "Negotiate & Transact.".split(" ");
+const line2Variants = {
+  hidden: { clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0 100%)", y: 20, opacity: 0 },
+  visible: { 
+    clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", 
+    y: 0, 
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 50,
+      damping: 14,
+      delay: 0.4
+    }
+  }
+};
+
+const titleLine1 = "Autonomous Agents That";
+const titleLine2 = "Negotiate & Transact.";
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -79,35 +94,41 @@ const Hero = () => {
             visible: {
               opacity: 1,
               transition: {
-                staggerChildren: 0.08
+                staggerChildren: 0.02,
+                delayChildren: 0.1
               }
             }
           }}
           className="text-4xl sm:text-6xl lg:text-7xl font-display text-white tracking-tight leading-[1.08] max-w-5xl mx-auto font-black uppercase"
         >
           <span className="block sm:inline-block">
-            {titleLine1.map((word, i) => (
-              <motion.span 
-                key={i} 
-                variants={wordVariants} 
-                className="inline-block mr-2.5 last:mr-0 text-glow-white"
-              >
-                {word}
-              </motion.span>
+            {titleLine1.split(" ").map((word, wordIdx) => (
+              <span key={wordIdx} className="inline-block whitespace-nowrap mr-2.5 last:mr-0">
+                {Array.from(word).map((char, charIdx) => (
+                  <motion.span 
+                    key={charIdx} 
+                    variants={charVariants} 
+                    whileHover={{ 
+                      y: -6, 
+                      scale: 1.06, 
+                      color: "#22d3ee",
+                      textShadow: "0 0 20px rgba(34, 211, 238, 0.6)"
+                    }}
+                    className="inline-block cursor-default text-glow-white transition-colors duration-200"
+                  >
+                    {char}
+                  </motion.span>
+                ))}
+              </span>
             ))}
           </span>{' '}
           <br className="hidden sm:inline" />
-          <span className="italic block sm:inline-block mt-1.5 sm:mt-0 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400 animate-shimmer-glow">
-            {titleLine2.map((word, i) => (
-              <motion.span 
-                key={i} 
-                variants={wordVariants} 
-                className="inline-block mr-2.5 last:mr-0"
-              >
-                {word}
-              </motion.span>
-            ))}
-          </span>
+          <motion.span 
+            variants={line2Variants}
+            className="italic block sm:inline-block mt-1.5 sm:mt-0 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400 animate-shimmer-glow pb-2"
+          >
+            {titleLine2}
+          </motion.span>
         </motion.h1>
 
         {/* Centered Spec Divider Row */}
