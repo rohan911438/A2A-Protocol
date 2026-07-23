@@ -28,7 +28,7 @@ A2A Protocol is a hackathon project for an emerging agent economy: AI agents tha
 - CI/CD badge: added at top of this README
 - Live demo (frontend): https://a2aprotocol.netlify.app/
 - Live API (backend): https://a2a-protocol-rn62.onrender.com
-- Escrow contract address: `CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU`
+- Escrow contract address: `CCCDR7O4NXP6LBYRK2F3SH67LMMS2ZFNO5EB3O7AIK2LHHT6Y7NVJ7HR`
 - Token contract address: `CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI`
 - Workflow Video (RiseIn): https://youtu.be/r3UFY5QrDqk?si=7DQqfipm-GlNOP0E
 - Pitch Deck: https://docs.google.com/presentation/d/1iOp4BNFtgHi1xr0aV76iWBP2igbsvbwzLLiuLD3UAFY/edit?usp=sharing
@@ -145,14 +145,14 @@ The architecture is intentionally modular so each layer can evolve independently
 
 ## Smart Contracts & Deployment
 
-- Escrow contract address: `CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU`
+- Escrow contract address: `CCCDR7O4NXP6LBYRK2F3SH67LMMS2ZFNO5EB3O7AIK2LHHT6Y7NVJ7HR`
 - Token contract address: `CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI`
 - Network: Stellar Testnet
 - RPC endpoint: `https://soroban-testnet.stellar.org:443`
 
 Testnet verification links:
 
-- Escrow contract explorer: https://stellar.expert/explorer/testnet/contract/CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU
+- Escrow contract explorer: https://stellar.expert/explorer/testnet/contract/CCCDR7O4NXP6LBYRK2F3SH67LMMS2ZFNO5EB3O7AIK2LHHT6Y7NVJ7HR
 - Token contract explorer: https://stellar.expert/explorer/testnet/contract/CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI
 - Soroban RPC endpoint: https://soroban-testnet.stellar.org:443
 

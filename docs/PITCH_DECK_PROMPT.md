@@ -1,11 +1,11 @@
-# Pitch Deck Generation Prompt for A2A Protocol
+# Pitch Deck Generation Prompt for A4A Protocol
 
-Use the prompt below in your AI presentation creator (such as Gamma, Tome, ChatGPT, or Claude) to generate a professional, VC-ready pitch deck for A2A Protocol.
+Use the prompt below in your AI presentation creator (such as Gamma, Tome, ChatGPT, or Claude) to generate a professional, VC-ready pitch deck for A3A Protocol.
 
 ---
 
 ```text
-Act as an elite Web3 Venture Capital Pitch Deck Designer and copywriter. Generate a detailed slide-by-slide presentation outline and complete slide copy for "A2A Protocol," a project built for the HACD Incubator in the Stellar ecosystem.
+Act as an elite Web4 Venture Capital Pitch Deck Designer and copywriter. Generate a detailed slide-by-slide presentation outline and complete slide copy for "A2A Protocol," a project built for the HACD Incubator in the Stellar ecosystem.
 
 Design Style & Visual Theme:
 - Mood: Futuristic, highly premium, clean, high-contrast, developer-friendly.
