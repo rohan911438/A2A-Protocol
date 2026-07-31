@@ -47,27 +47,33 @@ def update_deal(deal_id: str, data: dict[str, Any] | None = None, status: str | 
         
     old_data = json.loads(row['data'])
     new_data = data if data is not None else old_data
-    
-    query = 'UPDATE deals SET updated_at = ?'
-    params = [datetime.utcnow()]
-    
+    request_data = new_data.get("request") or {}
+
+    # Keep the indexed buyer/seller columns in sync with the JSON payload so
+    # lookups like get_deals_by_wallet() can actually find deals by wallet.
+    buyer_address = request_data.get("buyer_wallet") or new_data.get("buyer_wallet") or row['buyer_address']
+    seller_address = new_data.get("seller_wallet") or request_data.get("seller_wallet") or row['seller_address']
+
+    query = 'UPDATE deals SET updated_at = ?, buyer_address = ?, seller_address = ?'
+    params = [datetime.utcnow(), buyer_address, seller_address]
+
     if data is not None:
         query += ', data = ?'
         params.append(json.dumps(data))
     if status is not None:
         query += ', status = ?'
         params.append(status)
-        
+
     query += ' WHERE deal_id = ?'
     params.append(deal_id)
-    
+
     cursor.execute(query, tuple(params))
     conn.commit()
     conn.close()
-    
+
     # Activity logging for the last updated participant
     # In negotiation, seller address is often updated later.
-    active_wallet = new_data.get("seller_wallet") or row['seller_address'] or row['buyer_address']
+    active_wallet = seller_address or buyer_address
     if active_wallet:
         log_activity(active_wallet, "DEAL_UPDATED", deal_id, f"Status updated to: {status or 'N/A'}")
         
