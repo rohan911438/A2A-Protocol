@@ -20,7 +20,9 @@ async function request(path, options = {}) {
       payload = data
       if (Array.isArray(data?.detail) && data.detail.length > 0) {
         const first = data.detail[0]
-        message = first?.msg || data.detail || message
+        message = first?.msg || message
+      } else if (data?.detail && typeof data.detail === 'object') {
+        message = data.detail.message || data.detail.status || message
       } else {
         message = data?.detail || data?.message || message
       }
