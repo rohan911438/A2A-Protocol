@@ -12,16 +12,17 @@ def create_deal(data: dict[str, Any], status: str = "created", deal_id: str | No
     if not deal_id:
         deal_id = str(uuid.uuid4())
     
-    # Extract buyer address for activity logging
+    # Extract buyer/seller addresses so wallet-scoped lookups work from creation.
     buyer_address = data.get("request", {}).get("buyer_wallet") or data.get("buyer_wallet")
-    
+    seller_address = data.get("seller_wallet") or data.get("request", {}).get("seller_wallet")
+
     conn = get_db_connection()
     cursor = conn.cursor()
-    
+
     cursor.execute('''
-        INSERT INTO deals (deal_id, buyer_address, status, data)
-        VALUES (?, ?, ?, ?)
-    ''', (deal_id, buyer_address, status, json.dumps(data)))
+        INSERT INTO deals (deal_id, buyer_address, seller_address, status, data)
+        VALUES (?, ?, ?, ?, ?)
+    ''', (deal_id, buyer_address, seller_address, status, json.dumps(data)))
     
     conn.commit()
     conn.close()
