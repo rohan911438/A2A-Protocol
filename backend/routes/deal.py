@@ -454,10 +454,12 @@ def onchain_accept(id: str, payload: dict):
     deal_data["txids"] = txids
 
     # On-chain acceptance alone does not make the deal active (funding is required).
+    # Note: only the buyer submits an on-chain transaction to fund escrow in this
+    # flow, so activation must not require a seller-side on-chain acceptance.
     status = deal_record.get("status", "negotiated")
     approvals = deal_data.get("approvals") or {"buyer": False, "seller": False}
     funded = bool(deal_data.get("funded"))
-    if approvals.get("buyer") and approvals.get("seller") and onchain.get("buyer") and onchain.get("seller") and funded:
+    if approvals.get("buyer") and approvals.get("seller") and onchain.get("buyer") and funded:
         status = "active"
     update_deal(id, data=deal_data, status=status)
     return {"deal_id": id, "status": status, "onchain_accepts": onchain, "txids": txids}
@@ -482,7 +484,9 @@ def fund_deal(id: str, payload: dict):
     approvals = deal_data.get("approvals") or {"buyer": False, "seller": False}
     onchain = deal_data.get("onchain_accepts") or {"buyer": False, "seller": False}
     status = deal_record.get("status", "negotiated")
-    if approvals.get("buyer") and approvals.get("seller") and onchain.get("buyer") and onchain.get("seller"):
+    # Only the buyer's on-chain acceptance is required to activate; the seller
+    # never submits an on-chain transaction in this flow (see onchain-accept route).
+    if approvals.get("buyer") and approvals.get("seller") and onchain.get("buyer"):
         status = "active"
 
     update_deal(id, data=deal_data, status=status)
