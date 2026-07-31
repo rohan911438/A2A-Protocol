@@ -358,7 +358,7 @@ const ActiveDeal = () => {
                         await completeDeal(dealId);
                         navigate('/dashboard');
                       } catch (err) {
-                        setTxStatus('Protocol Tear-down Failed');
+                        setTxStatus(err.message || 'Protocol Tear-down Failed');
                       }
                     }}
                     className="px-16 py-7 bg-white text-ink-900 font-black rounded-[2rem] hover:scale-105 transition-all shadow-glow flex items-center justify-center gap-4 z-10 uppercase tracking-[0.3em] text-xs relative overflow-hidden"
