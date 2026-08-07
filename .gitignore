@@ -17,5 +17,6 @@ frontend/dist/
 .env.*
 
 smart_contract/build/
+smart_contract/**/target/
 .codex
 build
