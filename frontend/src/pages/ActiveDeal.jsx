@@ -6,8 +6,6 @@ import { useWallet } from '../context/WalletContext';
 import { getContractInfo, getReleaseTxn, submitSignedXdr } from '../services/ContractService';
 import { getDeal, recordRelease, completeDeal } from '../services/DealService';
 
-const DEFAULT_SELLER_WALLET = 'GC5OZM7AY73DKZMPWU5BMW3EA6BXCYJIIF6UUQQ44XT4DOJQOXQZU2YF';
-
 const ActiveDeal = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -96,9 +94,14 @@ const ActiveDeal = () => {
     return result.final_price || 0;
   }, [dealRecord]);
 
+  // Only trust a seller wallet the seller explicitly registered by accepting
+  // the deal. Falling back to a hardcoded placeholder address here made
+  // sellerWalletValid always true, so a buyer could release real funds to
+  // that shared demo wallet before the actual seller ever connected theirs.
   const sellerWalletRaw = useMemo(() => {
+    if (!dealRecord?.data?.seller_accepted) return '';
     const request = dealRecord?.data?.request || dealRecord?.data || {};
-    return dealRecord?.data?.seller_wallet || request?.seller_wallet || DEFAULT_SELLER_WALLET;
+    return dealRecord?.data?.seller_wallet || request?.seller_wallet || '';
   }, [dealRecord]);
 
   const isValidStellarAccount = (value) => typeof value === 'string' && /^G[A-Z2-7]{55}$/.test(value);
