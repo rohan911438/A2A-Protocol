@@ -4,8 +4,6 @@ import os
 from datetime import datetime
 from typing import Any, Optional
 
-from stellar_sdk.exceptions import NotFoundError
-
 from .database_service import get_x402_event, upsert_x402_event
 from .stellar_service import stellar_service
 
@@ -32,13 +30,11 @@ def _is_simulation_mode() -> bool:
 
 
 def _verify_stellar_payment(tx_hash: str) -> bool:
-    try:
-        stellar_service.server.transactions().transaction(tx_hash).call()
-        return True
-    except NotFoundError:
-        return False
-    except Exception:
-        return False
+    # Delegate to the shared helper, which also checks the `successful` flag.
+    # Previously this only checked that Horizon *had a record* of the hash,
+    # so a failed/reverted transaction (no funds actually moved) would still
+    # count as a verified x402 payment in enforce mode.
+    return stellar_service.verify_transaction_success(tx_hash)
 
 
 def ensure_x402_authorized(
