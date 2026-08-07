@@ -29,19 +29,42 @@ class SubmitRequest(BaseModel):
     xdr: str = Field(..., description="Signed transaction XDR")
 
 
+DEFAULT_SELLER_WALLET = os.getenv(
+    "DEFAULT_SELLER_WALLET",
+    "GC5OZM7AY73DKZMPWU5BMW3EA6BXCYJIIF6UUQQ44XT4DOJQOXQZU2YF",
+)
+
+
 def _resolve_recipient_wallet(deal_id: str) -> str:
     deal_record = get_deal(deal_id)
     if not deal_record:
-        return os.getenv(
-            "DEFAULT_SELLER_WALLET",
-            "GC5OZM7AY73DKZMPWU5BMW3EA6BXCYJIIF6UUQQ44XT4DOJQOXQZU2YF",
-        )
+        return DEFAULT_SELLER_WALLET
     deal_data = deal_record.get("data") or {}
     request_data = deal_data.get("request") or deal_data
-    return deal_data.get("seller_wallet") or request_data.get("seller_wallet") or os.getenv(
-        "DEFAULT_SELLER_WALLET",
-        "GC5OZM7AY73DKZMPWU5BMW3EA6BXCYJIIF6UUQQ44XT4DOJQOXQZU2YF",
-    )
+    return deal_data.get("seller_wallet") or request_data.get("seller_wallet") or DEFAULT_SELLER_WALLET
+
+
+def _require_registered_seller_wallet(deal_id: str) -> str:
+    """
+    Returns the seller wallet that explicitly accepted the deal. Unlike
+    _resolve_recipient_wallet (used for informational x402 fee quotes), this
+    never falls back to DEFAULT_SELLER_WALLET, so a fund-moving release
+    transaction can't be built to pay out to the shared demo/placeholder
+    address just because the real seller hasn't accepted yet.
+    """
+    deal_record = get_deal(deal_id)
+    if not deal_record:
+        raise HTTPException(status_code=404, detail="Deal ID not found")
+    deal_data = deal_record.get("data") or {}
+    if not deal_data.get("seller_accepted"):
+        raise HTTPException(
+            status_code=400,
+            detail="Seller has not registered a wallet for this deal yet",
+        )
+    seller_wallet = deal_data.get("seller_wallet")
+    if not seller_wallet:
+        raise HTTPException(status_code=400, detail="Deal has no registered seller wallet")
+    return seller_wallet
 
 
 def _gate_x402(sender: str, deal_id: str, purpose: str):
@@ -68,6 +91,10 @@ def contract_info():
 @router.post("/contract/create-txn")
 def contract_create_txn(payload: CreateDealRequest):
     try:
+        if any(m <= 0 for m in payload.milestones):
+            raise HTTPException(status_code=400, detail="Milestone amounts must be positive")
+        if round(sum(payload.milestones), 7) != round(payload.total, 7):
+            raise HTTPException(status_code=400, detail="Milestone amounts must sum to the total")
         _gate_x402(payload.sender, payload.deal_id, "escrow_authorization_fee")
         xdr = stellar_service.build_create_deal_transaction(
             payload.sender, payload.deal_id, payload.total, payload.milestones
@@ -81,9 +108,14 @@ def contract_create_txn(payload: CreateDealRequest):
 @router.post("/contract/release-txn")
 def contract_release_txn(payload: ReleaseRequest):
     try:
+        # Ignore the client-supplied destination for an actual fund-moving
+        # release: always pay out to the wallet the seller explicitly
+        # registered via /deal/{id}/accept, never an arbitrary address the
+        # caller passed in and never the shared DEFAULT_SELLER_WALLET.
+        recipient_wallet = _require_registered_seller_wallet(payload.deal_id)
         _gate_x402(payload.sender, payload.deal_id, "payment_release_fee")
         xdr = stellar_service.build_release_transaction(
-            payload.sender, payload.deal_id, payload.destination, payload.amount
+            payload.sender, payload.deal_id, recipient_wallet, payload.amount
         )
         return {"xdr": xdr}
     except Exception as e:
