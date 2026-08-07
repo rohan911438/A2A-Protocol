@@ -16,6 +16,7 @@ pub enum Error {
     InvalidMilestone = 8,
     MilestoneAlreadyReleased = 9,
     ProtocolAlreadyCompleted = 10,
+    InvalidDeadline = 11,
 }
 
 #[contracttype]
@@ -62,6 +63,11 @@ pub struct A2AEscrow;
 impl A2AEscrow {
     /// Initialize the contract with management and the target asset (XLM/USDC)
     pub fn initialize(env: Env, admin: Address, token: Address) {
+        // Require the admin's own signature so a third party cannot front-run
+        // deployment by calling initialize() first with themselves as admin
+        // and an attacker-controlled token address.
+        admin.require_auth();
+
         if env.storage().instance().has(&DataKey::Admin) {
             panic!("Contract already initialized");
         }
@@ -86,9 +92,26 @@ impl A2AEscrow {
             return Err(Error::AlreadyInitialized);
         }
 
-        // Validate milestone amounts sum to total amount
+        if total_amount <= 0 {
+            return Err(Error::InvalidAmount);
+        }
+
+        if deadline <= env.ledger().timestamp() {
+            return Err(Error::InvalidDeadline);
+        }
+
+        // Validate every milestone is strictly positive and that they sum to
+        // total_amount. Without the positivity check, a mix of oversized and
+        // negative milestone amounts could still sum to total_amount while
+        // letting release_milestone/complete_deal transfer a negative amount,
+        // which token contracts treat as a transfer in the *opposite*
+        // direction — silently draining the seller (or the contract's pooled
+        // balance from other deals) instead of paying them.
         let mut sum: i128 = 0;
         for m in milestones.iter() {
+            if m.amount <= 0 {
+                return Err(Error::InvalidAmount);
+            }
             sum += m.amount;
         }
         if sum != total_amount {
