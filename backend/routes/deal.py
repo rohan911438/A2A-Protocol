@@ -421,10 +421,26 @@ def accept_deal(id: str, payload: dict):
     deal_record = get_deal(id)
     if not deal_record:
         raise HTTPException(status_code=404, detail="Deal ID not found")
-    seller_wallet = payload.get("seller_wallet") or deal_record.get("data", {}).get("seller_wallet") or DEFAULT_SELLER_WALLET
+
     deal_data = deal_record.get("data") or {}
+    requested_wallet = payload.get("seller_wallet")
+
+    # Once a real seller wallet has explicitly accepted, lock it in. Without
+    # this, any caller who discovers the deal_id (e.g. via GET /deals, which
+    # is unauthenticated and lists every deal) could re-POST /accept with a
+    # different seller_wallet and hijack future milestone payouts.
+    if deal_data.get("seller_accepted"):
+        current_wallet = deal_data.get("seller_wallet")
+        if requested_wallet and is_stellar_account(requested_wallet) and requested_wallet != current_wallet:
+            raise HTTPException(status_code=409, detail="Deal already accepted by a seller wallet")
+        update_deal(id, data=deal_data, status="accepted")
+        return {"deal_id": id, "status": "accepted"}
+
+    seller_wallet = requested_wallet or deal_data.get("seller_wallet") or DEFAULT_SELLER_WALLET
     if is_stellar_account(seller_wallet):
         deal_data["seller_wallet"] = seller_wallet
+    if requested_wallet and is_stellar_account(requested_wallet):
+        deal_data["seller_accepted"] = True
     update_deal(id, data=deal_data, status="accepted")
     return {"deal_id": id, "status": "accepted"}
 
