@@ -34,6 +34,24 @@ class StellarService:
             print(f"Transaction submission failed: {e}")
             raise RuntimeError(f"Stellar submission error: {str(e)}")
 
+    def verify_transaction_success(self, tx_hash: str) -> bool:
+        """
+        Confirms a transaction hash actually exists on-chain and succeeded.
+        Used to gate off-chain state transitions (funded/accepted/released)
+        so a client can't move a deal forward by submitting an arbitrary or
+        unrelated txid string.
+        """
+        if not tx_hash or not isinstance(tx_hash, str):
+            return False
+        try:
+            record = self.server.transactions().transaction(tx_hash).call()
+            return bool(record.get("successful"))
+        except NotFoundError:
+            return False
+        except Exception as e:
+            print(f"Error verifying transaction {tx_hash}: {e}")
+            return False
+
     def _format_stellar_amount(self, amount: float) -> str:
         """Format amount for Stellar payment ops (max 7 decimal places)."""
         try:

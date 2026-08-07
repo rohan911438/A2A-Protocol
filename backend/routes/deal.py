@@ -11,10 +11,10 @@ from ..models import (
     DealDetailsResponse
 )
 from ..services import (
-    create_deal, 
-    get_deal, 
-    update_deal, 
-    list_deals, 
+    create_deal,
+    get_deal,
+    update_deal,
+    list_deals,
     run_negotiation,
     get_wallet_state,
     log_reasoning,
@@ -24,6 +24,7 @@ from ..services import (
     record_x402_payment,
     get_x402_fee,
 )
+from ..services.stellar_service import stellar_service
 
 router = APIRouter()
 
@@ -33,9 +34,25 @@ DEFAULT_SELLER_WALLET = os.getenv(
 )
 X402_MODE = os.getenv("X402_MODE", "simulate").strip().lower()
 
+# Off-chain lifecycle endpoints (fund/onchain-accept/release) previously trusted
+# any client-supplied txid string at face value, letting anyone advance a deal's
+# status (or mark a milestone "released") without an actual on-chain payment.
+# Verification is on by default; only disable for local/offline development.
+VERIFY_ONCHAIN_TX = os.getenv("VERIFY_ONCHAIN_TX", "true").strip().lower() not in ("false", "0", "no")
+
 
 def is_stellar_account(value: str | None) -> bool:
     return bool(value and re.fullmatch(r"G[A-Z2-7]{55}", value))
+
+
+def _require_verified_txid(txid: str) -> None:
+    if not VERIFY_ONCHAIN_TX:
+        return
+    if not stellar_service.verify_transaction_success(txid):
+        raise HTTPException(
+            status_code=400,
+            detail="txid could not be verified as a successful on-chain transaction",
+        )
 
 
 def _format_delivery_window(deadline: str | None) -> str:
@@ -444,6 +461,7 @@ def onchain_accept(id: str, payload: dict):
         raise HTTPException(status_code=400, detail="Invalid role")
     if not txid:
         raise HTTPException(status_code=400, detail="txid is required")
+    _require_verified_txid(txid)
 
     deal_data = deal_record.get("data") or {}
     onchain = deal_data.get("onchain_accepts") or {"buyer": False, "seller": False}
@@ -476,6 +494,7 @@ def fund_deal(id: str, payload: dict):
     txid = payload.get("txid")
     if not txid:
         raise HTTPException(status_code=400, detail="txid is required")
+    _require_verified_txid(txid)
 
     deal_data = deal_record.get("data") or {}
     deal_data["funded"] = True
@@ -507,6 +526,7 @@ def record_release(id: str, payload: dict):
         raise HTTPException(status_code=400, detail="milestone_index is required")
     if not txid:
         raise HTTPException(status_code=400, detail="txid is required")
+    _require_verified_txid(txid)
 
     deal_data = deal_record.get("data") or {}
     releases = deal_data.get("releases") or {"completed": [], "txids": {}}
