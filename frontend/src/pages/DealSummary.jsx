@@ -91,8 +91,11 @@ const DealSummary = () => {
     if (b && current === b) return 'buyer';
     if (s && current === s) return 'seller';
 
-    // Fallback for flows where seller wallet was not persisted yet.
-    if (b && current !== b) return 'seller';
+    // No persisted seller wallet yet and this isn't the buyer: don't grant
+    // seller authority to whoever happens to load the page next. Doing so
+    // let any third party who discovered the deal_id approve/reject a deal
+    // that wasn't theirs. Leave the role unresolved until the seller has
+    // actually accepted (which persists seller_wallet).
     return null;
   }, [account, buyerAddress, sellerAddress]);
 
