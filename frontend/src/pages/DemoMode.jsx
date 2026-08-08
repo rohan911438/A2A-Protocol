@@ -7,10 +7,6 @@ import {
   acceptDealWithWallet,
   startNegotiation,
   approveDeal,
-  recordOnchainAccept,
-  fundDeal,
-  recordRelease,
-  completeDeal,
   getDeal,
 } from '../services/DealService';
 import { getCreateDealTxn } from '../services/ContractService';
@@ -115,6 +111,13 @@ const DemoMode = () => {
       await sleep(900);
       updateStep(3, 'done', 'Deal terms finalized and approved by both agents.');
 
+      // From here on this is a visual-only walkthrough: escrow funding and
+      // milestone release now require a real, verified on-chain Stellar
+      // payment (see backend/routes/deal.py), which a scripted demo can't
+      // produce without an actual signed transaction. Rather than feeding
+      // the verification endpoints random fake hashes (which the backend
+      // correctly rejects), simulate the remaining steps client-side only
+      // so the walkthrough stays honest about what's real vs. illustrative.
       updateStep(4, 'running', 'Creating escrow transaction payload for Stellar testnet...');
       const finalPrice = Number(negotiated?.final_price || 108);
       const first = Math.round(finalPrice * 0.4);
@@ -122,11 +125,8 @@ const DemoMode = () => {
       const milestones = [first, second].filter((v) => v > 0);
       await getCreateDealTxn(DEMO_BUYER_WALLET, createdDealId, finalPrice, milestones);
       const fundTxHash = demoHash();
-      await recordOnchainAccept(createdDealId, 'buyer', fundTxHash);
-      await recordOnchainAccept(createdDealId, 'seller', demoHash());
-      await fundDeal(createdDealId, fundTxHash);
       await sleep(1200);
-      updateStep(4, 'done', `Escrow created and funded. Tx: ${fundTxHash.slice(0, 10)}...`);
+      updateStep(4, 'done', `Escrow payload generated (simulated). Ref: ${fundTxHash.slice(0, 10)}...`);
 
       updateStep(5, 'running', 'Simulating task completion signals...');
       await sleep(2200);
@@ -136,20 +136,18 @@ const DemoMode = () => {
       await sleep(1800);
       updateStep(6, 'done', 'Verifier approved all deliverables.');
 
-      updateStep(7, 'running', 'Releasing milestone payments and finalizing deal...');
+      updateStep(7, 'running', 'Releasing milestone payments and finalizing deal (simulated)...');
       for (let i = 0; i < milestones.length; i++) {
-        await recordRelease(createdDealId, i, demoHash());
         await sleep(700);
       }
-      await completeDeal(createdDealId);
       await sleep(800);
-      updateStep(7, 'done', 'Payment released and lifecycle closed.');
+      updateStep(7, 'done', 'Payment release simulated and lifecycle walkthrough closed.');
 
       const finalRecord = await getDeal(createdDealId).catch(() => null);
       setSummary({
         dealId: createdDealId,
         finalPrice,
-        status: finalRecord?.status || 'Completed',
+        status: finalRecord?.status || 'negotiated',
       });
     } catch (err) {
       const msg = err?.message || 'Demo failed unexpectedly.';
