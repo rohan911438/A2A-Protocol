@@ -60,12 +60,6 @@ export async function listDeals() {
   return request('/deals')
 }
 
-export async function acceptDeal(deal_id) {
-  return request(`/deal/${deal_id}/accept`, {
-    method: 'POST',
-  })
-}
-
 export async function acceptDealWithWallet(deal_id, seller_wallet) {
   return request(`/deal/${deal_id}/accept`, {
     method: 'POST',
