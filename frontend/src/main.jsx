@@ -4,16 +4,16 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
-// Log a check to verify polyfills are correctly loaded from index.html
-if (typeof window !== 'undefined') {
-  console.log('[DAPP_DEBUG] Polyfills Check - Buffer:', !!window.Buffer, 'process:', !!window.process);
-  
-  // Filter out noisy browser extension errors (Phantom, MetaMask conflicts)
+// Filter out noisy browser extension conflicts (Phantom/MetaMask redefining
+// window.ethereum) without swallowing real errors. Dev-only: shipping this
+// in production risks silently dropping unrelated errors that happen to
+// share a substring with these patterns.
+if (import.meta.env.DEV && typeof window !== 'undefined') {
   const originalError = console.error;
   console.error = (...args) => {
     const msg = args[0]?.toString() || '';
     if (
-      msg.includes('isDefaultWallet') || 
+      msg.includes('isDefaultWallet') ||
       msg.includes('Cannot redefine property: ethereum') ||
       msg.includes('evmAsk.js') ||
       args[1]?.message?.includes('isDefaultWallet')
