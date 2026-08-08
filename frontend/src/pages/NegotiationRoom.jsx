@@ -80,7 +80,11 @@ const NegotiationRoom = () => {
   }, [dealId]);
 
   useEffect(() => {
-    if (dealId && dealStatus === 'created' && messages.length === 0 && !loading && !isTyping) {
+    // Only auto-run negotiation once the seller has accepted the invite -
+    // this used to trigger on 'created', which meant the buyer's own page
+    // load kicked off negotiation before the seller ever clicked "Accept
+    // Invite", making that button decorative.
+    if (dealId && dealStatus === 'accepted' && messages.length === 0 && !loading && !isTyping) {
       handleStart();
     }
   }, [dealId, dealStatus, messages.length]);
