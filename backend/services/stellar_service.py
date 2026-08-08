@@ -1,8 +1,12 @@
+import logging
 import os
 from typing import List, Optional
 from decimal import Decimal, ROUND_DOWN, InvalidOperation
 from stellar_sdk import Server, Keypair, TransactionBuilder, Network, Asset, Operation
 from stellar_sdk.exceptions import NotFoundError
+
+logger = logging.getLogger(__name__)
+
 
 class StellarService:
     def __init__(self):
@@ -22,7 +26,7 @@ class StellarService:
         except NotFoundError:
             return 0.0
         except Exception as e:
-            print(f"Error fetching balance: {e}")
+            logger.error("Error fetching balance for %s: %s", public_key, e)
             return 0.0
 
     def submit_signed_transaction(self, xdr: str) -> str:
@@ -31,7 +35,7 @@ class StellarService:
             response = self.server.submit_transaction(xdr)
             return response['hash']
         except Exception as e:
-            print(f"Transaction submission failed: {e}")
+            logger.error("Transaction submission failed: %s", e)
             raise RuntimeError(f"Stellar submission error: {str(e)}")
 
     def verify_transaction_success(self, tx_hash: str, expected_source: Optional[str] = None) -> bool:
@@ -58,7 +62,7 @@ class StellarService:
         except NotFoundError:
             return False
         except Exception as e:
-            print(f"Error verifying transaction {tx_hash}: {e}")
+            logger.error("Error verifying transaction %s: %s", tx_hash, e)
             return False
 
     def verify_payment_transaction(self, tx_hash: str, expected_destination: str, min_amount: float) -> bool:
@@ -95,7 +99,7 @@ class StellarService:
         except NotFoundError:
             return False
         except Exception as e:
-            print(f"Error verifying payment transaction {tx_hash}: {e}")
+            logger.error("Error verifying payment transaction %s: %s", tx_hash, e)
             return False
 
     def _format_stellar_amount(self, amount: float) -> str:
