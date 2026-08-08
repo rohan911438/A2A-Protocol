@@ -158,6 +158,12 @@ Testnet verification links:
 
 Contract verification note: open the escrow contract explorer link above to confirm the deployed contract exists on Stellar Testnet and matches the on-chain address used by the app.
 
+### Mainnet
+
+- Escrow contract address: `CADGOK3EO3F5IJAD2JVG4V65N2GXHAWEY5QERK66BZI7UBEQPQJLKRL3`
+- Network: Stellar Mainnet (Public)
+- Escrow contract explorer: https://stellar.expert/explorer/public/contract/CADGOK3EO3F5IJAD2JVG4V65N2GXHAWEY5QERK66BZI7UBEQPQJLKRL3
+
 Escrow logic overview:
 
 - Funds are locked in a Soroban escrow contract.
