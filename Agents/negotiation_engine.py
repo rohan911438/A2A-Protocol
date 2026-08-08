@@ -201,9 +201,14 @@ class NegotiationEngine:
             log_round(round_number, current_buyer_price, current_seller_price)
 
             # 🛡️ Agent-Driven Finalization Logic
-            # A deal is only closed if the agents actually reach an agreement 
-            # where the Buyer meets or exceeds the Seller's ask.
-            if current_buyer_price >= current_seller_price:
+            # A deal closes if the buyer's offer meets or exceeds the
+            # seller's ask, or if the remaining gap is within the
+            # configured threshold (self.threshold was previously stored
+            # but never consulted here, so negotiations that landed close
+            # together but never technically crossed reported "failed").
+            if current_buyer_price >= current_seller_price or is_within_threshold(
+                current_buyer_price, current_seller_price, self.threshold
+            ):
                 # The agreed price is set to the seller's price (as the buyer met it)
                 return {
                     "status": "closed",
