@@ -34,22 +34,68 @@ class StellarService:
             print(f"Transaction submission failed: {e}")
             raise RuntimeError(f"Stellar submission error: {str(e)}")
 
-    def verify_transaction_success(self, tx_hash: str) -> bool:
+    def verify_transaction_success(self, tx_hash: str, expected_source: Optional[str] = None) -> bool:
         """
         Confirms a transaction hash actually exists on-chain and succeeded.
         Used to gate off-chain state transitions (funded/accepted/released)
         so a client can't move a deal forward by submitting an arbitrary or
         unrelated txid string.
+
+        If expected_source is given, the transaction must also have been
+        submitted by that account - otherwise any successful tx hash from
+        anyone (e.g. an unrelated public transaction) would satisfy the
+        check, regardless of who actually sent it.
         """
         if not tx_hash or not isinstance(tx_hash, str):
             return False
         try:
             record = self.server.transactions().transaction(tx_hash).call()
-            return bool(record.get("successful"))
+            if not record.get("successful"):
+                return False
+            if expected_source and record.get("source_account") != expected_source:
+                return False
+            return True
         except NotFoundError:
             return False
         except Exception as e:
             print(f"Error verifying transaction {tx_hash}: {e}")
+            return False
+
+    def verify_payment_transaction(self, tx_hash: str, expected_destination: str, min_amount: float) -> bool:
+        """
+        Confirms a transaction succeeded AND actually contains a native-asset
+        payment operation to expected_destination for at least min_amount.
+
+        Plain existence/success checking (verify_transaction_success) isn't
+        enough to gate a fund release: any successful, unrelated tx hash
+        (e.g. the caller's own account-creation transaction) would pass that
+        check without a single lumen ever reaching the seller.
+        """
+        if not tx_hash or not isinstance(tx_hash, str):
+            return False
+        try:
+            record = self.server.transactions().transaction(tx_hash).call()
+            if not record.get("successful"):
+                return False
+            ops = self.server.operations().for_transaction(tx_hash).call()
+            for op in ops.get("_embedded", {}).get("records", []):
+                if op.get("type") != "payment":
+                    continue
+                if op.get("to") != expected_destination:
+                    continue
+                if op.get("asset_type") != "native":
+                    continue
+                try:
+                    paid = float(op.get("amount", 0))
+                except (TypeError, ValueError):
+                    continue
+                if paid + 1e-7 >= min_amount:
+                    return True
+            return False
+        except NotFoundError:
+            return False
+        except Exception as e:
+            print(f"Error verifying payment transaction {tx_hash}: {e}")
             return False
 
     def _format_stellar_amount(self, amount: float) -> str:
