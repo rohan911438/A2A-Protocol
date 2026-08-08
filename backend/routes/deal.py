@@ -45,14 +45,37 @@ def is_stellar_account(value: str | None) -> bool:
     return bool(value and re.fullmatch(r"G[A-Z2-7]{55}", value))
 
 
-def _require_verified_txid(txid: str) -> None:
+def _require_verified_txid(txid: str, expected_source: str | None = None) -> None:
     if not VERIFY_ONCHAIN_TX:
         return
-    if not stellar_service.verify_transaction_success(txid):
+    if not stellar_service.verify_transaction_success(txid, expected_source=expected_source):
         raise HTTPException(
             status_code=400,
-            detail="txid could not be verified as a successful on-chain transaction",
+            detail="txid could not be verified as a successful on-chain transaction from the expected wallet",
         )
+
+
+def _require_verified_payment(txid: str, expected_destination: str, min_amount: float) -> None:
+    if not VERIFY_ONCHAIN_TX:
+        return
+    if not stellar_service.verify_payment_transaction(txid, expected_destination, min_amount):
+        raise HTTPException(
+            status_code=400,
+            detail="txid does not contain a verified on-chain payment of the milestone amount to the registered seller wallet",
+        )
+
+
+def _resolve_milestone_amounts(deal_data: dict[str, Any]) -> list[float]:
+    result = deal_data.get("result") or {}
+    milestones = result.get("milestones") or []
+    if milestones:
+        return [float(m) for m in milestones]
+    final_price = float(result.get("final_price") or 0)
+    if final_price <= 0:
+        return []
+    first = round(final_price * 0.4)
+    second = max(final_price - first, 0)
+    return [first, second] if second > 0 else [first]
 
 
 def _format_delivery_window(deadline: str | None) -> str:
@@ -477,9 +500,16 @@ def onchain_accept(id: str, payload: dict):
         raise HTTPException(status_code=400, detail="Invalid role")
     if not txid:
         raise HTTPException(status_code=400, detail="txid is required")
-    _require_verified_txid(txid)
 
     deal_data = deal_record.get("data") or {}
+    request_data = deal_data.get("request") or deal_data
+    expected_source = None
+    if role == "buyer":
+        buyer_wallet = request_data.get("buyer_wallet") or deal_data.get("buyer_wallet")
+        if is_stellar_account(buyer_wallet):
+            expected_source = buyer_wallet
+    _require_verified_txid(txid, expected_source=expected_source)
+
     onchain = deal_data.get("onchain_accepts") or {"buyer": False, "seller": False}
     onchain[role] = True
     txids = deal_data.get("txids") or {}
@@ -510,9 +540,13 @@ def fund_deal(id: str, payload: dict):
     txid = payload.get("txid")
     if not txid:
         raise HTTPException(status_code=400, detail="txid is required")
-    _require_verified_txid(txid)
 
     deal_data = deal_record.get("data") or {}
+    request_data = deal_data.get("request") or deal_data
+    buyer_wallet = request_data.get("buyer_wallet") or deal_data.get("buyer_wallet")
+    expected_source = buyer_wallet if is_stellar_account(buyer_wallet) else None
+    _require_verified_txid(txid, expected_source=expected_source)
+
     deal_data["funded"] = True
     deal_data["funding_txid"] = txid
 
@@ -542,9 +576,20 @@ def record_release(id: str, payload: dict):
         raise HTTPException(status_code=400, detail="milestone_index is required")
     if not txid:
         raise HTTPException(status_code=400, detail="txid is required")
-    _require_verified_txid(txid)
 
     deal_data = deal_record.get("data") or {}
+    if not deal_data.get("seller_accepted"):
+        raise HTTPException(status_code=400, detail="Seller has not registered a wallet for this deal yet")
+    seller_wallet = deal_data.get("seller_wallet")
+    if not is_stellar_account(seller_wallet):
+        raise HTTPException(status_code=400, detail="Deal has no registered seller wallet")
+
+    milestone_amounts = _resolve_milestone_amounts(deal_data)
+    if milestone_index < 0 or milestone_index >= len(milestone_amounts):
+        raise HTTPException(status_code=400, detail="milestone_index is out of range for this deal")
+    expected_amount = milestone_amounts[milestone_index]
+    _require_verified_payment(txid, seller_wallet, expected_amount)
+
     releases = deal_data.get("releases") or {"completed": [], "txids": {}}
     completed = releases.get("completed") or []
     if milestone_index not in completed:
@@ -583,6 +628,14 @@ def complete_deal(id: str):
         raise HTTPException(status_code=404, detail="Deal ID not found")
 
     deal_data = deal_record.get("data") or {}
+    milestone_amounts = _resolve_milestone_amounts(deal_data)
+    completed = set((deal_data.get("releases") or {}).get("completed") or [])
+    if milestone_amounts and len(completed) < len(milestone_amounts):
+        raise HTTPException(
+            status_code=400,
+            detail="All milestones must be released before completing this deal",
+        )
+
     buyer_wallet, _ = _resolve_x402_participants(deal_record, None)
     authorized, payload = _require_x402_payment(id, deal_record, buyer_wallet, "deal_completion_fee")
     if not authorized:
