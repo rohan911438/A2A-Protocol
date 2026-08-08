@@ -165,9 +165,23 @@ const DealSummary = () => {
       if (userRole === 'buyer') {
         setTxStatus('Generating Stellar Escrow XDR...');
         await approveDeal(dealId, 'buyer');
-        const amount = Math.max(Math.round(finalPrice || 0), 0);
-        const milestoneValues = [amount]; 
-        
+        // Split into the same 40/60 milestone schedule ActiveDeal releases
+        // against instead of recording a single lump-sum milestone, so the
+        // on-chain create-txn record matches what's actually enforced
+        // during release. `amount` is derived as the exact sum of the
+        // milestones (rather than independently rounding finalPrice) so it
+        // always satisfies the backend's sum-must-equal-total check.
+        const storedMilestones = dealRecord?.data?.result?.milestones;
+        const milestoneValues = storedMilestones?.length
+          ? storedMilestones
+          : (() => {
+              const rounded = Math.max(Math.round(finalPrice || 0), 0);
+              const first = Math.round(rounded * 0.4);
+              const second = Math.max(rounded - first, 0);
+              return second > 0 ? [first, second] : [first];
+            })();
+        const amount = milestoneValues.reduce((sum, v) => sum + Number(v), 0);
+
         const { xdr } = await getCreateDealTxn(account, dealId, amount, milestoneValues);
         const signedXdr = await signTransaction(xdr);
         

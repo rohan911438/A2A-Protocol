@@ -122,9 +122,23 @@ const Dashboard = () => {
       await approveDeal(deal.id, role);
       
       if (role === 'buyer') {
-        const amount = Math.max(Math.round(deal.price || 0), 0);
-        const milestones = [amount]; 
-        
+        // Mirror the 40/60 milestone split ActiveDeal releases against later
+        // instead of recording a single lump-sum milestone here - otherwise
+        // the on-chain create-txn record never matches the schedule that's
+        // actually enforced during release. `amount` is derived as the
+        // exact sum of the milestones so it always satisfies the backend's
+        // sum-must-equal-total check.
+        const storedMilestones = deal.data?.result?.milestones;
+        const milestones = storedMilestones?.length
+          ? storedMilestones
+          : (() => {
+              const rounded = Math.max(Math.round(deal.price || 0), 0);
+              const first = Math.round(rounded * 0.4);
+              const second = Math.max(rounded - first, 0);
+              return second > 0 ? [first, second] : [first];
+            })();
+        const amount = milestones.reduce((sum, v) => sum + Number(v), 0);
+
         const { xdr } = await getCreateDealTxn(account, deal.id, amount, milestones);
         const signedXdr = await signTransaction(xdr);
         const { tx_hash } = await submitSignedXdr(signedXdr);
