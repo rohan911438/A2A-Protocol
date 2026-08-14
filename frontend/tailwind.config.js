@@ -13,17 +13,17 @@ export default {
         // Claude-style editorial dark palette (used on the marketing Home page)
         paper: {
           DEFAULT: "#000000",
-          soft: "#050403",
-          deep: "#0F0D0A",
+          soft: "#0A0806",
+          deep: "#120F0C",
         },
         surface: {
-          DEFAULT: "#100E0C",
-          raised: "#18150F",
+          DEFAULT: "#1A1613",
+          raised: "#231D17",
         },
         bark: {
-          DEFAULT: "#F2EFE9",
-          muted: "#A9A59B",
-          faint: "#726E63",
+          DEFAULT: "#F5F2EA",
+          muted: "#B9B3A4",
+          faint: "#8B8576",
         },
         clay: {
           50: "#FBF0EA",
@@ -39,7 +39,7 @@ export default {
           500: "#71835F",
           600: "#5C6C4C",
         },
-        line: "rgba(255,255,255,0.08)",
+        line: "rgba(255,255,255,0.11)",
         ink: {
           900: "#000000", // True pure black
           850: "#050505", // Rich deep black

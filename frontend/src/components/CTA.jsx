@@ -9,7 +9,7 @@ const CTA = () => {
   const { connected, toggleModal } = useWallet();
 
   return (
-    <section className="py-32 px-6 relative bg-bark overflow-hidden">
+    <section className="py-32 px-6 relative bg-surface-raised border-t border-line overflow-hidden">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-[320px] bg-clay-500/10 blur-[160px] rounded-full pointer-events-none" />
 
       <motion.div

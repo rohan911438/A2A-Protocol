@@ -87,7 +87,7 @@ const ChatDemo = () => {
   };
 
   return (
-    <div className="w-full max-w-xl bg-bark border border-black/10 rounded-2xl shadow-[0_24px_60px_rgba(38,36,31,0.25)] overflow-hidden font-mono select-none">
+    <div className="w-full max-w-xl bg-black border border-line rounded-2xl shadow-[0_24px_60px_rgba(0,0,0,0.5)] overflow-hidden font-mono select-none">
       {/* Terminal Title Bar */}
       <div className="px-6 py-3.5 bg-zinc-950/80 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-3">

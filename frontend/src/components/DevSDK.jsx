@@ -136,9 +136,9 @@ const DevSDK = () => {
             transition={{ duration: 0.6 }}
             className="lg:col-span-7 w-full"
           >
-            <div className="bg-bark rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(38,36,31,0.18)] font-mono">
+            <div className="bg-black border border-line rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] font-mono">
 
-              <div className="px-6 py-3.5 bg-black/20 border-b border-white/5 flex items-center justify-between">
+              <div className="px-6 py-3.5 bg-white/[0.03] border-b border-white/5 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Code size={13} className="text-clay-400" />
                   <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest opacity-80">A2A SDK Integration</span>
@@ -152,11 +152,11 @@ const DevSDK = () => {
                 </button>
               </div>
 
-              <div className="flex border-b border-white/5 bg-black/10 text-[9px] font-bold uppercase tracking-widest">
+              <div className="flex border-b border-white/5 bg-white/[0.02] text-[9px] font-bold uppercase tracking-widest">
                 <button
                   onClick={() => setActiveTab('js')}
                   className={`flex-1 py-3 text-center transition-all duration-300 flex items-center justify-center gap-2 ${
-                    activeTab === 'js' ? 'bg-black/30 text-clay-400 border-b border-b-clay-400' : 'text-zinc-500 hover:text-zinc-300'
+                    activeTab === 'js' ? 'bg-white/[0.06] text-clay-400 border-b border-b-clay-400' : 'text-zinc-500 hover:text-zinc-300'
                   }`}
                 >
                   <Code size={11} className="opacity-70" />
@@ -165,7 +165,7 @@ const DevSDK = () => {
                 <button
                   onClick={() => setActiveTab('py')}
                   className={`flex-1 py-3 text-center transition-all border-l border-white/5 flex items-center justify-center gap-2 ${
-                    activeTab === 'py' ? 'bg-black/30 text-clay-400 border-b border-b-clay-400' : 'text-zinc-500 hover:text-zinc-300'
+                    activeTab === 'py' ? 'bg-white/[0.06] text-clay-400 border-b border-b-clay-400' : 'text-zinc-500 hover:text-zinc-300'
                   }`}
                 >
                   <Code size={11} className="opacity-70" />
@@ -174,7 +174,7 @@ const DevSDK = () => {
                 <button
                   onClick={() => setActiveTab('cli')}
                   className={`flex-1 py-3 text-center transition-all border-l border-white/5 flex items-center justify-center gap-2 ${
-                    activeTab === 'cli' ? 'bg-black/30 text-clay-400 border-b border-b-clay-400' : 'text-zinc-500 hover:text-zinc-300'
+                    activeTab === 'cli' ? 'bg-white/[0.06] text-clay-400 border-b border-b-clay-400' : 'text-zinc-500 hover:text-zinc-300'
                   }`}
                 >
                   <TerminalIcon size={11} className="opacity-70" />
@@ -190,7 +190,7 @@ const DevSDK = () => {
                 </pre>
               </div>
 
-              <div className="px-6 py-3.5 bg-black/20 border-t border-white/5 flex items-center justify-between text-[9px] text-zinc-500 font-bold uppercase">
+              <div className="px-6 py-3.5 bg-white/[0.03] border-t border-white/5 flex items-center justify-between text-[9px] text-zinc-500 font-bold uppercase">
                 <span>npm registry: @a2a/protocol@1.0.4</span>
                 <span className="text-clay-400/90">Stellar mainnet compatible</span>
               </div>
