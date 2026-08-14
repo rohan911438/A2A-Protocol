@@ -20,7 +20,7 @@ pub enum Error {
 }
 
 #[contracttype]
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub enum DealStatus {
     Created = 0,
     Funded = 1,
