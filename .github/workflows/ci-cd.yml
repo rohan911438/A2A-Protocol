@@ -67,8 +67,12 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
         with:
+          # Pinned below 1.97: soroban-env-common 20.3.0 hard-pins ethnum =1.5.0,
+          # which fails to build on rustc >=1.97 (rust-lang/rust#157363). Bump this
+          # once soroban-sdk is upgraded past the exact ethnum pin.
+          toolchain: "1.96.0"
           targets: wasm32-unknown-unknown
 
       - name: Cache cargo registry and build artifacts
