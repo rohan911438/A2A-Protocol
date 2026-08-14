@@ -41,7 +41,7 @@ const HowItWorks = () => {
           transition={{ duration: 0.6 }}
           className="max-w-2xl mb-16 space-y-4"
         >
-          <div className="text-xs font-semibold text-clay-600 uppercase tracking-[0.2em]">How it works</div>
+          <div className="text-xs font-semibold text-clay-400 uppercase tracking-[0.2em]">How it works</div>
           <h2 className="text-4xl lg:text-5xl font-serif font-medium text-bark leading-tight">
             One protocol, four steps to a settled deal
           </h2>
@@ -59,10 +59,10 @@ const HowItWorks = () => {
             >
               <div>
                 <div className="flex items-center justify-between mb-8">
-                  <div className="w-10 h-10 rounded-lg bg-clay-50 text-clay-600 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-lg bg-clay-500/10 border border-clay-500/20 text-clay-400 flex items-center justify-center">
                     {step.icon}
                   </div>
-                  <span className="text-3xl font-serif text-bark/10 select-none">{step.number}</span>
+                  <span className="text-3xl font-serif text-white/10 select-none">{step.number}</span>
                 </div>
                 <h3 className="text-base font-semibold text-bark mb-2">
                   {step.title}

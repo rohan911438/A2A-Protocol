@@ -10,16 +10,20 @@ export default {
         serif: ["\"Newsreader\"", "serif"],
       },
       colors: {
-        // Claude-style editorial light palette (used on the marketing Home page)
+        // Claude-style editorial dark palette (used on the marketing Home page)
         paper: {
-          DEFAULT: "#F7F5EF",
-          soft: "#FAF9F4",
-          deep: "#EFECE0",
+          DEFAULT: "#000000",
+          soft: "#050403",
+          deep: "#0F0D0A",
+        },
+        surface: {
+          DEFAULT: "#100E0C",
+          raised: "#18150F",
         },
         bark: {
-          DEFAULT: "#26241F",
-          muted: "#5B584D",
-          faint: "#8C8879",
+          DEFAULT: "#F2EFE9",
+          muted: "#A9A59B",
+          faint: "#726E63",
         },
         clay: {
           50: "#FBF0EA",
@@ -35,7 +39,7 @@ export default {
           500: "#71835F",
           600: "#5C6C4C",
         },
-        line: "#E4E0D3",
+        line: "rgba(255,255,255,0.08)",
         ink: {
           900: "#000000", // True pure black
           850: "#050505", // Rich deep black

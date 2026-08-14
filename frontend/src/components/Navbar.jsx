@@ -14,7 +14,7 @@ const Navbar = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-paper/85 border-b border-line backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-white border border-line flex items-center justify-center overflow-hidden shadow-[0_2px_8px_rgba(38,36,31,0.05)] group-hover:border-clay-400/40 transition-colors duration-300">
+            <div className="w-10 h-10 rounded-xl bg-surface border border-line flex items-center justify-center overflow-hidden group-hover:border-clay-400/40 transition-colors duration-300">
               <img src={logo} className="w-7 h-7 object-contain group-hover:scale-105 transition-transform duration-500" alt="Logo" />
             </div>
             <div className="flex flex-col -space-y-1">
@@ -36,7 +36,7 @@ const Navbar = () => {
                 onMouseEnter={() => connected && setShowBalance(true)}
                 onMouseLeave={() => setShowBalance(false)}
                 className={`px-5 py-2.5 rounded-xl font-semibold text-[13px] transition-all duration-300 flex items-center gap-2 ${connected
-                    ? 'bg-white border border-line text-bark cursor-default'
+                    ? 'bg-surface border border-line text-bark cursor-default'
                     : 'bg-clay-500 text-white hover:bg-clay-600 shadow-[0_6px_18px_rgba(217,119,87,0.25)]'
                   }`}
               >
@@ -45,7 +45,7 @@ const Navbar = () => {
               </button>
 
               {connected && showBalance && (
-                <div className="absolute top-14 right-0 z-50 rounded-2xl bg-white border border-line p-5 min-w-[240px] shadow-[0_20px_50px_rgba(38,36,31,0.12)] animate-fadeInUp">
+                <div className="absolute top-14 right-0 z-50 rounded-2xl bg-surface border border-line p-5 min-w-[240px] shadow-[0_20px_50px_rgba(0,0,0,0.4)] animate-fadeInUp">
                   <div className="space-y-4">
                     <div className="flex justify-between items-center text-[10px] text-bark-faint uppercase tracking-widest font-bold">
                       <span>Active assets</span>
@@ -68,7 +68,7 @@ const Navbar = () => {
               {connected && (
                 <button
                   onClick={disconnect}
-                  className="p-2.5 rounded-xl bg-white border border-line text-bark-faint hover:text-clay-600 hover:border-clay-400/40 transition-all duration-300"
+                  className="p-2.5 rounded-xl bg-surface border border-line text-bark-faint hover:text-clay-400 hover:border-clay-400/40 transition-all duration-300"
                   title="Disconnect wallet"
                 >
                   <LogOut className="w-4 h-4" />

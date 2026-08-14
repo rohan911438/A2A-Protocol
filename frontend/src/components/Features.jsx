@@ -54,7 +54,7 @@ const Features = () => {
           transition={{ duration: 0.6 }}
           className="max-w-2xl space-y-4"
         >
-          <div className="text-xs font-semibold text-clay-600 uppercase tracking-[0.2em]">Capabilities</div>
+          <div className="text-xs font-semibold text-clay-400 uppercase tracking-[0.2em]">Capabilities</div>
           <h2 className="text-4xl lg:text-5xl font-serif font-medium text-bark leading-tight">
             Everything a trustless agent economy needs
           </h2>
@@ -72,7 +72,7 @@ const Features = () => {
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 items-center h-full">
               <div className="space-y-4">
-                <div className="w-11 h-11 rounded-xl bg-clay-50 text-clay-600 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-xl bg-clay-500/10 border border-clay-500/20 text-clay-400 flex items-center justify-center">
                   <MessageSquare size={18} />
                 </div>
                 <h3 className="text-lg font-semibold text-bark">
@@ -83,25 +83,25 @@ const Features = () => {
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-white border border-line h-[180px] flex flex-col justify-between relative overflow-hidden">
+              <div className="p-4 rounded-xl bg-surface-raised border border-line h-[180px] flex flex-col justify-between relative overflow-hidden">
                 <div className="flex justify-between items-center text-[9px] text-bark-faint font-mono uppercase tracking-wider">
                   <span>Price resolution</span>
-                  <span className="text-moss-600 flex items-center gap-1 font-semibold">
-                    <span className="w-1.5 h-1.5 rounded-full bg-moss-500" />
+                  <span className="text-moss-400 flex items-center gap-1 font-semibold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-moss-400" />
                     Round 4 converged
                   </span>
                 </div>
 
                 <div className="flex-1 w-full relative mt-2">
                   <svg className="w-full h-full" viewBox="0 0 220 100" preserveAspectRatio="none">
-                    <line x1="10" y1="50" x2="210" y2="50" stroke="#E4E0D3" strokeDasharray="3,3" />
-                    <line x1="110" y1="10" x2="110" y2="90" stroke="#E4E0D3" strokeDasharray="3,3" />
+                    <line x1="10" y1="50" x2="210" y2="50" stroke="rgba(255,255,255,0.06)" strokeDasharray="3,3" />
+                    <line x1="110" y1="10" x2="110" y2="90" stroke="rgba(255,255,255,0.06)" strokeDasharray="3,3" />
 
                     {points.buyer && (
                       <polyline fill="none" stroke="#D97757" strokeWidth="1.75" points={points.buyer} />
                     )}
                     {points.seller && (
-                      <polyline fill="none" stroke="#5C6C4C" strokeWidth="1.75" points={points.seller} />
+                      <polyline fill="none" stroke="#8A9A7E" strokeWidth="1.75" points={points.seller} />
                     )}
 
                     {chartProgress > 95 && (
@@ -112,7 +112,7 @@ const Features = () => {
 
                 <div className="flex justify-between text-[10px] text-bark-faint font-mono mt-1">
                   <span>Bid $800 / Ask $1200</span>
-                  <span className="text-clay-600 font-bold">$950.00</span>
+                  <span className="text-clay-400 font-bold">$950.00</span>
                 </div>
               </div>
             </div>
@@ -127,7 +127,7 @@ const Features = () => {
             className="md:col-span-5 paper-card p-8 flex flex-col justify-between"
           >
             <div className="space-y-4">
-              <div className="w-11 h-11 rounded-xl bg-clay-50 text-clay-600 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-xl bg-clay-500/10 border border-clay-500/20 text-clay-400 flex items-center justify-center">
                 <Lock size={18} />
               </div>
               <h3 className="text-lg font-semibold text-bark">
@@ -140,11 +140,11 @@ const Features = () => {
 
             <div
               onClick={() => setEscrowLocked(!escrowLocked)}
-              className="mt-8 p-4 rounded-xl bg-white border border-line flex items-center justify-between cursor-pointer hover:border-clay-300 transition-all duration-300"
+              className="mt-8 p-4 rounded-xl bg-surface-raised border border-line flex items-center justify-between cursor-pointer hover:border-clay-500/30 transition-all duration-300"
             >
               <div className="flex items-center gap-3">
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
-                  escrowLocked ? 'bg-paper-deep text-bark-faint' : 'bg-clay-500 text-white'
+                  escrowLocked ? 'bg-white/5 text-bark-faint' : 'bg-clay-500 text-white'
                 }`}>
                   <Key size={13} className={escrowLocked ? 'rotate-0' : 'rotate-45 transition-transform'} />
                 </div>
@@ -154,7 +154,7 @@ const Features = () => {
                 </div>
               </div>
               <span className={`text-[9px] font-mono font-bold uppercase px-2.5 py-1 rounded-full border ${
-                escrowLocked ? 'bg-clay-50 border-clay-200 text-clay-600' : 'bg-moss-400/10 border-moss-400/30 text-moss-600'
+                escrowLocked ? 'bg-clay-500/10 border-clay-500/25 text-clay-400' : 'bg-moss-400/10 border-moss-400/30 text-moss-400'
               }`}>
                 {escrowLocked ? 'Locked' : 'Released'}
               </span>
@@ -170,7 +170,7 @@ const Features = () => {
             className="md:col-span-5 paper-card p-8 flex flex-col justify-between"
           >
             <div className="space-y-4">
-              <div className="w-11 h-11 rounded-xl bg-clay-50 text-clay-600 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-xl bg-clay-500/10 border border-clay-500/20 text-clay-400 flex items-center justify-center">
                 <Zap size={18} />
               </div>
               <h3 className="text-lg font-semibold text-bark">
@@ -184,14 +184,14 @@ const Features = () => {
             <div
               onMouseEnter={() => setX402Success(true)}
               onMouseLeave={() => setX402Success(false)}
-              className="mt-8 p-4 rounded-xl bg-bark text-white font-mono text-[10px] leading-relaxed relative overflow-hidden h-[110px] border border-bark"
+              className="mt-8 p-4 rounded-xl bg-black font-mono text-[10px] leading-relaxed relative overflow-hidden h-[110px] border border-line"
             >
               {!x402Success ? (
-                <div className="space-y-1.5 text-zinc-400">
+                <div className="space-y-1.5 text-zinc-500">
                   <div className="text-clay-400 font-bold">HTTP/1.1 402 Payment Required</div>
                   <div>X-Agent-Gate: x402-gated-token</div>
                   <div>Status: <span className="text-clay-400 font-bold">LOCKED_PAYLOAD</span></div>
-                  <div className="text-[9px] text-zinc-500 mt-2 italic">Hover to unlock secure payload...</div>
+                  <div className="text-[9px] text-zinc-600 mt-2 italic">Hover to unlock secure payload...</div>
                 </div>
               ) : (
                 <div className="space-y-1.5 text-moss-400 animate-fadeInUp">
@@ -217,7 +217,7 @@ const Features = () => {
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 items-center h-full">
               <div className="space-y-4">
-                <div className="w-11 h-11 rounded-xl bg-clay-50 text-clay-600 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-xl bg-clay-500/10 border border-clay-500/20 text-clay-400 flex items-center justify-center">
                   <Cpu size={18} />
                 </div>
                 <h3 className="text-lg font-semibold text-bark">
@@ -228,17 +228,17 @@ const Features = () => {
                 </p>
               </div>
 
-              <div className="relative h-[150px] bg-white rounded-xl border border-line flex items-center justify-center overflow-hidden">
+              <div className="relative h-[150px] bg-surface-raised rounded-xl border border-line flex items-center justify-center overflow-hidden">
                 <svg className="absolute inset-0 w-full h-full opacity-70" viewBox="0 0 200 120">
-                  <line x1="40" y1="30" x2="160" y2="30" stroke="#EFECE0" strokeWidth="1" />
-                  <line x1="40" y1="30" x2="40" y2="90" stroke="#EFECE0" strokeWidth="1" />
-                  <line x1="160" y1="30" x2="160" y2="90" stroke="#EFECE0" strokeWidth="1" />
-                  <line x1="40" y1="90" x2="160" y2="90" stroke="#EFECE0" strokeWidth="1" />
-                  <line x1="40" y1="30" x2="160" y2="90" stroke="#EFECE0" strokeWidth="1" />
+                  <line x1="40" y1="30" x2="160" y2="30" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+                  <line x1="40" y1="30" x2="40" y2="90" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+                  <line x1="160" y1="30" x2="160" y2="90" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+                  <line x1="40" y1="90" x2="160" y2="90" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+                  <line x1="40" y1="30" x2="160" y2="90" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
 
                   {activeNode === 0 && <line x1="40" y1="30" x2="160" y2="30" stroke="#D97757" strokeWidth="1.5" />}
                   {activeNode === 1 && <line x1="160" y1="30" x2="160" y2="90" stroke="#C15F3C" strokeWidth="1.5" />}
-                  {activeNode === 2 && <line x1="160" y1="90" x2="40" y2="90" stroke="#71835F" strokeWidth="1.5" />}
+                  {activeNode === 2 && <line x1="160" y1="90" x2="40" y2="90" stroke="#8A9A7E" strokeWidth="1.5" />}
                   {activeNode === 3 && <line x1="40" y1="90" x2="40" y2="30" stroke="#D97757" strokeWidth="1.5" />}
 
                   {activeNode === 0 && (
@@ -254,7 +254,7 @@ const Features = () => {
                     </circle>
                   )}
                   {activeNode === 2 && (
-                    <circle r="2" fill="#71835F">
+                    <circle r="2" fill="#8A9A7E">
                       <animate attributeName="cx" from="160" to="40" dur="1.5s" repeatCount="indefinite" />
                       <animate attributeName="cy" from="90" to="90" dur="1.5s" repeatCount="indefinite" />
                     </circle>
@@ -275,7 +275,7 @@ const Features = () => {
                 ].map((node) => (
                   <div key={node.code} className={`absolute ${node.pos} flex flex-col items-center`}>
                     <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold transition-all duration-300 ${
-                      activeNode === node.idx ? 'bg-clay-500 text-white' : 'bg-paper-deep text-bark-faint'
+                      activeNode === node.idx ? 'bg-clay-500 text-white' : 'bg-white/5 text-bark-faint'
                     }`}>
                       {node.code}
                     </div>

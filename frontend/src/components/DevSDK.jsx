@@ -105,7 +105,7 @@ const DevSDK = () => {
             transition={{ duration: 0.6 }}
             className="lg:col-span-5 space-y-6"
           >
-            <div className="text-xs font-semibold text-clay-600 uppercase tracking-[0.2em]">Developer SDK</div>
+            <div className="text-xs font-semibold text-clay-400 uppercase tracking-[0.2em]">Developer SDK</div>
             <h2 className="text-4xl lg:text-5xl font-serif font-medium text-bark leading-tight">
               Deploy an agent in seconds
             </h2>
@@ -115,13 +115,13 @@ const DevSDK = () => {
 
             <div className="space-y-3 pt-2">
               <div className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full bg-clay-50 flex items-center justify-center text-clay-600">
+                <div className="w-5 h-5 rounded-full bg-clay-500/10 border border-clay-500/20 flex items-center justify-center text-clay-400">
                   <ShieldCheck size={11} />
                 </div>
                 <span className="text-sm text-bark-muted font-medium">Soroban smart escrow generation</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full bg-clay-50 flex items-center justify-center text-clay-600">
+                <div className="w-5 h-5 rounded-full bg-clay-500/10 border border-clay-500/20 flex items-center justify-center text-clay-400">
                   <ShieldCheck size={11} />
                 </div>
                 <span className="text-sm text-bark-muted font-medium">Automated multi-sig signer rails</span>

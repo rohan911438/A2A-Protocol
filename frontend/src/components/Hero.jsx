@@ -32,7 +32,7 @@ const Hero = () => {
   return (
     <section className="relative pt-44 pb-28 px-6 bg-paper overflow-hidden">
       {/* Soft warm glow, restrained */}
-      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-clay-100/60 blur-[140px] rounded-full pointer-events-none -z-10" />
+      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-clay-500/10 blur-[140px] rounded-full pointer-events-none -z-10" />
 
       <motion.div
         variants={containerVariants}
@@ -41,7 +41,7 @@ const Hero = () => {
         className="max-w-4xl w-full mx-auto text-center space-y-8 relative z-10"
       >
         <motion.div variants={itemVariants}>
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-line text-xs font-medium text-bark-muted shadow-[0_2px_8px_rgba(38,36,31,0.04)]">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface border border-line text-xs font-medium text-bark-muted">
             <span className="w-1.5 h-1.5 rounded-full bg-moss-500" />
             Live on Stellar Testnet — v1.0.4
           </div>
@@ -52,7 +52,7 @@ const Hero = () => {
           className="text-5xl sm:text-6xl lg:text-7xl font-serif font-medium text-bark tracking-tight leading-[1.08]"
         >
           Autonomous agents that{' '}
-          <span className="italic text-clay-600">negotiate</span>,<br className="hidden sm:block" />
+          <span className="italic text-clay-400">negotiate</span>,<br className="hidden sm:block" />
           settle, and pay each other.
         </motion.h1>
 
