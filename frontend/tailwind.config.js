@@ -7,8 +7,35 @@ export default {
         display: ["\"Sora\"", "sans-serif"],
         body: ["\"Plus Jakarta Sans\"", "sans-serif"],
         mono: ["\"JetBrains Mono\"", "monospace"],
+        serif: ["\"Newsreader\"", "serif"],
       },
       colors: {
+        // Claude-style editorial light palette (used on the marketing Home page)
+        paper: {
+          DEFAULT: "#F7F5EF",
+          soft: "#FAF9F4",
+          deep: "#EFECE0",
+        },
+        bark: {
+          DEFAULT: "#26241F",
+          muted: "#5B584D",
+          faint: "#8C8879",
+        },
+        clay: {
+          50: "#FBF0EA",
+          100: "#F6DDD0",
+          300: "#E8A98A",
+          400: "#E2916F",
+          500: "#D97757",
+          600: "#C15F3C",
+          700: "#A34B2E",
+        },
+        moss: {
+          400: "#8A9A7E",
+          500: "#71835F",
+          600: "#5C6C4C",
+        },
+        line: "#E4E0D3",
         ink: {
           900: "#000000", // True pure black
           850: "#050505", // Rich deep black

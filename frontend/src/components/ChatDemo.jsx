@@ -87,7 +87,7 @@ const ChatDemo = () => {
   };
 
   return (
-    <div className="w-full max-w-xl bg-black border border-white/5 rounded-2xl shadow-[0_30px_70px_rgba(0,0,0,0.95)] overflow-hidden font-mono select-none">
+    <div className="w-full max-w-xl bg-bark border border-black/10 rounded-2xl shadow-[0_24px_60px_rgba(38,36,31,0.25)] overflow-hidden font-mono select-none">
       {/* Terminal Title Bar */}
       <div className="px-6 py-3.5 bg-zinc-950/80 border-b border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -109,18 +109,18 @@ const ChatDemo = () => {
           >
             {isRunning ? <Square size={10} fill="currentColor" /> : <Play size={10} fill="currentColor" />}
           </button>
-          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_#06b6d4]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-clay-400 animate-pulse" />
         </div>
       </div>
 
       {/* Terminal Tabs */}
-      <div className="flex border-b border-white/5 bg-zinc-950/30 text-[9px] font-bold uppercase tracking-wider">
+      <div className="flex border-b border-white/5 bg-black/10 text-[9px] font-bold uppercase tracking-wider">
         <button
           onClick={() => setActiveTab('logs')}
           className={`flex-1 py-3 border-r border-white/5 transition-all duration-300 ${
-            activeTab === 'logs' 
-              ? 'bg-black/40 text-cyan-400 border-b-2 border-b-cyan-400 font-bold shadow-[inset_0_-10px_20px_rgba(34,211,238,0.02)]' 
-              : 'text-zinc-500 hover:bg-zinc-900/10 hover:text-zinc-350'
+            activeTab === 'logs'
+              ? 'bg-black/30 text-clay-400 border-b-2 border-b-clay-400 font-bold'
+              : 'text-zinc-500 hover:bg-white/5 hover:text-zinc-350'
           }`}
         >
           Bargain Logs
@@ -128,9 +128,9 @@ const ChatDemo = () => {
         <button
           onClick={() => setActiveTab('escrow')}
           className={`flex-1 py-3 border-r border-white/5 transition-all duration-300 ${
-            activeTab === 'escrow' 
-              ? 'bg-black/40 text-indigo-400 border-b-2 border-b-indigo-500 font-bold shadow-[inset_0_-10px_20px_rgba(99,102,241,0.02)]' 
-              : 'text-zinc-500 hover:bg-zinc-900/10 hover:text-zinc-350'
+            activeTab === 'escrow'
+              ? 'bg-black/30 text-moss-400 border-b-2 border-b-moss-400 font-bold'
+              : 'text-zinc-500 hover:bg-white/5 hover:text-zinc-350'
           }`}
         >
           Smart Escrow (Rust)
@@ -138,9 +138,9 @@ const ChatDemo = () => {
         <button
           onClick={() => setActiveTab('telemetry')}
           className={`flex-1 py-3 transition-all duration-300 ${
-            activeTab === 'telemetry' 
-              ? 'bg-black/40 text-purple-400 border-b-2 border-b-purple-500 font-bold shadow-[inset_0_-10px_20px_rgba(168,85,247,0.02)]' 
-              : 'text-zinc-500 hover:bg-zinc-900/10 hover:text-zinc-350'
+            activeTab === 'telemetry'
+              ? 'bg-black/30 text-[#C9A868] border-b-2 border-b-[#C9A868] font-bold'
+              : 'text-zinc-500 hover:bg-white/5 hover:text-zinc-350'
           }`}
         >
           State Telemetry
@@ -148,16 +148,16 @@ const ChatDemo = () => {
       </div>
 
       {/* Terminal Body */}
-      <div className="p-6 h-[380px] overflow-y-auto bg-black/40 text-xs leading-relaxed" ref={scrollRef}>
+      <div className="p-6 h-[380px] overflow-y-auto bg-black/20 text-xs leading-relaxed" ref={scrollRef}>
         {activeTab === 'logs' && (
           <div className="space-y-2">
             {logs.map((log, i) => (
               <div key={i} className="hover:bg-zinc-900/15 p-1.5 px-2 rounded transition-all font-mono text-[11px] leading-relaxed text-zinc-350 select-text">
                 <span className="text-zinc-650 select-none mr-2 font-semibold">[{log.time}]</span>
                 <span className={`font-bold mr-2 uppercase tracking-wider ${
-                  log.type === 'buyer' ? 'text-cyan-400' :
-                  log.type === 'seller' ? 'text-purple-400' :
-                  log.type === 'success' ? 'text-green-400' : 'text-indigo-400'
+                  log.type === 'buyer' ? 'text-clay-400' :
+                  log.type === 'seller' ? 'text-moss-400' :
+                  log.type === 'success' ? 'text-green-400' : 'text-[#C9A868]'
                 }`}>
                   {log.tag}:
                 </span>
@@ -186,19 +186,19 @@ const ChatDemo = () => {
               {copied ? <Check size={10} className="text-green-400" /> : <Copy size={10} />}
               {copied ? 'Copied' : 'Copy'}
             </button>
-            <pre className="text-zinc-400 overflow-x-auto text-[11px] leading-relaxed no-scrollbar select-text selection:bg-indigo-500/30 selection:text-white">
+            <pre className="text-zinc-400 overflow-x-auto text-[11px] leading-relaxed no-scrollbar select-text selection:bg-clay-500/30 selection:text-white">
               {rustEscrowCode}
             </pre>
           </div>
         )}
 
         {activeTab === 'telemetry' && (
-          <div className="space-y-6 select-text selection:bg-purple-500/20">
+          <div className="space-y-6 select-text selection:bg-clay-500/20">
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 rounded-xl bg-zinc-950/40 border border-white/5">
                 <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold mb-1 opacity-70">Target Object</div>
                 <div className="text-sm text-zinc-200 font-bold flex items-center gap-2">
-                  <Cpu size={14} className="text-cyan-400" />
+                  <Cpu size={14} className="text-clay-400" />
                   Cluster_Node_0x7
                 </div>
               </div>
@@ -226,10 +226,10 @@ const ChatDemo = () => {
               </div>
               <div className="flex justify-between items-center text-[11px]">
                 <span className="text-zinc-500">Settled Transaction Price:</span>
-                <span className="text-cyan-400 font-bold font-mono">950.00 USDC</span>
+                <span className="text-clay-400 font-bold font-mono">950.00 USDC</span>
               </div>
               <div className="h-1 w-full bg-zinc-950 rounded-full overflow-hidden mt-3">
-                <div className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400 rounded-full w-[95%]" />
+                <div className="h-full bg-gradient-to-r from-clay-500 via-[#C9A868] to-moss-400 rounded-full w-[95%]" />
               </div>
             </div>
 

@@ -1,12 +1,15 @@
 import React, { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const NeuralBackground = () => {
   const canvasRef = useRef(null);
   const mouseRef = useRef({ x: null, y: null, active: false });
+  const { pathname } = useLocation();
+  const isHome = pathname === '/';
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || isHome) return;
 
     // Check performance settings
     const lowPerf = typeof document !== 'undefined' && document.documentElement.getAttribute('data-perf') === 'low';
@@ -196,7 +199,9 @@ const NeuralBackground = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, []);
+  }, [isHome]);
+
+  if (isHome) return null;
 
   const lowPerf = typeof document !== 'undefined' && document.documentElement.getAttribute('data-perf') === 'low';
 
