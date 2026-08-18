@@ -150,6 +150,27 @@
   animation: none !important;
 }
 
+/* Cursor-reactive orbit rings (Hero background) */
+@keyframes orbit-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes orbit-spin-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+.animate-orbit-a { animation: orbit-spin 46s linear infinite; }
+.animate-orbit-b { animation: orbit-spin-reverse 38s linear infinite; }
+.animate-orbit-c { animation: orbit-spin 60s linear infinite; }
+
+:root[data-perf='low'] .animate-orbit-a,
+:root[data-perf='low'] .animate-orbit-b,
+:root[data-perf='low'] .animate-orbit-c {
+  animation: none !important;
+}
+
 /* Custom sleek dark scrollbar */
 ::-webkit-scrollbar {
   width: 5px;

@@ -5,6 +5,7 @@ import { Terminal, ArrowRight } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import ChatDemo from './ChatDemo';
 import MagneticButton from './MagneticButton';
+import CursorOrbit from './CursorOrbit';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -73,17 +74,18 @@ const Word = ({ children, className = '' }) => (
 // The headline names the product's three real stages (negotiate, settle,
 // pay) - instead of only revealing once, a traveling highlight cycles
 // through them continuously, so the sentence keeps demonstrating the
-// product's actual flow rather than sitting static after load.
+// product's actual flow rather than sitting static after load. Each word
+// does a real 3D flip (like a flip-clock digit) as it becomes active,
+// rather than just fading color.
 const CycleWord = ({ active, children }) => (
-  <span
-    className={`inline-block italic transition-all duration-500 ease-out ${
-      active
-        ? 'text-clay-400 drop-shadow-[0_0_18px_rgba(179,234,30,0.4)]'
-        : 'text-bark-muted'
-    }`}
+  <motion.span
+    animate={active ? { rotateX: [90, 0], color: '#B3EA1E' } : { rotateX: 0, color: '#9C9C9C' }}
+    transition={{ duration: 0.55, ease: [0.34, 1.56, 0.64, 1] }}
+    style={{ display: 'inline-block', transformPerspective: 300 }}
+    className={`italic transition-[filter] duration-500 ${active ? 'drop-shadow-[0_0_18px_rgba(179,234,30,0.4)]' : ''}`}
   >
     {children}
-  </span>
+  </motion.span>
 );
 
 const Hero = () => {
@@ -127,6 +129,8 @@ const Hero = () => {
         <div className="animate-aurora-b absolute top-[-5%] right-[5%] w-[550px] h-[420px] bg-moss-500/[0.07] blur-[130px] rounded-full" />
         <div className="animate-aurora-c absolute top-[10%] left-1/2 -translate-x-1/2 w-[600px] h-[380px] bg-clay-400/[0.06] blur-[140px] rounded-full" />
       </motion.div>
+
+      <CursorOrbit />
 
       {/* Giant ghost wordmark - oversized, near-invisible type sitting behind
           the real content for scale/depth. Pure texture, not meant to be
