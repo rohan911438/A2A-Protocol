@@ -4,42 +4,49 @@ export default {
   theme: {
     extend: {
       fontFamily: {
+        // Cooler, engineered-minimalism system: geometric sans throughout,
+        // no serif pairing (Newsreader dropped - it read as warm/editorial,
+        // exactly the "AI redesign" signature this palette moves away from).
         display: ["\"Sora\"", "sans-serif"],
         body: ["\"Plus Jakarta Sans\"", "sans-serif"],
         mono: ["\"JetBrains Mono\"", "monospace"],
-        serif: ["\"Newsreader\"", "serif"],
+        serif: ["\"Sora\"", "sans-serif"],
       },
       colors: {
-        // Claude-style editorial dark palette (used on the marketing Home page)
+        // Monochrome + single-accent palette: near-black/white/gray base,
+        // one sharp lime accent for primary actions, one teal for secondary/
+        // success signals. Token names kept the same as the prior warm
+        // editorial palette (paper/surface/bark/clay/moss/line) so every
+        // component that already references them repaints automatically.
         paper: {
           DEFAULT: "#000000",
-          soft: "#0A0806",
-          deep: "#120F0C",
+          soft: "#050505",
+          deep: "#0A0A0A",
         },
         surface: {
-          DEFAULT: "#1A1613",
-          raised: "#231D17",
+          DEFAULT: "#121212",
+          raised: "#1B1B1B",
         },
         bark: {
-          DEFAULT: "#F5F2EA",
-          muted: "#B9B3A4",
-          faint: "#8B8576",
+          DEFAULT: "#F2F2F0",
+          muted: "#9C9C9C",
+          faint: "#6E6E6E",
         },
         clay: {
-          50: "#FBF0EA",
-          100: "#F6DDD0",
-          300: "#E8A98A",
-          400: "#E2916F",
-          500: "#D97757",
-          600: "#C15F3C",
-          700: "#A34B2E",
+          50: "#F6FFE0",
+          100: "#E9FFB8",
+          300: "#D4FA6E",
+          400: "#C3F53E",
+          500: "#B3EA1E",
+          600: "#93C914",
+          700: "#74A00D",
         },
         moss: {
-          400: "#8A9A7E",
-          500: "#71835F",
-          600: "#5C6C4C",
+          400: "#5EF0D6",
+          500: "#22DDBE",
+          600: "#13B79C",
         },
-        line: "rgba(255,255,255,0.11)",
+        line: "rgba(255,255,255,0.10)",
         ink: {
           900: "#000000", // True pure black
           850: "#050505", // Rich deep black

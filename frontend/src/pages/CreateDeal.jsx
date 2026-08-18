@@ -170,7 +170,7 @@ const CreateDeal = () => {
                     onClick={() => setFormData(p => ({...p, priority: opt.id}))}
                     className={`flex items-center justify-center gap-2 py-3 rounded-xl border text-sm font-medium transition-all duration-300 ${
                       formData.priority === opt.id
-                      ? 'bg-clay-500 text-white border-clay-400'
+                      ? 'bg-clay-500 text-black border-clay-400'
                       : 'bg-surface border-line text-bark-muted hover:border-clay-400/30'
                     }`}
                   >

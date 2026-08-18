@@ -125,7 +125,7 @@ const Completion = () => {
                 >
                   <Star
                     size={30}
-                    fill={(hover || rating) >= star ? '#D97757' : 'transparent'}
+                    fill={(hover || rating) >= star ? '#B3EA1E' : 'transparent'}
                     className={`transition-all duration-300 ${
                       (hover || rating) >= star
                       ? 'text-clay-500'

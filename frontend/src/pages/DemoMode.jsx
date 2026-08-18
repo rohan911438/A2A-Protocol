@@ -228,7 +228,7 @@ const DemoMode = () => {
               <div className="flex gap-3">
                 <button
                   onClick={() => navigate('/dashboard')}
-                  className="px-5 py-2.5 rounded-xl bg-clay-500 text-white text-sm font-semibold hover:bg-clay-600 transition-all"
+                  className="px-5 py-2.5 rounded-xl bg-clay-500 text-black text-sm font-semibold hover:bg-clay-600 transition-all"
                 >
                   Open Dashboard
                 </button>

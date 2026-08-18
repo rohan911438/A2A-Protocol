@@ -66,7 +66,7 @@ const Navbar = () => {
               onMouseLeave={() => setShowBalance(false)}
               className={`px-5 py-2.5 rounded-xl font-semibold text-[13px] transition-all duration-300 flex items-center gap-2 ${connected
                   ? 'bg-surface border border-line text-bark cursor-default'
-                  : 'bg-clay-500 text-white hover:bg-clay-600 shadow-[0_6px_18px_rgba(217,119,87,0.25)]'
+                  : 'bg-clay-500 text-black hover:bg-clay-600 shadow-[0_6px_18px_rgba(179,234,30,0.25)]'
                 }`}
             >
               <Wallet className="w-3.5 h-3.5" />

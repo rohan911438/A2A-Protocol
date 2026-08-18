@@ -36,7 +36,7 @@ const CTA = () => {
           <MagneticButton
             onClick={() => connected ? navigate('/dashboard') : toggleModal()}
             whileTap={{ scale: 0.98 }}
-            className="w-full sm:w-auto group px-7 py-3.5 bg-clay-500 text-white font-semibold rounded-xl transition-colors shadow-[0_8px_24px_rgba(217,119,87,0.3)] hover:bg-clay-600 flex items-center justify-center gap-2"
+            className="w-full sm:w-auto group px-7 py-3.5 bg-clay-500 text-black font-semibold rounded-xl transition-colors shadow-[0_8px_24px_rgba(179,234,30,0.3)] hover:bg-clay-400 flex items-center justify-center gap-2"
           >
             <span>Launch controller</span>
             <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />

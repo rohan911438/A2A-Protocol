@@ -39,42 +39,42 @@ a2a run --role buyer --budget 950 --objective "Acquire compute cluster 0x7"`;
 
 const renderJSCode = () => (
   <code className="text-zinc-400 font-mono text-[11px] leading-relaxed select-text">
-    <span className="text-[#E2916F]">import</span> {"{"} <span className="text-[#E8A98A]">AgentNode</span>, <span className="text-[#E8A98A]">StellarRails</span> {"}"} <span className="text-[#E2916F]">from</span> <span className="text-[#8A9A7E]">'@a2a/protocol'</span>;<br /><br />
+    <span className="text-[#C3F53E]">import</span> {"{"} <span className="text-[#D4FA6E]">AgentNode</span>, <span className="text-[#D4FA6E]">StellarRails</span> {"}"} <span className="text-[#C3F53E]">from</span> <span className="text-[#5EF0D6]">'@a2a/protocol'</span>;<br /><br />
     <span className="text-zinc-600 italic">// Initialize agent with custom negotiation parameters</span><br />
-    <span className="text-[#E2916F]">const</span> <span className="text-white">buyerAgent</span> = <span className="text-[#E2916F]">new</span> <span className="text-[#E8A98A]">AgentNode</span>({"{"}<br />
-    {"  "}role: <span className="text-[#8A9A7E]">'buyer'</span>,<br />
-    {"  "}budget: <span className="text-[#E8A98A]">950</span>, <span className="text-zinc-600 italic">// USDC</span><br />
-    {"  "}objective: <span className="text-[#8A9A7E]">'Acquire high-perf compute cluster 0x7'</span>,<br />
-    {"  "}network: <span className="text-white">StellarRails</span>.<span className="text-[#E8A98A]">TESTNET</span><br />
+    <span className="text-[#C3F53E]">const</span> <span className="text-white">buyerAgent</span> = <span className="text-[#C3F53E]">new</span> <span className="text-[#D4FA6E]">AgentNode</span>({"{"}<br />
+    {"  "}role: <span className="text-[#5EF0D6]">'buyer'</span>,<br />
+    {"  "}budget: <span className="text-[#D4FA6E]">950</span>, <span className="text-zinc-600 italic">// USDC</span><br />
+    {"  "}objective: <span className="text-[#5EF0D6]">'Acquire high-perf compute cluster 0x7'</span>,<br />
+    {"  "}network: <span className="text-white">StellarRails</span>.<span className="text-[#D4FA6E]">TESTNET</span><br />
     {"}"});<br /><br />
     <span className="text-zinc-600 italic">// Run Pareto negotiation & deploy Soroban escrow</span><br />
-    <span className="text-[#E2916F]">const</span> <span className="text-white">escrowResult</span> = <span className="text-[#E2916F]">await</span> <span className="text-white">buyerAgent</span>.<span className="font-semibold text-[#E8A98A]">negotiateAndSettle</span>();<br />
-    <span className="text-white">console</span>.<span className="text-[#E8A98A]">log</span>(<span className="text-[#8A9A7E]">{"`Smart Escrow address deployed: ${"}</span><span className="text-white">escrowResult.address</span><span className="text-[#8A9A7E]">{"}`"}</span>);
+    <span className="text-[#C3F53E]">const</span> <span className="text-white">escrowResult</span> = <span className="text-[#C3F53E]">await</span> <span className="text-white">buyerAgent</span>.<span className="font-semibold text-[#D4FA6E]">negotiateAndSettle</span>();<br />
+    <span className="text-white">console</span>.<span className="text-[#D4FA6E]">log</span>(<span className="text-[#5EF0D6]">{"`Smart Escrow address deployed: ${"}</span><span className="text-white">escrowResult.address</span><span className="text-[#5EF0D6]">{"}`"}</span>);
   </code>
 );
 
 const renderPyCode = () => (
   <code className="text-zinc-400 font-mono text-[11px] leading-relaxed select-text">
-    <span className="text-[#E2916F]">from</span> <span className="text-white">a2a_protocol</span> <span className="text-[#E2916F]">import</span> <span className="text-[#E8A98A]">AgentNode</span>, <span className="text-[#E8A98A]">StellarRails</span><br /><br />
+    <span className="text-[#C3F53E]">from</span> <span className="text-white">a2a_protocol</span> <span className="text-[#C3F53E]">import</span> <span className="text-[#D4FA6E]">AgentNode</span>, <span className="text-[#D4FA6E]">StellarRails</span><br /><br />
     <span className="text-zinc-600 italic"># Initialize agent with custom negotiation parameters</span><br />
-    <span className="text-white">buyer_agent</span> = <span className="text-[#E8A98A]">AgentNode</span>(<br />
-    {"    "}role=<span className="text-[#8A9A7E]">'buyer'</span>,<br />
-    {"    "}budget=<span className="text-[#E8A98A]">950</span>, <span className="text-zinc-600 italic"># USDC</span><br />
-    {"    "}objective=<span className="text-[#8A9A7E]">'Acquire high-perf compute cluster 0x7'</span>,<br />
-    {"    "}network=<span className="text-white">StellarRails</span>.<span className="text-[#E8A98A]">TESTNET</span><br />
+    <span className="text-white">buyer_agent</span> = <span className="text-[#D4FA6E]">AgentNode</span>(<br />
+    {"    "}role=<span className="text-[#5EF0D6]">'buyer'</span>,<br />
+    {"    "}budget=<span className="text-[#D4FA6E]">950</span>, <span className="text-zinc-600 italic"># USDC</span><br />
+    {"    "}objective=<span className="text-[#5EF0D6]">'Acquire high-perf compute cluster 0x7'</span>,<br />
+    {"    "}network=<span className="text-white">StellarRails</span>.<span className="text-[#D4FA6E]">TESTNET</span><br />
     )<br /><br />
     <span className="text-zinc-600 italic"># Run Pareto negotiation & deploy Soroban escrow</span><br />
-    <span className="text-white">escrow_result</span> = <span className="text-white">buyer_agent</span>.<span className="font-semibold text-[#E8A98A]">negotiate_and_settle</span>()<br />
-    <span className="text-[#E8A98A]">print</span>(<span className="text-[#8A9A7E]">{"f\"Smart Escrow address deployed: {"}</span><span className="text-white">escrow_result.address</span><span className="text-[#8A9A7E]">{"}\""}</span>)
+    <span className="text-white">escrow_result</span> = <span className="text-white">buyer_agent</span>.<span className="font-semibold text-[#D4FA6E]">negotiate_and_settle</span>()<br />
+    <span className="text-[#D4FA6E]">print</span>(<span className="text-[#5EF0D6]">{"f\"Smart Escrow address deployed: {"}</span><span className="text-white">escrow_result.address</span><span className="text-[#5EF0D6]">{"}\""}</span>)
   </code>
 );
 
 const renderCLICode = () => (
   <code className="text-zinc-400 font-mono text-[11px] leading-relaxed select-text">
     <span className="text-zinc-600 italic"># Install the global CLI node module</span><br />
-    <span className="text-[#E8A98A]">npm</span> install -g @a2a/protocol-cli<br /><br />
+    <span className="text-[#D4FA6E]">npm</span> install -g @a2a/protocol-cli<br /><br />
     <span className="text-zinc-600 italic"># Spin up buyer agent negotiating for compute resources</span><br />
-    <span className="text-[#E8A98A]">a2a</span> run --role buyer --budget <span className="text-white">950</span> --objective <span className="text-[#8A9A7E]">"Acquire compute cluster 0x7"</span>
+    <span className="text-[#D4FA6E]">a2a</span> run --role buyer --budget <span className="text-white">950</span> --objective <span className="text-[#5EF0D6]">"Acquire compute cluster 0x7"</span>
   </code>
 );
 

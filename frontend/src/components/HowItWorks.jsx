@@ -57,7 +57,7 @@ const HowItWorks = () => {
           <svg className="absolute inset-0 w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 10">
             <motion.line
               x1="12.5" y1="5" x2="87.5" y2="5"
-              stroke="#D97757" strokeWidth="0.4" strokeDasharray="0.1 3" strokeLinecap="round"
+              stroke="#B3EA1E" strokeWidth="0.4" strokeDasharray="0.1 3" strokeLinecap="round"
               initial={{ pathLength: 0, opacity: 0 }}
               whileInView={{ pathLength: 1, opacity: 0.4 }}
               viewport={{ once: true }}
@@ -65,7 +65,7 @@ const HowItWorks = () => {
             />
             {[12.5, 37.5, 62.5, 87.5].map((x, i) => (
               <motion.circle
-                key={x} cx={x} cy="5" r="1.4" fill="#D97757"
+                key={x} cx={x} cy="5" r="1.4" fill="#B3EA1E"
                 initial={{ scale: 0, opacity: 0 }}
                 whileInView={{ scale: 1, opacity: 0.9 }}
                 viewport={{ once: true }}

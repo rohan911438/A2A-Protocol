@@ -300,13 +300,13 @@ const Dashboard = () => {
             <div className="flex items-center gap-1 p-1 rounded-xl bg-surface border border-line">
               <button
                 onClick={() => setActiveTab('active')}
-                className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === 'active' ? 'bg-clay-500 text-white' : 'text-bark-muted hover:text-bark'}`}
+                className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === 'active' ? 'bg-clay-500 text-black' : 'text-bark-muted hover:text-bark'}`}
               >
                 Active
               </button>
               <button
                 onClick={() => setActiveTab('completed')}
-                className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === 'completed' ? 'bg-clay-500 text-white' : 'text-bark-muted hover:text-bark'}`}
+                className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === 'completed' ? 'bg-clay-500 text-black' : 'text-bark-muted hover:text-bark'}`}
               >
                 Archive
               </button>

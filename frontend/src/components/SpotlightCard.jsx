@@ -8,7 +8,7 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
  * combined on one element rather than a static box that just changes
  * border color on hover.
  */
-const SpotlightCard = ({ children, className = '', glow = 'rgba(217,119,87,0.10)' }) => {
+const SpotlightCard = ({ children, className = '', glow = 'rgba(179,234,30,0.10)' }) => {
   const ref = useRef(null);
 
   const rotateX = useMotionValue(0);

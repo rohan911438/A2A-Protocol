@@ -102,14 +102,14 @@ const Features = () => {
                     <line x1="110" y1="10" x2="110" y2="90" stroke="rgba(255,255,255,0.06)" strokeDasharray="3,3" />
 
                     {points.buyer && (
-                      <polyline fill="none" stroke="#D97757" strokeWidth="1.75" points={points.buyer} />
+                      <polyline fill="none" stroke="#B3EA1E" strokeWidth="1.75" points={points.buyer} />
                     )}
                     {points.seller && (
-                      <polyline fill="none" stroke="#8A9A7E" strokeWidth="1.75" points={points.seller} />
+                      <polyline fill="none" stroke="#5EF0D6" strokeWidth="1.75" points={points.seller} />
                     )}
 
                     {chartProgress > 95 && (
-                      <circle cx="210" cy="50" r="3" fill="#D97757" />
+                      <circle cx="210" cy="50" r="3" fill="#B3EA1E" />
                     )}
                   </svg>
                 </div>
@@ -150,7 +150,7 @@ const Features = () => {
             >
               <div className="flex items-center gap-3">
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
-                  escrowLocked ? 'bg-white/5 text-bark-faint' : 'bg-clay-500 text-white'
+                  escrowLocked ? 'bg-white/5 text-bark-faint' : 'bg-clay-500 text-black'
                 }`}>
                   <Key size={13} className={escrowLocked ? 'rotate-0' : 'rotate-45 transition-transform'} />
                 </div>
@@ -246,31 +246,31 @@ const Features = () => {
                   <line x1="40" y1="90" x2="160" y2="90" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
                   <line x1="40" y1="30" x2="160" y2="90" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
 
-                  {activeNode === 0 && <line x1="40" y1="30" x2="160" y2="30" stroke="#D97757" strokeWidth="1.5" />}
-                  {activeNode === 1 && <line x1="160" y1="30" x2="160" y2="90" stroke="#C15F3C" strokeWidth="1.5" />}
-                  {activeNode === 2 && <line x1="160" y1="90" x2="40" y2="90" stroke="#8A9A7E" strokeWidth="1.5" />}
-                  {activeNode === 3 && <line x1="40" y1="90" x2="40" y2="30" stroke="#D97757" strokeWidth="1.5" />}
+                  {activeNode === 0 && <line x1="40" y1="30" x2="160" y2="30" stroke="#B3EA1E" strokeWidth="1.5" />}
+                  {activeNode === 1 && <line x1="160" y1="30" x2="160" y2="90" stroke="#93C914" strokeWidth="1.5" />}
+                  {activeNode === 2 && <line x1="160" y1="90" x2="40" y2="90" stroke="#5EF0D6" strokeWidth="1.5" />}
+                  {activeNode === 3 && <line x1="40" y1="90" x2="40" y2="30" stroke="#B3EA1E" strokeWidth="1.5" />}
 
                   {activeNode === 0 && (
-                    <circle r="2" fill="#D97757">
+                    <circle r="2" fill="#B3EA1E">
                       <animate attributeName="cx" from="40" to="160" dur="1.5s" repeatCount="indefinite" />
                       <animate attributeName="cy" from="30" to="30" dur="1.5s" repeatCount="indefinite" />
                     </circle>
                   )}
                   {activeNode === 1 && (
-                    <circle r="2" fill="#C15F3C">
+                    <circle r="2" fill="#93C914">
                       <animate attributeName="cx" from="160" to="160" dur="1.5s" repeatCount="indefinite" />
                       <animate attributeName="cy" from="30" to="90" dur="1.5s" repeatCount="indefinite" />
                     </circle>
                   )}
                   {activeNode === 2 && (
-                    <circle r="2" fill="#8A9A7E">
+                    <circle r="2" fill="#5EF0D6">
                       <animate attributeName="cx" from="160" to="40" dur="1.5s" repeatCount="indefinite" />
                       <animate attributeName="cy" from="90" to="90" dur="1.5s" repeatCount="indefinite" />
                     </circle>
                   )}
                   {activeNode === 3 && (
-                    <circle r="2" fill="#D97757">
+                    <circle r="2" fill="#B3EA1E">
                       <animate attributeName="cx" from="40" to="40" dur="1.5s" repeatCount="indefinite" />
                       <animate attributeName="cy" from="90" to="30" dur="1.5s" repeatCount="indefinite" />
                     </circle>
@@ -285,7 +285,7 @@ const Features = () => {
                 ].map((node) => (
                   <div key={node.code} className={`absolute ${node.pos} flex flex-col items-center`}>
                     <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold transition-all duration-300 ${
-                      activeNode === node.idx ? 'bg-clay-500 text-white' : 'bg-white/5 text-bark-faint'
+                      activeNode === node.idx ? 'bg-clay-500 text-black' : 'bg-white/5 text-bark-faint'
                     }`}>
                       {node.code}
                     </div>
