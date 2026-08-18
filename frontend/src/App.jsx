@@ -5,7 +5,6 @@ import { MotionConfig } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import WalletModal from './components/WalletModal';
-import NeuralBackground from './components/NeuralBackground';
 import { WalletProvider, useWallet } from './context/WalletContext';
 
 // Pages
@@ -22,11 +21,9 @@ function AppContent() {
   const { connected } = useWallet();
 
   return (
-    <div className="min-h-screen font-body selection:bg-indigo-500/30 selection:text-cyan-400 flex flex-col transition-colors duration-500">
-      <NeuralBackground />
+    <div className="min-h-screen bg-paper font-body selection:bg-clay-500/30 selection:text-clay-400 flex flex-col transition-colors duration-500">
       <Navbar />
       <WalletModal />
-
 
       <main className="flex-grow">
         <Routes>

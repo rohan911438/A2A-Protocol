@@ -9,156 +9,84 @@ const Navbar = () => {
   const [showBalance, setShowBalance] = useState(false);
   const isHome = useLocation().pathname === '/';
 
-  if (isHome) {
-    return (
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-paper/85 border-b border-line backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-surface border border-line flex items-center justify-center overflow-hidden group-hover:border-clay-400/40 transition-colors duration-300">
-              <img src={logo} className="w-7 h-7 object-contain group-hover:scale-105 transition-transform duration-500" alt="Logo" />
-            </div>
-            <div className="flex flex-col -space-y-1">
-              <span className="text-lg font-serif font-medium text-bark tracking-tight">
-                A2A <span className="text-bark-faint font-normal">Protocol</span>
-              </span>
-              <span className="text-[9px] text-bark-faint font-semibold uppercase tracking-[0.25em]">Agent Economy on Stellar</span>
-            </div>
-          </Link>
-
-          <div className="hidden md:flex items-center gap-9">
-            <a href="#how-it-works" className="text-[13px] font-medium text-bark-muted hover:text-bark transition-colors duration-300">How it works</a>
-            <a href="#features" className="text-[13px] font-medium text-bark-muted hover:text-bark transition-colors duration-300">Capabilities</a>
-            <a href="#developer-sdk" className="text-[13px] font-medium text-bark-muted hover:text-bark transition-colors duration-300">Developers</a>
-
-            <div className="flex items-center gap-3 relative">
-              <button
-                onClick={connected ? undefined : toggleModal}
-                onMouseEnter={() => connected && setShowBalance(true)}
-                onMouseLeave={() => setShowBalance(false)}
-                className={`px-5 py-2.5 rounded-xl font-semibold text-[13px] transition-all duration-300 flex items-center gap-2 ${connected
-                    ? 'bg-surface border border-line text-bark cursor-default'
-                    : 'bg-clay-500 text-white hover:bg-clay-600 shadow-[0_6px_18px_rgba(217,119,87,0.25)]'
-                  }`}
-              >
-                <Wallet className="w-3.5 h-3.5" />
-                {connected ? formatAddress(account) : 'Connect wallet'}
-              </button>
-
-              {connected && showBalance && (
-                <div className="absolute top-14 right-0 z-50 rounded-2xl bg-surface border border-line p-5 min-w-[240px] shadow-[0_20px_50px_rgba(0,0,0,0.4)] animate-fadeInUp">
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center text-[10px] text-bark-faint uppercase tracking-widest font-bold">
-                      <span>Active assets</span>
-                      <span className="px-2 py-0.5 bg-paper-deep rounded-full">{network}</span>
-                    </div>
-                    <div className="space-y-3">
-                      {balances.length > 0 ? balances.map((b, i) => (
-                        <div key={i} className="flex justify-between items-end border-b border-line pb-2 last:border-0">
-                          <span className="text-sm font-bold text-bark">{parseFloat(b.balance).toFixed(4)}</span>
-                          <span className="text-[10px] font-mono text-bark-muted font-bold">{b.asset}</span>
-                        </div>
-                      )) : (
-                        <div className="text-xs text-bark-faint italic">Syncing with Stellar...</div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {connected && (
-                <button
-                  onClick={disconnect}
-                  className="p-2.5 rounded-xl bg-surface border border-line text-bark-faint hover:text-clay-400 hover:border-clay-400/40 transition-all duration-300"
-                  title="Disconnect wallet"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
-    );
-  }
-
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 border-b border-white/5 backdrop-blur-md">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-paper/85 border-b border-line backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="relative w-11 h-11 rounded-xl bg-zinc-950 border border-white/5 p-[1px] shadow-[0_0_20px_rgba(255,255,255,0.01)] group-hover:shadow-[0_0_25px_rgba(255,255,255,0.05)] group-hover:border-zinc-800 transition-all duration-500">
-            <div className="w-full h-full rounded-[10px] bg-[#000000] flex items-center justify-center overflow-hidden">
-              {/* Background neural pulse in icon */}
-              <div className="absolute inset-0 bg-white/[0.01] animate-neural-pulse" />
-              <img src={logo} className="w-8 h-8 object-contain z-10 group-hover:scale-105 transition-transform duration-500" alt="Logo" />
-            </div>
+          <div className="w-10 h-10 rounded-xl bg-surface border border-line flex items-center justify-center overflow-hidden group-hover:border-clay-400/40 transition-colors duration-300">
+            <img src={logo} className="w-7 h-7 object-contain group-hover:scale-105 transition-transform duration-500" alt="Logo" />
           </div>
           <div className="flex flex-col -space-y-1">
-            <span className="text-xl font-display font-bold text-white tracking-tighter uppercase group-hover:text-glow-white transition-all">
-              A2A <span className="text-zinc-500 font-normal group-hover:text-zinc-400 transition-colors">PROTOCOL</span>
+            <span className="text-lg font-serif font-medium text-bark tracking-tight">
+              A2A <span className="text-bark-faint font-normal">Protocol</span>
             </span>
-            <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-[0.3em]">Neural Swarm Intelligence</span>
-          </div>
-          <div className="ml-2 px-2 py-0.5 rounded-full bg-zinc-950 border border-white/5 text-[9px] font-mono font-bold text-zinc-400 uppercase tracking-tighter shadow-[0_0_15px_rgba(255,255,255,0.01)]">
-            {network}
+            <span className="text-[9px] text-bark-faint font-semibold uppercase tracking-[0.25em]">Agent Economy on Stellar</span>
           </div>
         </Link>
 
-        <div className="hidden md:flex items-center gap-8">
-          {!connected ? (
-            <NavLink
-              to="/"
-              className={({ isActive }) => `text-[11px] font-bold uppercase tracking-widest transition-all duration-300 ${isActive ? 'text-white text-glow-white font-extrabold' : 'text-zinc-500 hover:text-white'}`}
-            >
-              Nexus
-            </NavLink>
+        <div className="hidden md:flex items-center gap-9">
+          {isHome ? (
+            <>
+              <a href="#how-it-works" className="text-[13px] font-medium text-bark-muted hover:text-bark transition-colors duration-300">How it works</a>
+              <a href="#features" className="text-[13px] font-medium text-bark-muted hover:text-bark transition-colors duration-300">Capabilities</a>
+              <a href="#developer-sdk" className="text-[13px] font-medium text-bark-muted hover:text-bark transition-colors duration-300">Developers</a>
+            </>
           ) : (
-            <div className="flex items-center gap-10">
+            <>
               <NavLink
                 to="/dashboard"
-                className={({ isActive }) => `text-[11px] font-bold uppercase tracking-widest transition-all duration-300 relative group ${isActive ? 'text-white font-extrabold' : 'text-zinc-500 hover:text-white'}`}
+                className={({ isActive }) => `text-[13px] font-medium transition-colors duration-300 relative pb-1 ${isActive ? 'text-bark' : 'text-bark-muted hover:text-bark'}`}
               >
-                Control Center
-                <span className="absolute -bottom-2 left-0 w-0 h-0.5 bg-white transition-all duration-500 group-hover:w-full shadow-[0_0_10px_rgba(255,255,255,0.4)]"></span>
+                {({ isActive }) => (
+                  <>
+                    Dashboard
+                    {isActive && <span className="absolute -bottom-0.5 left-0 right-0 h-px bg-clay-400" />}
+                  </>
+                )}
               </NavLink>
               <NavLink
                 to="/create-deal"
-                className={({ isActive }) => `text-[11px] font-bold uppercase tracking-widest transition-all duration-300 relative group ${isActive ? 'text-white font-extrabold' : 'text-zinc-500 hover:text-white'}`}
+                className={({ isActive }) => `text-[13px] font-medium transition-colors duration-300 relative pb-1 ${isActive ? 'text-bark' : 'text-bark-muted hover:text-bark'}`}
               >
-                Assemble Agent
-                <span className="absolute -bottom-2 left-0 w-0 h-0.5 bg-white transition-all duration-500 group-hover:w-full shadow-[0_0_10px_rgba(255,255,255,0.4)]"></span>
+                {({ isActive }) => (
+                  <>
+                    New deal
+                    {isActive && <span className="absolute -bottom-0.5 left-0 right-0 h-px bg-clay-400" />}
+                  </>
+                )}
               </NavLink>
-            </div>
+            </>
           )}
 
-          <div className="flex items-center gap-4 relative">
+          <div className="flex items-center gap-3 relative">
             <button
               onClick={connected ? undefined : toggleModal}
               onMouseEnter={() => connected && setShowBalance(true)}
               onMouseLeave={() => setShowBalance(false)}
-              className={`px-6 py-2 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all duration-500 flex items-center gap-2.5 ${connected
-                  ? 'bg-zinc-950 border border-zinc-800 text-white cursor-default shadow-[inset_0_0_15px_rgba(255,255,255,0.03)]'
-                  : 'bg-white text-black hover:bg-zinc-100 hover:scale-102 active:scale-98 shadow-[0_0_20px_rgba(255,255,255,0.05)]'
+              className={`px-5 py-2.5 rounded-xl font-semibold text-[13px] transition-all duration-300 flex items-center gap-2 ${connected
+                  ? 'bg-surface border border-line text-bark cursor-default'
+                  : 'bg-clay-500 text-white hover:bg-clay-600 shadow-[0_6px_18px_rgba(217,119,87,0.25)]'
                 }`}
             >
               <Wallet className="w-3.5 h-3.5" />
-              {connected ? `${formatAddress(account)}` : 'Initiate Handshake'}
+              {connected ? formatAddress(account) : 'Connect wallet'}
             </button>
 
             {connected && showBalance && (
-              <div className="absolute top-16 right-0 z-50 rounded-2xl bg-zinc-950/95 border border-zinc-900 p-5 min-w-[240px] shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-3xl animate-fadeInUp animate-floaty">
+              <div className="absolute top-14 right-0 z-50 rounded-2xl bg-surface border border-line p-5 min-w-[240px] shadow-[0_20px_50px_rgba(0,0,0,0.4)] animate-fadeInUp">
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center text-[10px] text-zinc-500 uppercase tracking-widest font-black">
-                    <span>Active Assets</span>
-                    <span className="px-2 py-0.5 bg-zinc-900 rounded-full border border-zinc-800">{network}</span>
+                  <div className="flex justify-between items-center text-[10px] text-bark-faint uppercase tracking-widest font-bold">
+                    <span>Active assets</span>
+                    <span className="px-2 py-0.5 bg-paper-deep rounded-full">{network}</span>
                   </div>
                   <div className="space-y-3">
                     {balances.length > 0 ? balances.map((b, i) => (
-                      <div key={i} className="flex justify-between items-end border-b border-zinc-900/60 pb-2 last:border-0 group cursor-pointer hover:bg-zinc-900/40 p-1 rounded-lg transition-colors">
-                        <span className="text-sm font-black text-white group-hover:text-white transition-colors">{parseFloat(b.balance).toFixed(4)}</span>
-                        <span className="text-[10px] font-mono text-zinc-400 font-bold">{b.asset}</span>
+                      <div key={i} className="flex justify-between items-end border-b border-line pb-2 last:border-0">
+                        <span className="text-sm font-bold text-bark">{parseFloat(b.balance).toFixed(4)}</span>
+                        <span className="text-[10px] font-mono text-bark-muted font-bold">{b.asset}</span>
                       </div>
                     )) : (
-                      <div className="text-xs text-zinc-600 italic">Syncing with Stellar...</div>
+                      <div className="text-xs text-bark-faint italic">Syncing with Stellar...</div>
                     )}
                   </div>
                 </div>
@@ -168,10 +96,10 @@ const Navbar = () => {
             {connected && (
               <button
                 onClick={disconnect}
-                className="p-2.5 rounded-xl bg-zinc-950 border border-zinc-900 text-zinc-500 hover:text-white hover:border-zinc-700 hover:bg-zinc-900/20 transition-all duration-300 group"
-                title="Deauthorize Session"
+                className="p-2.5 rounded-xl bg-surface border border-line text-bark-faint hover:text-clay-400 hover:border-clay-400/40 transition-all duration-300"
+                title="Disconnect wallet"
               >
-                <LogOut className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                <LogOut className="w-4 h-4" />
               </button>
             )}
           </div>
