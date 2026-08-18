@@ -1,0 +1,6 @@
+# Newer Rust/LLVM toolchains emit the wasm reference-types proposal by
+# default for wasm32-unknown-unknown, but Soroban's host wasm parser rejects
+# it ("reference-types not enabled: zero byte expected"). Pin codegen to the
+# wasm feature set Soroban actually supports.
+[target.wasm32-unknown-unknown]
+rustflags = ["-C", "target-feature=-reference-types"]
