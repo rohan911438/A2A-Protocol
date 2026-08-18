@@ -1,21 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { MotionConfig } from 'framer-motion';
+import { Loader2 } from 'lucide-react';
 // Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import WalletModal from './components/WalletModal';
 import { WalletProvider, useWallet } from './context/WalletContext';
 
-// Pages
+// Home is the first thing most visitors (and judges) see, so it stays in
+// the main bundle for the fastest first paint. Every other route is only
+// reached after a click, so it's lazy-loaded - keeps the initial JS payload
+// down instead of shipping the whole app (negotiation chat, escrow flows,
+// demo walkthrough, ...) up front.
 import Home from './pages/Home';
-import CreateDeal from './pages/CreateDeal';
-import NegotiationRoom from './pages/NegotiationRoom';
-import DealSummary from './pages/DealSummary';
-import Dashboard from './pages/Dashboard';
-import ActiveDeal from './pages/ActiveDeal';
-import Completion from './pages/Completion';
-import DemoMode from './pages/DemoMode';
+const CreateDeal = lazy(() => import('./pages/CreateDeal'));
+const NegotiationRoom = lazy(() => import('./pages/NegotiationRoom'));
+const DealSummary = lazy(() => import('./pages/DealSummary'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const ActiveDeal = lazy(() => import('./pages/ActiveDeal'));
+const Completion = lazy(() => import('./pages/Completion'));
+const DemoMode = lazy(() => import('./pages/DemoMode'));
+
+function RouteFallback() {
+  return (
+    <div className="pt-40 pb-20 px-6 min-h-screen flex flex-col items-center justify-center">
+      <Loader2 className="text-clay-400 animate-spin" size={28} />
+    </div>
+  );
+}
 
 function AppContent() {
   const { connected } = useWallet();
@@ -26,16 +39,18 @@ function AppContent() {
       <WalletModal />
 
       <main className="flex-grow">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/create-deal" element={connected ? <CreateDeal /> : <Navigate to="/" />} />
-          <Route path="/negotiation-room" element={<NegotiationRoom />} />
-          <Route path="/summary" element={connected ? <DealSummary /> : <Navigate to="/" />} />
-          <Route path="/dashboard" element={connected ? <Dashboard /> : <Navigate to="/" />} />
-          <Route path="/active-deal" element={connected ? <ActiveDeal /> : <Navigate to="/" />} />
-          <Route path="/completion" element={connected ? <Completion /> : <Navigate to="/" />} />
-          <Route path="/demo" element={<DemoMode />} />
-        </Routes>
+        <Suspense fallback={<RouteFallback />}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/create-deal" element={connected ? <CreateDeal /> : <Navigate to="/" />} />
+            <Route path="/negotiation-room" element={<NegotiationRoom />} />
+            <Route path="/summary" element={connected ? <DealSummary /> : <Navigate to="/" />} />
+            <Route path="/dashboard" element={connected ? <Dashboard /> : <Navigate to="/" />} />
+            <Route path="/active-deal" element={connected ? <ActiveDeal /> : <Navigate to="/" />} />
+            <Route path="/completion" element={connected ? <Completion /> : <Navigate to="/" />} />
+            <Route path="/demo" element={<DemoMode />} />
+          </Routes>
+        </Suspense>
       </main>
 
       <Footer />
