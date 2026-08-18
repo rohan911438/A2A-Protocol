@@ -179,7 +179,8 @@ const NegotiationRoom = () => {
   };
 
   return (
-    <div className="pt-20 min-h-screen bg-paper flex flex-col items-center relative">
+    <div className="pt-20 min-h-screen bg-paper flex flex-col items-center relative overflow-hidden">
+      <div className="animate-aurora-a absolute top-[-5%] left-1/2 -translate-x-1/2 w-[900px] h-[420px] bg-clay-500/5 blur-[140px] rounded-full pointer-events-none -z-10" />
       {/* Header */}
       <div className="w-full h-20 bg-paper/90 backdrop-blur-md border-b border-line flex items-center z-20 px-6">
         <div className="max-w-6xl mx-auto w-full flex items-center justify-between">

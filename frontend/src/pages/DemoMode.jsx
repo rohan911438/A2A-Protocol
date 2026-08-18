@@ -160,8 +160,8 @@ const DemoMode = () => {
   };
 
   return (
-    <div className="pt-32 pb-24 px-6 min-h-screen bg-paper relative">
-      <div className="absolute top-[-5%] left-1/2 -translate-x-1/2 w-[900px] h-[420px] bg-clay-500/5 blur-[140px] rounded-full pointer-events-none -z-10" />
+    <div className="pt-32 pb-24 px-6 min-h-screen bg-paper relative overflow-hidden">
+      <div className="animate-aurora-a absolute top-[-5%] left-1/2 -translate-x-1/2 w-[900px] h-[420px] bg-clay-500/5 blur-[140px] rounded-full pointer-events-none -z-10" />
 
       <div className="max-w-5xl mx-auto w-full space-y-10">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">

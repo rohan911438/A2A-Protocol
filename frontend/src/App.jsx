@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { MotionConfig } from 'framer-motion';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { MotionConfig, AnimatePresence, motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 // Components
 import Navbar from './components/Navbar';
@@ -30,8 +30,16 @@ function RouteFallback() {
   );
 }
 
+const pageTransition = {
+  initial: { opacity: 0, y: 14 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -10 },
+  transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+};
+
 function AppContent() {
   const { connected } = useWallet();
+  const location = useLocation();
 
   return (
     <div className="min-h-screen bg-paper font-body selection:bg-clay-500/30 selection:text-clay-400 flex flex-col transition-colors duration-500">
@@ -40,16 +48,26 @@ function AppContent() {
 
       <main className="flex-grow">
         <Suspense fallback={<RouteFallback />}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/create-deal" element={connected ? <CreateDeal /> : <Navigate to="/" />} />
-            <Route path="/negotiation-room" element={<NegotiationRoom />} />
-            <Route path="/summary" element={connected ? <DealSummary /> : <Navigate to="/" />} />
-            <Route path="/dashboard" element={connected ? <Dashboard /> : <Navigate to="/" />} />
-            <Route path="/active-deal" element={connected ? <ActiveDeal /> : <Navigate to="/" />} />
-            <Route path="/completion" element={connected ? <Completion /> : <Navigate to="/" />} />
-            <Route path="/demo" element={<DemoMode />} />
-          </Routes>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={location.pathname}
+              initial={pageTransition.initial}
+              animate={pageTransition.animate}
+              exit={pageTransition.exit}
+              transition={pageTransition.transition}
+            >
+              <Routes location={location}>
+                <Route path="/" element={<Home />} />
+                <Route path="/create-deal" element={connected ? <CreateDeal /> : <Navigate to="/" />} />
+                <Route path="/negotiation-room" element={<NegotiationRoom />} />
+                <Route path="/summary" element={connected ? <DealSummary /> : <Navigate to="/" />} />
+                <Route path="/dashboard" element={connected ? <Dashboard /> : <Navigate to="/" />} />
+                <Route path="/active-deal" element={connected ? <ActiveDeal /> : <Navigate to="/" />} />
+                <Route path="/completion" element={connected ? <Completion /> : <Navigate to="/" />} />
+                <Route path="/demo" element={<DemoMode />} />
+              </Routes>
+            </motion.div>
+          </AnimatePresence>
         </Suspense>
       </main>
 

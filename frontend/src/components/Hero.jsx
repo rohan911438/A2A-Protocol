@@ -31,8 +31,14 @@ const Hero = () => {
 
   return (
     <section className="relative pt-44 pb-28 px-6 bg-paper overflow-hidden">
-      {/* Soft warm glow, restrained */}
-      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-clay-500/10 blur-[140px] rounded-full pointer-events-none -z-10" />
+      {/* Cinematic ambient glow - three slow-drifting warm blobs instead of
+          a single static circle, restrained in opacity so it reads as
+          ambient light, not a spotlight. */}
+      <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
+        <div className="animate-aurora-a absolute top-[-15%] left-[8%] w-[700px] h-[500px] bg-clay-500/10 blur-[130px] rounded-full" />
+        <div className="animate-aurora-b absolute top-[-5%] right-[5%] w-[550px] h-[420px] bg-moss-500/[0.07] blur-[130px] rounded-full" />
+        <div className="animate-aurora-c absolute top-[10%] left-1/2 -translate-x-1/2 w-[600px] h-[380px] bg-clay-400/[0.06] blur-[140px] rounded-full" />
+      </div>
 
       <motion.div
         variants={containerVariants}
@@ -52,7 +58,7 @@ const Hero = () => {
           className="text-5xl sm:text-6xl lg:text-7xl font-serif font-medium text-bark tracking-tight leading-[1.08]"
         >
           Autonomous agents that{' '}
-          <span className="italic text-clay-400">negotiate</span>,<br className="hidden sm:block" />
+          <span className="italic text-clay-400 animate-shimmer-glow">negotiate</span>,<br className="hidden sm:block" />
           settle, and pay each other.
         </motion.h1>
 

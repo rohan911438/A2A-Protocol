@@ -170,8 +170,41 @@
 :root[data-perf='low'] .animate-scan-line,
 :root[data-perf='low'] .animate-pulse-glow,
 :root[data-perf='low'] .animate-neural-pulse,
-:root[data-perf='low'] .animate-fadeInUp {
+:root[data-perf='low'] .animate-fadeInUp,
+:root[data-perf='low'] .animate-aurora-a,
+:root[data-perf='low'] .animate-aurora-b,
+:root[data-perf='low'] .animate-aurora-c,
+:root[data-perf='low'] .animate-shimmer-glow {
   animation: none !important;
+}
+
+/* Cinematic ambient background: slow-drifting warm glows, GPU-only
+   (transform + opacity) so they stay smooth even on modest hardware. */
+@keyframes aurora-drift-a {
+  0%, 100% { transform: translate(-6%, -4%) scale(1); opacity: 0.75; }
+  50% { transform: translate(6%, 5%) scale(1.15); opacity: 1; }
+}
+
+@keyframes aurora-drift-b {
+  0%, 100% { transform: translate(5%, 6%) scale(1.05); opacity: 0.6; }
+  50% { transform: translate(-7%, -3%) scale(0.95); opacity: 0.9; }
+}
+
+@keyframes aurora-drift-c {
+  0%, 100% { transform: translate(0%, 4%) scale(0.95); opacity: 0.5; }
+  50% { transform: translate(3%, -6%) scale(1.1); opacity: 0.8; }
+}
+
+.animate-aurora-a {
+  animation: aurora-drift-a 22s ease-in-out infinite;
+}
+
+.animate-aurora-b {
+  animation: aurora-drift-b 26s ease-in-out infinite;
+}
+
+.animate-aurora-c {
+  animation: aurora-drift-c 30s ease-in-out infinite;
 }
 
 /* Custom sleek dark scrollbar */
@@ -192,17 +225,17 @@
 
 /* Shimmer glow text effect keyframes */
 @keyframes shimmer-glow {
-  0% { 
+  0% {
     background-position: 0% 50%;
-    filter: drop-shadow(0 0 10px rgba(34, 211, 238, 0.1));
+    filter: drop-shadow(0 0 10px rgba(217, 119, 87, 0.15));
   }
-  50% { 
+  50% {
     background-position: 100% 50%;
-    filter: drop-shadow(0 0 25px rgba(99, 102, 241, 0.3));
+    filter: drop-shadow(0 0 22px rgba(217, 119, 87, 0.35));
   }
-  100% { 
+  100% {
     background-position: 0% 50%;
-    filter: drop-shadow(0 0 10px rgba(34, 211, 238, 0.1));
+    filter: drop-shadow(0 0 10px rgba(217, 119, 87, 0.15));
   }
 }
 
