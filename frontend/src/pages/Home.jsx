@@ -1,5 +1,6 @@
 import React from 'react';
 import Hero from '../components/Hero';
+import TechMarquee from '../components/TechMarquee';
 import HowItWorks from '../components/HowItWorks';
 import Features from '../components/Features';
 import DevSDK from '../components/DevSDK';
@@ -9,6 +10,7 @@ const Home = () => {
   return (
     <>
       <Hero />
+      <TechMarquee />
       <HowItWorks />
       <Features />
       <DevSDK />

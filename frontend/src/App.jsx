@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { MotionConfig, AnimatePresence, motion } from 'framer-motion';
+import { MotionConfig, AnimatePresence, motion, useScroll, useSpring } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 // Components
 import Navbar from './components/Navbar';
@@ -37,6 +37,18 @@ const pageTransition = {
   transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
 };
 
+function ScrollProgressBar() {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30, restDelta: 0.001 });
+  return (
+    <motion.div
+      style={{ scaleX }}
+      className="fixed top-0 left-0 right-0 h-[2px] bg-clay-500 origin-left z-[150]"
+      aria-hidden="true"
+    />
+  );
+}
+
 function AppContent() {
   const { connected } = useWallet();
   const location = useLocation();
@@ -44,6 +56,7 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-paper font-body selection:bg-clay-500/30 selection:text-clay-400 flex flex-col transition-colors duration-500">
       <div className="grain-overlay" aria-hidden="true" />
+      <ScrollProgressBar />
       <Navbar />
       <WalletModal />
 

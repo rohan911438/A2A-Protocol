@@ -224,6 +224,24 @@
   display: none;
 }
 
+/* Continuous-scroll tech marquee */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee-scroll 32s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+:root[data-perf='low'] .animate-marquee {
+  animation: none !important;
+}
+
 /* Custom sleek dark scrollbar */
 ::-webkit-scrollbar {
   width: 5px;

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useWallet } from '../context/WalletContext';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import MagneticButton from './MagneticButton';
 
 const CTA = () => {
   const navigate = useNavigate();
@@ -32,24 +33,22 @@ const CTA = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
-          <motion.button
+          <MagneticButton
             onClick={() => connected ? navigate('/dashboard') : toggleModal()}
-            whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="w-full sm:w-auto group px-7 py-3.5 bg-clay-500 text-white font-semibold rounded-xl transition-all shadow-[0_8px_24px_rgba(217,119,87,0.3)] hover:bg-clay-600 flex items-center justify-center gap-2"
+            className="w-full sm:w-auto group px-7 py-3.5 bg-clay-500 text-white font-semibold rounded-xl transition-colors shadow-[0_8px_24px_rgba(217,119,87,0.3)] hover:bg-clay-600 flex items-center justify-center gap-2"
           >
             <span>Launch controller</span>
             <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
-          </motion.button>
+          </MagneticButton>
 
-          <motion.button
+          <MagneticButton
             onClick={() => window.open('https://github.com/rohan911438/A2A-Protocol', '_blank')}
-            whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="w-full sm:w-auto px-7 py-3.5 bg-white/5 border border-white/10 text-white font-semibold rounded-xl hover:bg-white/10 transition-all"
+            className="w-full sm:w-auto px-7 py-3.5 bg-white/5 border border-white/10 text-white font-semibold rounded-xl hover:bg-white/10 transition-colors"
           >
             View on GitHub
-          </motion.button>
+          </MagneticButton>
         </div>
       </motion.div>
     </section>

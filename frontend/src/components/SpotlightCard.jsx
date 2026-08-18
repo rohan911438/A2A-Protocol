@@ -1,25 +1,51 @@
 import React, { useRef } from 'react';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
 /**
- * A paper-card that tracks the cursor and reveals a soft warm glow under
- * it on hover. Plain DOM mutation (no React state) so the glow follows the
- * mouse at 60fps without triggering a re-render per pointer move.
+ * A paper-card that tracks the cursor: a soft warm glow follows the pointer,
+ * and the card tilts slightly in 3D toward it (perspective + rotateX/Y),
+ * springing back flat on leave. Two classic "someone designed this" cues
+ * combined on one element rather than a static box that just changes
+ * border color on hover.
  */
 const SpotlightCard = ({ children, className = '', glow = 'rgba(217,119,87,0.10)' }) => {
   const ref = useRef(null);
+
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+  const springRotateX = useSpring(rotateX, { stiffness: 220, damping: 20, mass: 0.5 });
+  const springRotateY = useSpring(rotateY, { stiffness: 220, damping: 20, mass: 0.5 });
+  const scale = useSpring(1, { stiffness: 220, damping: 20 });
 
   const handleMouseMove = (e) => {
     const el = ref.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
-    el.style.setProperty('--spot-x', `${e.clientX - rect.left}px`);
-    el.style.setProperty('--spot-y', `${e.clientY - rect.top}px`);
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+    el.style.setProperty('--spot-x', `${px}px`);
+    el.style.setProperty('--spot-y', `${py}px`);
+
+    const relX = (px / rect.width) - 0.5;
+    const relY = (py / rect.height) - 0.5;
+    rotateY.set(relX * 6);
+    rotateX.set(relY * -6);
+  };
+
+  const handleMouseEnter = () => scale.set(1.012);
+  const handleMouseLeave = () => {
+    rotateX.set(0);
+    rotateY.set(0);
+    scale.set(1);
   };
 
   return (
-    <div
+    <motion.div
       ref={ref}
       onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={{ rotateX: springRotateX, rotateY: springRotateY, scale, transformPerspective: 800 }}
       className="paper-card relative overflow-hidden h-full"
     >
       <div
@@ -29,7 +55,7 @@ const SpotlightCard = ({ children, className = '', glow = 'rgba(217,119,87,0.10)
         }}
       />
       <div className={`relative z-10 h-full ${className}`}>{children}</div>
-    </div>
+    </motion.div>
   );
 };
 
