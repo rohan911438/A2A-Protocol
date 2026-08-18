@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Play, CheckCircle2, Loader2, AlertTriangle, ArrowRight, Terminal, Coins, ShieldCheck } from 'lucide-react';
+import { Play, CheckCircle2, Loader2, AlertTriangle, ArrowRight, Sparkles, ShieldCheck } from 'lucide-react';
 import {
   createDeal,
   acceptDealWithWallet,
@@ -160,53 +160,53 @@ const DemoMode = () => {
   };
 
   return (
-    <div className="pt-28 pb-24 px-6 min-h-screen flex flex-col items-center relative overflow-hidden">
-      <div className="max-w-5xl w-full space-y-10 z-10">
+    <div className="pt-32 pb-24 px-6 min-h-screen bg-paper relative">
+      <div className="absolute top-[-5%] left-1/2 -translate-x-1/2 w-[900px] h-[420px] bg-clay-500/5 blur-[140px] rounded-full pointer-events-none -z-10" />
+
+      <div className="max-w-5xl mx-auto w-full space-y-10">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] font-black uppercase tracking-[0.3em]">
-              <Terminal size={13} /> Demo Mode
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-clay-500/10 border border-clay-500/25 text-clay-400 text-xs font-semibold">
+              <Sparkles size={13} /> Demo mode
             </div>
-            <h1 className="text-5xl md:text-6xl font-display font-black text-white uppercase tracking-tight leading-none">
-              Instant Product Walkthrough
+            <h1 className="text-4xl md:text-5xl font-serif font-medium text-bark tracking-tight">
+              Instant product walkthrough
             </h1>
-            <p className="text-slate/80 max-w-2xl text-sm">
+            <p className="text-bark-muted max-w-2xl text-sm leading-relaxed">
               One-click simulation of the full A2A lifecycle: negotiation, escrow, verification, and payment release.
             </p>
           </div>
           <button
             onClick={runDemo}
             disabled={running}
-            className="px-8 py-4 rounded-2xl bg-white text-ink-900 font-black uppercase tracking-[0.2em] text-xs shadow-glow hover:scale-[1.02] transition-all disabled:opacity-60"
+            className="btn-clay flex items-center gap-2 disabled:opacity-60"
           >
-            <span className="inline-flex items-center gap-2">
-              {running ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />} {running ? 'Running Demo...' : 'Run Demo'}
-            </span>
+            {running ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />} {running ? 'Running demo...' : 'Run demo'}
           </button>
         </div>
 
-        <div className="glass-morphism border border-white/10 rounded-[2rem] p-6 md:p-8 space-y-6">
+        <div className="paper-card p-6 md:p-8 space-y-6">
           <div>
-            <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.3em] font-black text-slate/70 mb-2">
-              <span>Demo Progress</span>
+            <div className="flex items-center justify-between text-[11px] font-semibold text-bark-faint uppercase tracking-widest mb-2">
+              <span>Progress</span>
               <span>{progress}%</span>
             </div>
-            <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-              <motion.div className="h-full bg-gradient-to-r from-indigo-500 via-cyan-400 to-purple-500" animate={{ width: `${progress}%` }} />
+            <div className="h-2 rounded-full bg-surface-raised overflow-hidden">
+              <motion.div className="h-full bg-clay-500" animate={{ width: `${progress}%` }} />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {steps.map((step, idx) => (
-              <div key={step.label} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+              <div key={step.label} className="rounded-xl border border-line bg-surface p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <div className="text-[10px] font-black uppercase tracking-[0.25em] text-indigo-300 mb-1">Step {idx + 1}</div>
-                    <div className="text-sm font-bold text-white">{step.label}</div>
-                    <div className="text-xs text-slate/80 mt-2">{step.message}</div>
+                    <div className="text-[11px] font-semibold text-clay-400 uppercase tracking-widest mb-1">Step {idx + 1}</div>
+                    <div className="text-sm font-semibold text-bark">{step.label}</div>
+                    <div className="text-xs text-bark-faint mt-1.5">{step.message}</div>
                   </div>
-                  {step.status === 'done' && <CheckCircle2 size={18} className="text-emerald-400 shrink-0" />}
-                  {step.status === 'running' && <Loader2 size={18} className="text-cyan-300 animate-spin shrink-0" />}
+                  {step.status === 'done' && <CheckCircle2 size={18} className="text-moss-400 shrink-0" />}
+                  {step.status === 'running' && <Loader2 size={18} className="text-clay-400 animate-spin shrink-0" />}
                   {step.status === 'error' && <AlertTriangle size={18} className="text-red-400 shrink-0" />}
                 </div>
               </div>
@@ -214,29 +214,29 @@ const DemoMode = () => {
           </div>
 
           {error && (
-            <div className="rounded-2xl border border-red-400/20 bg-red-400/10 p-4 text-xs text-red-300 uppercase tracking-[0.15em] font-black">
+            <div className="rounded-xl border border-red-400/20 bg-red-400/10 p-4 text-sm text-red-300">
               {error}
             </div>
           )}
 
           {summary && (
-            <div className="rounded-2xl border border-emerald-400/30 bg-emerald-400/10 p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="rounded-xl border border-moss-400/25 bg-moss-400/10 p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div className="space-y-1">
-                <div className="text-[10px] uppercase tracking-[0.25em] font-black text-emerald-300 inline-flex items-center gap-2"><ShieldCheck size={14} /> Demo Completed</div>
-                <div className="text-sm text-white font-bold">Deal {summary.dealId.slice(0, 8)}... finalized at {summary.finalPrice} XLM</div>
+                <div className="text-xs font-semibold text-moss-400 inline-flex items-center gap-2"><ShieldCheck size={14} /> Demo completed</div>
+                <div className="text-sm text-bark font-medium">Deal {summary.dealId.slice(0, 8)}... finalized at {summary.finalPrice} XLM</div>
               </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => navigate('/dashboard')}
-                  className="px-5 py-3 rounded-xl bg-white text-ink-900 text-xs font-black uppercase tracking-[0.2em]"
+                  className="px-5 py-2.5 rounded-xl bg-clay-500 text-white text-sm font-semibold hover:bg-clay-600 transition-all"
                 >
                   Open Dashboard
                 </button>
                 <button
                   onClick={() => navigate('/completion', { state: { dealId: summary.dealId } })}
-                  className="px-5 py-3 rounded-xl bg-white/10 border border-white/20 text-white text-xs font-black uppercase tracking-[0.2em] inline-flex items-center gap-2"
+                  className="px-5 py-2.5 rounded-xl bg-surface border border-line text-bark text-sm font-semibold inline-flex items-center gap-2 hover:border-clay-400/30 transition-all"
                 >
-                  View Completion <ArrowRight size={14} />
+                  View completion <ArrowRight size={14} />
                 </button>
               </div>
             </div>
