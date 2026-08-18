@@ -122,13 +122,16 @@ const Hero = () => {
 
   // One shared cursor source for every reactive element below: the orbit
   // rings, the ghost wordmark, and the terminal card all move off this
-  // instead of each tracking the mouse independently.
-  const { springX, springY } = useMouseParallax();
-  const ghostX = useTransform(springX, [-0.5, 0.5], [-24, 24]);
-  const ghostY = useTransform(springY, [-0.5, 0.5], [-14, 14]);
-  const terminalRotateX = useTransform(springY, [-0.5, 0.5], [6, -6]);
-  const terminalRotateY = useTransform(springX, [-0.5, 0.5], [-6, 6]);
-  const terminalY = useTransform(springY, [-0.5, 0.5], [-8, 8]);
+  // instead of each tracking the mouse independently. Smoothing is CSS
+  // (transition-transform, applied where each value is used) rather than
+  // a JS spring - see useMouseParallax for why.
+  const { mouseX, mouseY } = useMouseParallax();
+  const ghostX = useTransform(mouseX, [-0.5, 0.5], [-40, 40]);
+  const ghostY = useTransform(mouseY, [-0.5, 0.5], [-24, 24]);
+  const terminalRotateX = useTransform(mouseY, [-0.5, 0.5], [14, -14]);
+  const terminalRotateY = useTransform(mouseX, [-0.5, 0.5], [-14, 14]);
+  const terminalX = useTransform(mouseX, [-0.5, 0.5], [-16, 16]);
+  const terminalY = useTransform(mouseY, [-0.5, 0.5], [-16, 16]);
 
   return (
     <section ref={sectionRef} className="relative pt-44 pb-28 px-6 bg-paper overflow-hidden">
@@ -141,7 +144,7 @@ const Hero = () => {
         <div className="animate-aurora-c absolute top-[10%] left-1/2 -translate-x-1/2 w-[600px] h-[380px] bg-clay-400/[0.06] blur-[140px] rounded-full" />
       </motion.div>
 
-      <CursorOrbit springX={springX} springY={springY} />
+      <CursorOrbit springX={mouseX} springY={mouseY} />
 
       {/* Giant ghost wordmark - oversized, near-invisible type sitting behind
           the real content for scale/depth. Pure texture, not meant to be
@@ -151,7 +154,7 @@ const Hero = () => {
           one flat plane. */}
       <motion.div
         style={{ x: ghostX, y: ghostY }}
-        className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none select-none overflow-hidden"
+        className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none select-none overflow-hidden transition-transform duration-500 ease-out"
       >
         <span className="font-display font-extrabold text-[26vw] leading-none tracking-tighter text-white/[0.025] whitespace-nowrap">
           A2A
@@ -243,7 +246,10 @@ const Hero = () => {
           {/* The terminal card itself tilts toward the cursor - a concrete,
               visible piece of UI reacting to the visitor, not just
               background decoration. */}
-          <motion.div style={{ rotateX: terminalRotateX, rotateY: terminalRotateY, y: terminalY }}>
+          <motion.div
+            style={{ rotateX: terminalRotateX, rotateY: terminalRotateY, x: terminalX, y: terminalY }}
+            className="transition-transform duration-500 ease-out"
+          >
             <ChatDemo />
           </motion.div>
         </motion.div>
