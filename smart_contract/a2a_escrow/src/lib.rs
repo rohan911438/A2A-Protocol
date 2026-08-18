@@ -3,6 +3,18 @@ use soroban_sdk::{
     contract, contracterror, contractimpl, contracttype, symbol_short, token, Address, Env, Symbol, Vec,
 };
 
+#[cfg(test)]
+mod test;
+
+/// Soroban persistent storage entries expire (get archived) after their TTL
+/// runs out unless explicitly bumped. A single-asset, never-extended deal
+/// entry works fine in a demo but silently breaks in production once a deal
+/// sits funded for longer than the default TTL window. Every write below
+/// extends the entry's TTL so long-lived escrows survive.
+const LEDGERS_PER_DAY: u32 = 17280;
+const DEAL_TTL_THRESHOLD: u32 = LEDGERS_PER_DAY * 7; // bump once inside 7 days of expiry
+const DEAL_TTL_EXTEND_TO: u32 = LEDGERS_PER_DAY * 45; // renew for 45 days
+
 #[contracterror]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 pub enum Error {
@@ -17,6 +29,7 @@ pub enum Error {
     MilestoneAlreadyReleased = 9,
     ProtocolAlreadyCompleted = 10,
     InvalidDeadline = 11,
+    EmptyMilestoneSelection = 12,
 }
 
 #[contracttype]
@@ -42,6 +55,13 @@ pub struct Deal {
     pub buyer: Address,
     pub seller: Address,
     pub verifier: Address,
+    /// Asset escrowed for this specific deal. Scoping the token to the deal
+    /// (instead of one contract-wide asset set at `initialize`) lets the same
+    /// deployed contract instance serve concurrent deals in different assets
+    /// (native XLM, USDC, a custom SAC, ...) without redeploying per asset -
+    /// the single-asset design was the main ceiling on how many independent
+    /// buyer/seller pairs the contract could realistically serve.
+    pub token: Address,
     pub total_amount: i128,
     pub remaining_amount: i128,
     pub deadline: u64,
@@ -52,7 +72,6 @@ pub struct Deal {
 #[contracttype]
 pub enum DataKey {
     Admin,
-    Token,
     Deal(Symbol),
 }
 
@@ -61,34 +80,39 @@ pub struct A2AEscrow;
 
 #[contractimpl]
 impl A2AEscrow {
-    /// Initialize the contract with management and the target asset (XLM/USDC)
-    pub fn initialize(env: Env, admin: Address, token: Address) {
-        // Require the admin's own signature so a third party cannot front-run
-        // deployment by calling initialize() first with themselves as admin
-        // and an attacker-controlled token address.
+    /// Register the protocol admin. The admin has no special fund-moving
+    /// power today (every transfer still requires the buyer/verifier's own
+    /// signature) - this is reserved for future protocol-level operations
+    /// (e.g. fee configuration) and kept auth-gated so nobody else can
+    /// squat the admin slot.
+    pub fn initialize(env: Env, admin: Address) {
         admin.require_auth();
 
         if env.storage().instance().has(&DataKey::Admin) {
             panic!("Contract already initialized");
         }
         env.storage().instance().set(&DataKey::Admin, &admin);
-        env.storage().instance().set(&DataKey::Token, &token);
+        env.storage().instance().extend_ttl(DEAL_TTL_THRESHOLD, DEAL_TTL_EXTEND_TO);
     }
 
-    /// Create a new deal and lock funds into escrow
+    /// Create a new deal and lock funds into escrow for a caller-specified
+    /// token, so the contract can host many concurrent deals across
+    /// different assets rather than being pinned to one at deploy time.
     pub fn create_deal(
         env: Env,
         deal_id: Symbol,
         buyer: Address,
         seller: Address,
         verifier: Address,
+        token: Address,
         total_amount: i128,
         milestones: Vec<Milestone>,
         deadline: u64,
     ) -> Result<(), Error> {
         buyer.require_auth();
 
-        if env.storage().persistent().has(&DataKey::Deal(deal_id.clone())) {
+        let key = DataKey::Deal(deal_id.clone());
+        if env.storage().persistent().has(&key) {
             return Err(Error::AlreadyInitialized);
         }
 
@@ -105,7 +129,7 @@ impl A2AEscrow {
         // negative milestone amounts could still sum to total_amount while
         // letting release_milestone/complete_deal transfer a negative amount,
         // which token contracts treat as a transfer in the *opposite*
-        // direction — silently draining the seller (or the contract's pooled
+        // direction - silently draining the seller (or the contract's pooled
         // balance from other deals) instead of paying them.
         let mut sum: i128 = 0;
         for m in milestones.iter() {
@@ -123,6 +147,7 @@ impl A2AEscrow {
             buyer: buyer.clone(),
             seller,
             verifier,
+            token: token.clone(),
             total_amount,
             remaining_amount: total_amount,
             deadline,
@@ -130,12 +155,12 @@ impl A2AEscrow {
             milestones,
         };
 
-        // Transfer funds from buyer to contract
-        let token_addr: Address = env.storage().instance().get(&DataKey::Token).ok_or(Error::NotInitialized)?;
-        let client = token::Client::new(&env, &token_addr);
+        // Transfer funds from buyer to contract, in the deal's own token.
+        let client = token::Client::new(&env, &token);
         client.transfer(&buyer, &env.current_contract_address(), &total_amount);
 
-        env.storage().persistent().set(&DataKey::Deal(deal_id.clone()), &deal);
+        env.storage().persistent().set(&key, &deal);
+        env.storage().persistent().extend_ttl(&key, DEAL_TTL_THRESHOLD, DEAL_TTL_EXTEND_TO);
 
         // Emit creation event
         env.events().publish(
@@ -148,42 +173,65 @@ impl A2AEscrow {
 
     /// Authorized release of a specific milestone by the Verifier Agent
     pub fn release_milestone(env: Env, deal_id: Symbol, milestone_idx: u32) -> Result<(), Error> {
-        let mut deal: Deal = env.storage().persistent().get(&DataKey::Deal(deal_id.clone())).ok_or(Error::DealNotFound)?;
-        
+        let mut indices = Vec::new(&env);
+        indices.push_back(milestone_idx);
+        Self::release_milestones(env, deal_id, indices)
+    }
+
+    /// Release several milestones in a single transaction and a single token
+    /// transfer. A verifier settling multiple completed phases at once no
+    /// longer pays per-milestone base fees and resource costs one call at a
+    /// time - this is the difference between a workflow that stays cheap as
+    /// deal volume grows and one where cost scales linearly with milestone
+    /// count.
+    pub fn release_milestones(env: Env, deal_id: Symbol, milestone_indices: Vec<u32>) -> Result<(), Error> {
+        if milestone_indices.is_empty() {
+            return Err(Error::EmptyMilestoneSelection);
+        }
+
+        let key = DataKey::Deal(deal_id.clone());
+        let mut deal: Deal = env.storage().persistent().get(&key).ok_or(Error::DealNotFound)?;
+
         deal.verifier.require_auth();
 
         if deal.status != DealStatus::Funded {
             return Err(Error::ProtocolAlreadyCompleted);
         }
 
-        let mut milestones = deal.milestones;
-        let mut milestone = milestones.get(milestone_idx).ok_or(Error::InvalidMilestone)?;
-        
-        if milestone.is_released {
-            return Err(Error::MilestoneAlreadyReleased);
+        let mut milestones = deal.milestones.clone();
+        let mut total_release: i128 = 0;
+
+        // Re-reading from `milestones` (mutated in-loop below) rather than an
+        // immutable snapshot means a duplicate index in the same batch hits
+        // the `MilestoneAlreadyReleased` check on its second occurrence,
+        // which is exactly the guard needed to prevent double-paying it.
+        for idx in milestone_indices.iter() {
+            let mut milestone = milestones.get(idx).ok_or(Error::InvalidMilestone)?;
+            if milestone.is_released {
+                return Err(Error::MilestoneAlreadyReleased);
+            }
+            total_release += milestone.amount;
+            milestone.is_released = true;
+            milestones.set(idx, milestone);
         }
 
-        // Transfer milestone amount to seller
-        let token_addr: Address = env.storage().instance().get(&DataKey::Token).ok_or(Error::NotInitialized)?;
-        let client = token::Client::new(&env, &token_addr);
-        let milestone_amount = milestone.amount;
-        client.transfer(&env.current_contract_address(), &deal.seller, &milestone_amount);
+        // Single aggregate transfer for the whole batch instead of one
+        // transfer per milestone.
+        let client = token::Client::new(&env, &deal.token);
+        client.transfer(&env.current_contract_address(), &deal.seller, &total_release);
 
-        // Update state
-        milestone.is_released = true;
-        milestones.set(milestone_idx, milestone);
         deal.milestones = milestones;
-        deal.remaining_amount -= milestone_amount;
-
+        deal.remaining_amount -= total_release;
         if deal.remaining_amount == 0 {
             deal.status = DealStatus::Completed;
         }
 
-        env.storage().persistent().set(&DataKey::Deal(deal_id.clone()), &deal);
-        
+        env.storage().persistent().set(&key, &deal);
+        env.storage().persistent().extend_ttl(&key, DEAL_TTL_THRESHOLD, DEAL_TTL_EXTEND_TO);
+
         env.events().publish(
             (symbol_short!("milestone"), deal_id),
-            milestone_idx,
+            (milestone_indices, total_release),
         );
 
         Ok(())
@@ -191,8 +239,9 @@ impl A2AEscrow {
 
     /// Complete the deal and release all remaining funds
     pub fn complete_deal(env: Env, deal_id: Symbol) -> Result<(), Error> {
-        let mut deal: Deal = env.storage().persistent().get(&DataKey::Deal(deal_id.clone())).ok_or(Error::DealNotFound)?;
-        
+        let key = DataKey::Deal(deal_id.clone());
+        let mut deal: Deal = env.storage().persistent().get(&key).ok_or(Error::DealNotFound)?;
+
         deal.verifier.require_auth();
 
         if deal.status != DealStatus::Funded {
@@ -202,14 +251,14 @@ impl A2AEscrow {
         let amount_to_release = deal.remaining_amount;
 
         // Transfer all remaining funds to seller
-        let token_addr: Address = env.storage().instance().get(&DataKey::Token).ok_or(Error::NotInitialized)?;
-        let client = token::Client::new(&env, &token_addr);
+        let client = token::Client::new(&env, &deal.token);
         client.transfer(&env.current_contract_address(), &deal.seller, &amount_to_release);
 
         // Update state
         deal.remaining_amount = 0;
         deal.status = DealStatus::Completed;
-        env.storage().persistent().set(&DataKey::Deal(deal_id.clone()), &deal);
+        env.storage().persistent().set(&key, &deal);
+        env.storage().persistent().extend_ttl(&key, DEAL_TTL_THRESHOLD, DEAL_TTL_EXTEND_TO);
 
         env.events().publish(
             (symbol_short!("completed"), deal_id),
@@ -221,8 +270,9 @@ impl A2AEscrow {
 
     /// Request a refund if the deadline has passed without completion
     pub fn request_refund(env: Env, deal_id: Symbol) -> Result<(), Error> {
-        let mut deal: Deal = env.storage().persistent().get(&DataKey::Deal(deal_id.clone())).ok_or(Error::DealNotFound)?;
-        
+        let key = DataKey::Deal(deal_id.clone());
+        let mut deal: Deal = env.storage().persistent().get(&key).ok_or(Error::DealNotFound)?;
+
         deal.buyer.require_auth();
 
         if deal.status != DealStatus::Funded {
@@ -236,14 +286,14 @@ impl A2AEscrow {
         let amount_to_refund = deal.remaining_amount;
 
         // Transfer funds back to buyer
-        let token_addr: Address = env.storage().instance().get(&DataKey::Token).ok_or(Error::NotInitialized)?;
-        let client = token::Client::new(&env, &token_addr);
+        let client = token::Client::new(&env, &deal.token);
         client.transfer(&env.current_contract_address(), &deal.buyer, &amount_to_refund);
 
         // Update state
         deal.remaining_amount = 0;
         deal.status = DealStatus::Refunded;
-        env.storage().persistent().set(&DataKey::Deal(deal_id.clone()), &deal);
+        env.storage().persistent().set(&key, &deal);
+        env.storage().persistent().extend_ttl(&key, DEAL_TTL_THRESHOLD, DEAL_TTL_EXTEND_TO);
 
         env.events().publish(
             (symbol_short!("refunded"), deal_id),

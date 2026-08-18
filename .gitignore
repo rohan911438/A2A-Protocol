@@ -20,5 +20,6 @@ frontend/dist/
 
 smart_contract/build/
 smart_contract/**/target/
+smart_contract/**/test_snapshots/
 .codex
 build
