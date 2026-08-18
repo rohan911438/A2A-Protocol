@@ -6,6 +6,7 @@ import { useWallet } from '../context/WalletContext';
 import { getCreateDealTxn, getContractInfo, submitSignedXdr } from '../services/ContractService';
 import { getDeal, approveDeal, rejectDeal, recordOnchainAccept, fundDeal, getSmartDealSummary, getDealX402Status, recordDealX402Payment } from '../services/DealService';
 import SmartDealSummary from '../components/SmartDealSummary';
+import CountUp from '../components/CountUp';
 
 const DealSummary = () => {
   const navigate = useNavigate();
@@ -291,7 +292,7 @@ const DealSummary = () => {
             <div className="space-y-2.5">
               <div className="text-[11px] font-semibold text-clay-400 uppercase tracking-widest">Agreed price</div>
               <div className="text-4xl font-serif font-medium text-bark flex items-end gap-2">
-                {finalPrice || 0} <span className="text-xs text-bark-faint font-sans mb-1.5">XLM</span>
+                <CountUp value={finalPrice || 0} duration={1} /> <span className="text-xs text-bark-faint font-sans mb-1.5">XLM</span>
               </div>
             </div>
             <div className="space-y-2.5 text-right">

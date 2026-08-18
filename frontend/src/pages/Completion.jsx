@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Star, ArrowLeft, Share2, Trophy, ShieldCheck, Inbox, Loader2 } from 'lucide-react';
 import { getDeal } from '../services/DealService';
+import CountUp from '../components/CountUp';
 
 const Completion = () => {
   const navigate = useNavigate();
@@ -94,7 +95,7 @@ const Completion = () => {
             <div className="text-center md:text-left space-y-2">
               <div className="text-[11px] font-semibold text-clay-400 uppercase tracking-widest">Final disbursement</div>
               <div className="text-4xl font-serif font-medium text-bark">
-                {finalDeal.price} <span className="text-xs text-bark-faint font-sans">XLM</span>
+                <CountUp value={finalDeal.price} duration={1.1} /> <span className="text-xs text-bark-faint font-sans">XLM</span>
               </div>
             </div>
             <div className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-moss-400/10 border border-moss-400/20">

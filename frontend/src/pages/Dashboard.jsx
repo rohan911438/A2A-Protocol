@@ -5,6 +5,7 @@ import { TrendingUp, CheckCircle2, ArrowRight, Coins, Activity, ShieldCheck, Sea
 import { listDeals, approveDeal, rejectDeal, recordOnchainAccept, fundDeal } from '../services/DealService';
 import { useWallet } from '../context/WalletContext';
 import { getCreateDealTxn, getContractInfo, submitSignedXdr } from '../services/ContractService';
+import CountUp from '../components/CountUp';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('active');
@@ -238,7 +239,7 @@ const Dashboard = () => {
             <div key={stat.label} className="paper-card p-7 flex items-center justify-between">
               <div>
                 <div className="text-[11px] font-semibold text-bark-faint uppercase tracking-widest mb-2">{stat.label}</div>
-                <div className="text-3xl font-serif font-medium text-bark mb-1">{stat.value}</div>
+                <div className="text-3xl font-serif font-medium text-bark mb-1"><CountUp value={stat.value} /></div>
                 <div className="text-xs text-bark-faint">{stat.desc}</div>
               </div>
               <div className="w-11 h-11 rounded-xl bg-surface-raised border border-line flex items-center justify-center">
