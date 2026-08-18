@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, TrendingUp, CheckCircle2, ArrowRight, Coins, Activity, Shield, Terminal, Cpu, Zap, Search, Database } from 'lucide-react';
+import { TrendingUp, CheckCircle2, ArrowRight, Coins, Activity, ShieldCheck, Search, Inbox } from 'lucide-react';
 import { listDeals, approveDeal, rejectDeal, recordOnchainAccept, fundDeal } from '../services/DealService';
 import { useWallet } from '../context/WalletContext';
 import { getCreateDealTxn, getContractInfo, submitSignedXdr } from '../services/ContractService';
@@ -12,6 +12,7 @@ const Dashboard = () => {
   const [contractInfo, setContractInfo] = useState(null);
   const [actionStatus, setActionStatus] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
+  const [query, setQuery] = useState('');
   const navigate = useNavigate();
   const { account, connected, signTransaction, fetchBalances } = useWallet();
 
@@ -31,7 +32,7 @@ const Dashboard = () => {
   useEffect(() => {
     loadDeals();
   }, []);
-  
+
   useEffect(() => {
     getContractInfo()
       .then(setContractInfo)
@@ -40,35 +41,35 @@ const Dashboard = () => {
 
   const normalized = useMemo(() => deals.map((deal) => {
     const request = deal.data?.request || deal.data || {};
-    const title = request?.title || request?.description?.split('—')[0]?.trim() || request?.description || 'Agent Module';
+    const title = request?.title || request?.description?.split('—')[0]?.trim() || request?.description || 'Untitled deal';
     const finalPrice = deal.data?.result?.final_price || deal.data?.final_price || request?.budget || 0;
     const statusKey = (deal.status || '').toLowerCase();
-    
+
     let displayStatus = 'Negotiating';
     let route = '/negotiation-room';
-    let actionLabel = 'Resume Session';
-    let colorClass = 'bg-stellar-cyan/10 border-stellar-cyan/30 text-stellar-cyan';
+    let actionLabel = 'Resume negotiation';
+    let colorClass = 'bg-clay-500/10 border-clay-500/25 text-clay-400';
 
     if (statusKey === 'rejected') {
-      displayStatus = 'Terminated';
+      displayStatus = 'Rejected';
       route = '/dashboard';
       actionLabel = 'Dismiss';
-      colorClass = 'bg-red-400/10 border-red-400/30 text-red-400';
+      colorClass = 'bg-red-400/10 border-red-400/25 text-red-300';
     } else if (statusKey === 'negotiated' || statusKey === 'success') {
-      displayStatus = 'Consensus';
+      displayStatus = 'Agreed';
       route = '/summary';
-      actionLabel = 'Audit Offer';
-      colorClass = 'bg-indigo-400/10 border-indigo-400/30 text-indigo-400';
+      actionLabel = 'Review offer';
+      colorClass = 'bg-clay-500/10 border-clay-500/25 text-clay-400';
     } else if (statusKey === 'active') {
-      displayStatus = 'Live Escrow';
+      displayStatus = 'Active escrow';
       route = '/active-deal';
-      actionLabel = 'Monitor Rails';
-      colorClass = 'bg-emerald-400/10 border-emerald-400/30 text-emerald-400';
+      actionLabel = 'View escrow';
+      colorClass = 'bg-moss-400/10 border-moss-400/25 text-moss-400';
     } else if (statusKey === 'completed') {
-      displayStatus = 'Finalized';
+      displayStatus = 'Completed';
       route = '/completion';
-      actionLabel = 'Settle Archive';
-      colorClass = 'bg-white/10 border-white/20 text-white';
+      actionLabel = 'View summary';
+      colorClass = 'bg-surface border-line text-bark-muted';
     }
 
     return {
@@ -83,10 +84,10 @@ const Dashboard = () => {
     };
   }), [deals]);
 
-  const activeDeals = normalized.filter((d) => d.status !== 'Finalized' && d.status !== 'Terminated');
-  const completedDeals = normalized.filter((d) => d.status === 'Finalized');
+  const activeDeals = normalized.filter((d) => d.status !== 'Completed' && d.status !== 'Rejected');
+  const completedDeals = normalized.filter((d) => d.status === 'Completed');
   const dealsNeedingYourApproval = normalized.filter((deal) => {
-    if (deal.status !== 'Consensus') return false;
+    if (deal.status !== 'Agreed') return false;
     const request = deal.data?.request || deal.data || {};
     const buyerWallet = request?.buyer_wallet || '';
     const sellerWallet = deal.data?.seller_wallet || '';
@@ -98,29 +99,34 @@ const Dashboard = () => {
     return false;
   });
 
-  const currentDeals = activeTab === 'active' ? activeDeals : completedDeals;
+  const currentDeals = useMemo(() => {
+    const base = activeTab === 'active' ? activeDeals : completedDeals;
+    if (!query.trim()) return base;
+    const q = query.trim().toLowerCase();
+    return base.filter((d) => d.title.toLowerCase().includes(q) || d.id.toLowerCase().includes(q));
+  }, [activeTab, activeDeals, completedDeals, query]);
 
   const handleApprove = async (deal) => {
     const request = deal.data?.request || deal.data || {};
     const buyerWallet = request?.buyer_wallet || '';
     const sellerWallet = deal.data?.seller_wallet || '';
     const role = account && account.toLowerCase() === buyerWallet.toLowerCase() ? 'buyer' : account && account.toLowerCase() === sellerWallet.toLowerCase() ? 'seller' : null;
-    
+
     if (!role) return;
     if (!connected || !account) {
-      setActionStatus('Connect wallet to sign on Stellar.');
+      setActionStatus('Connect your wallet to sign on Stellar.');
       return;
     }
     if (!/^G[A-Z2-7]{55}$/.test(account)) {
-      setActionStatus('Invalid wallet account selected. Reconnect wallet and choose a Stellar account (G...).');
+      setActionStatus('Invalid wallet account selected. Reconnect and choose a Stellar account (G...).');
       return;
     }
 
     setActionLoading(true);
-    setActionStatus('Interacting with A2A Protocol logic...');
+    setActionStatus('Preparing the escrow transaction...');
     try {
       await approveDeal(deal.id, role);
-      
+
       if (role === 'buyer') {
         // Mirror the 40/60 milestone split ActiveDeal releases against later
         // instead of recording a single lump-sum milestone here - otherwise
@@ -142,16 +148,16 @@ const Dashboard = () => {
         const { xdr } = await getCreateDealTxn(account, deal.id, amount, milestones);
         const signedXdr = await signTransaction(xdr);
         const { tx_hash } = await submitSignedXdr(signedXdr);
-        
+
         await recordOnchainAccept(deal.id, 'buyer', tx_hash);
         await fundDeal(deal.id, tx_hash);
-        
-        setActionStatus(`Deal funded on Stellar. Hash: ${tx_hash.substring(0, 10)}...`);
-        await fetchBalances(); 
+
+        setActionStatus(`Escrow funded on Stellar. Tx ${tx_hash.substring(0, 10)}...`);
+        await fetchBalances();
       } else {
-        setActionStatus('Offer accepted. Waiting for buyer settlement.');
+        setActionStatus('Offer accepted. Waiting for the buyer to fund escrow.');
       }
-      
+
       loadDeals();
     } catch (err) {
       setActionStatus(err.message || 'Action failed');
@@ -171,121 +177,115 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="pt-28 pb-32 px-6 min-h-screen flex flex-col items-center relative overflow-hidden selection:bg-indigo-500/30 selection:text-stellar-cyan">
-      <div className="max-w-6xl mx-auto w-full space-y-16 z-10">
-        
-        {/* Dashboard Header */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10">
-          <div className="space-y-4">
-             <div className="inline-flex items-center gap-3 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400">
-                <Terminal size={14} /> System Command
-             </div>
-             <h1 className="text-6xl font-display font-black text-white uppercase tracking-tighter leading-none">
-               Protocol <br/>
-               <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-stellar-cyan">Terminal</span>
-             </h1>
+    <div className="pt-32 pb-32 px-6 min-h-screen bg-paper relative">
+      <div className="absolute top-[-5%] left-1/2 -translate-x-1/2 w-[900px] h-[420px] bg-clay-500/5 blur-[140px] rounded-full pointer-events-none -z-10" />
+
+      <div className="max-w-6xl mx-auto w-full space-y-14">
+
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8">
+          <div className="space-y-3">
+            <div className="text-xs font-semibold text-clay-400 uppercase tracking-[0.2em]">Dashboard</div>
+            <h1 className="text-4xl sm:text-5xl font-serif font-medium text-bark tracking-tight">
+              Your deals
+            </h1>
+            {contractInfo && (
+              <p className="text-sm text-bark-faint">{contractInfo.protocol} · {contractInfo.network}</p>
+            )}
           </div>
-          
+
           <div className="flex flex-wrap items-center gap-4">
-               <div className="px-5 py-3 glass-morphism rounded-2xl border border-white/5 flex items-center gap-4">
-                  <div className="text-right">
-                     <div className="text-[8px] font-black text-slate uppercase tracking-widest opacity-40">Account Node</div>
-                     <div className="text-[11px] font-mono font-bold text-white">{account ? `${account.substring(0, 6)}...${account.substring(account.length - 4)}` : 'DEAUTHORIZED'}</div>
-                  </div>
-                  <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-indigo-400">
-                     <Shield size={18} />
-                  </div>
-               </div>
-               <Link to="/create-deal" className="group relative px-8 py-5 bg-white text-ink-900 rounded-2xl font-black shadow-glow transition-all hover:scale-105 uppercase tracking-widest text-[11px] overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                  <span className="relative z-10 flex items-center gap-2">Deploy New Agent <Zap size={14} /></span>
-               </Link>
+            <div className="px-5 py-3 rounded-2xl bg-surface border border-line flex items-center gap-4">
+              <div className="text-right">
+                <div className="text-[10px] font-semibold text-bark-faint uppercase tracking-widest">Wallet</div>
+                <div className="text-[13px] font-mono font-medium text-bark">{account ? `${account.substring(0, 6)}...${account.substring(account.length - 4)}` : 'Not connected'}</div>
+              </div>
+              <div className="w-9 h-9 rounded-xl bg-clay-500/10 border border-clay-500/20 flex items-center justify-center text-clay-400">
+                <ShieldCheck size={16} />
+              </div>
+            </div>
+            <Link to="/create-deal" className="btn-clay flex items-center gap-2">
+              New deal <ArrowRight size={16} />
+            </Link>
           </div>
         </div>
 
-        {/* Action Status Ticker */}
+        {/* Action status */}
         <AnimatePresence>
-            {actionStatus && (
-                <motion.div 
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
-                    className="p-4 rounded-2xl bg-stellar-cyan/5 border border-stellar-cyan/10 flex items-center justify-between group"
-                >
-                    <div className="flex items-center gap-4">
-                        <div className="w-2 h-2 rounded-full bg-stellar-cyan animate-pulse shadow-[0_0_10px_#22d3ee]" />
-                        <span className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-stellar-cyan/80">{actionStatus}</span>
-                    </div>
-                    <button onClick={() => setActionStatus('')} className="text-[9px] font-black text-slate uppercase tracking-widest hover:text-white transition-colors">Dismiss</button>
-                </motion.div>
-            )}
+          {actionStatus && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="p-4 rounded-xl bg-surface border border-line flex items-center justify-between"
+            >
+              <div className="flex items-center gap-3">
+                <span className="w-1.5 h-1.5 rounded-full bg-clay-400 animate-pulse" />
+                <span className="text-sm text-bark-muted">{actionStatus}</span>
+              </div>
+              <button onClick={() => setActionStatus('')} className="text-xs font-semibold text-bark-faint hover:text-bark transition-colors">Dismiss</button>
+            </motion.div>
+          )}
         </AnimatePresence>
 
-        {/* Quick Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {[
-            { label: 'Active Channels', value: activeDeals.length, icon: <Activity className="text-stellar-cyan" />, desc: 'Real-time syncing' },
-            { label: 'Network Settle', value: completedDeals.length, icon: <CheckCircle2 className="text-emerald-400" />, desc: 'Immutable Archive' },
-            { label: 'Queue Load', value: dealsNeedingYourApproval.length, icon: <Cpu className="text-cyber-purple" />, desc: 'Awaiting Auth' }
+            { label: 'Active deals', value: activeDeals.length, icon: <Activity size={18} className="text-clay-400" />, desc: 'In progress' },
+            { label: 'Completed', value: completedDeals.length, icon: <CheckCircle2 size={18} className="text-moss-400" />, desc: 'Settled on-chain' },
+            { label: 'Needs your approval', value: dealsNeedingYourApproval.length, icon: <TrendingUp size={18} className="text-clay-400" />, desc: 'Awaiting sign-off' },
           ].map((stat) => (
-            <div key={stat.label} className="p-8 rounded-[3rem] glass-morphism border border-white/5 flex items-center justify-between group hover:border-indigo-500/30 transition-all duration-500 shadow-2xl relative overflow-hidden">
-               <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-               <div className="relative z-10">
-                <div className="text-[10px] font-black text-slate uppercase tracking-[0.4em] mb-2 opacity-40">{stat.label}</div>
-                <div className="text-5xl font-display font-black text-white mb-2 tracking-tighter">{stat.value}</div>
-                <div className="text-[9px] font-mono text-indigo-400/60 uppercase tracking-widest font-black">{stat.desc}</div>
+            <div key={stat.label} className="paper-card p-7 flex items-center justify-between">
+              <div>
+                <div className="text-[11px] font-semibold text-bark-faint uppercase tracking-widest mb-2">{stat.label}</div>
+                <div className="text-3xl font-serif font-medium text-bark mb-1">{stat.value}</div>
+                <div className="text-xs text-bark-faint">{stat.desc}</div>
               </div>
-              <div className="w-16 h-16 rounded-[2rem] bg-white/[0.03] border border-white/5 flex items-center justify-center group-hover:scale-110 group-hover:border-indigo-500/20 transition-all duration-500 shadow-xl">
+              <div className="w-11 h-11 rounded-xl bg-surface-raised border border-line flex items-center justify-center">
                 {stat.icon}
               </div>
             </div>
           ))}
         </div>
 
-        {/* Notification Panel (Authorizations) */}
+        {/* Needs approval */}
         <AnimatePresence>
           {dealsNeedingYourApproval.length > 0 && (
-            <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-6"
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-5"
             >
-              <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.4em] text-white/40">
-                <Shield size={14} className="text-indigo-500" /> Authorized Handshake Required
+              <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-widest text-bark-faint">
+                <ShieldCheck size={14} className="text-clay-400" /> Awaiting your approval
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {dealsNeedingYourApproval.map((deal) => (
-                  <div key={deal.id} className="p-10 rounded-[3rem] glass-morphism border-2 border-indigo-500/20 flex flex-col gap-8 shadow-2xl relative group overflow-hidden">
-                     <div className="absolute inset-0 bg-indigo-500/[0.03] animate-pulse" />
-                     <div className="relative z-10">
-                        <div className="flex justify-between items-start mb-6">
-                          <div className="space-y-1">
-                            <h3 className="text-2xl font-display font-black text-white uppercase tracking-tighter">{deal.title}</h3>
-                            <div className="text-sm font-mono font-bold text-stellar-cyan flex items-center gap-3">
-                              <Coins size={16} /> {deal.price} XLM
-                            </div>
-                          </div>
-                          <div className="text-[9px] px-3 py-1 bg-white/5 rounded-full text-indigo-400 font-black uppercase tracking-widest border border-indigo-500/20">
-                            Logic Locked
-                          </div>
+                  <div key={deal.id} className="paper-card p-8 flex flex-col gap-6 border-clay-500/25">
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-1">
+                        <h3 className="text-xl font-serif font-medium text-bark">{deal.title}</h3>
+                        <div className="text-sm font-mono text-clay-400 flex items-center gap-2">
+                          <Coins size={14} /> {deal.price} XLM
                         </div>
-                        <div className="flex gap-4">
-                          <button
-                            onClick={() => handleApprove(deal)}
-                            disabled={actionLoading}
-                            className="flex-1 py-4 rounded-2xl bg-indigo-500 text-white text-[10px] font-black uppercase tracking-[0.2em] shadow-glow hover:scale-105 transition-all"
-                          >
-                            Authorize XDR
-                          </button>
-                          <button
-                            onClick={() => handleReject(deal)}
-                            disabled={actionLoading}
-                            className="px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-slate text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all"
-                          >
-                            Decline
-                          </button>
-                        </div>
-                     </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => handleApprove(deal)}
+                        disabled={actionLoading}
+                        className="flex-1 btn-clay text-center justify-center text-sm py-3"
+                      >
+                        Approve &amp; fund
+                      </button>
+                      <button
+                        onClick={() => handleReject(deal)}
+                        disabled={actionLoading}
+                        className="px-5 py-3 rounded-xl bg-surface border border-line text-bark-muted text-sm font-medium hover:border-clay-400/30 hover:text-bark transition-all"
+                      >
+                        Decline
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -293,64 +293,65 @@ const Dashboard = () => {
           )}
         </AnimatePresence>
 
-        {/* Main Content (Deals List) */}
-        <div className="space-y-10">
-          <div className="flex flex-wrap items-center justify-between gap-8 border-b border-white/5 pb-8">
-              <div className="flex items-center gap-3 p-1.5 glass-morphism rounded-2xl border border-white/5 relative overflow-hidden">
-                <button
-                  onClick={() => setActiveTab('active')}
-                  className={`relative z-10 px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${activeTab === 'active' ? 'bg-white text-ink-900 shadow-xl' : 'text-slate hover:text-white'}`}
-                >
-                  Active Channels
-                </button>
-                <button
-                  onClick={() => setActiveTab('completed')}
-                  className={`relative z-10 px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${activeTab === 'completed' ? 'bg-white text-ink-900 shadow-xl' : 'text-slate hover:text-white'}`}
-                >
-                  Archive
-                </button>
-              </div>
-              
-              <div className="hidden sm:flex items-center gap-4 px-6 py-3 rounded-2xl bg-white/5 border border-white/10">
-                 <Search size={16} className="text-slate/40" />
-                 <input type="text" placeholder="QUERY PROTOCOL..." className="bg-transparent border-none outline-none text-[10px] font-mono font-bold text-white placeholder:text-slate/20 uppercase tracking-widest w-40" />
-              </div>
+        {/* Deals list */}
+        <div className="space-y-8">
+          <div className="flex flex-wrap items-center justify-between gap-6 border-b border-line pb-6">
+            <div className="flex items-center gap-1 p-1 rounded-xl bg-surface border border-line">
+              <button
+                onClick={() => setActiveTab('active')}
+                className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === 'active' ? 'bg-clay-500 text-white' : 'text-bark-muted hover:text-bark'}`}
+              >
+                Active
+              </button>
+              <button
+                onClick={() => setActiveTab('completed')}
+                className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${activeTab === 'completed' ? 'bg-clay-500 text-white' : 'text-bark-muted hover:text-bark'}`}
+              >
+                Archive
+              </button>
+            </div>
+
+            <div className="hidden sm:flex items-center gap-3 px-4 py-2.5 rounded-xl bg-surface border border-line w-64">
+              <Search size={15} className="text-bark-faint" />
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search deals..."
+                className="bg-transparent border-none outline-none text-sm text-bark placeholder:text-bark-faint w-full"
+              />
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             <AnimatePresence mode="wait">
               {currentDeals.map((deal, i) => (
                 <motion.div
                   key={deal.id}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ delay: i * 0.05, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  className="group relative glass-morphism border border-white/5 rounded-[3.5rem] p-10 hover:border-indigo-500/40 transition-all duration-500 flex flex-col justify-between min-h-[320px] shadow-2xl overflow-hidden"
+                  exit={{ opacity: 0 }}
+                  transition={{ delay: i * 0.04, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  className="paper-card p-7 flex flex-col justify-between min-h-[240px]"
                 >
-                   <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  
-                  <div className="relative z-10">
-                    <div className="flex justify-between items-start mb-8">
-                      <div className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border shadow-sm ${deal.colorClass}`}>
+                  <div>
+                    <div className="flex justify-between items-start mb-6">
+                      <div className={`px-3 py-1 rounded-full text-[11px] font-semibold border ${deal.colorClass}`}>
                         {deal.status}
                       </div>
-                      <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 group-hover:rotate-12 transition-transform">
-                         <Database size={18} className="text-slate/40 group-hover:text-white" />
-                      </div>
                     </div>
-                    <h3 className="text-2xl font-display font-black text-white mb-6 group-hover:text-glow transition-all line-clamp-2 uppercase tracking-tight leading-tight">{deal.title}</h3>
-                    <div className="text-3xl font-mono font-black text-white/90 flex items-center gap-2">
-                       {deal.price} <span className="text-[10px] text-slate opacity-40">XLM</span>
+                    <h3 className="text-lg font-semibold text-bark mb-4 line-clamp-2">{deal.title}</h3>
+                    <div className="text-2xl font-serif font-medium text-bark flex items-baseline gap-2">
+                      {deal.price} <span className="text-xs text-bark-faint font-sans">XLM</span>
                     </div>
                   </div>
 
-                  <div className="pt-10 relative z-10">
-                    <button 
+                  <div className="pt-7">
+                    <button
                       onClick={() => navigate(deal.route, { state: { dealId: deal.id } })}
-                      className="w-full py-4 rounded-2xl bg-white/5 border border-white/10 text-white text-[10px] font-black uppercase tracking-[0.3em] hover:bg-white hover:text-ink-900 transition-all duration-500 flex items-center justify-center gap-3 group/btn shadow-xl"
+                      className="w-full py-3 rounded-xl bg-surface-raised border border-line text-bark text-sm font-medium hover:border-clay-400/40 hover:bg-clay-500/[0.06] transition-all duration-300 flex items-center justify-center gap-2 group"
                     >
-                      {deal.actionLabel} <ArrowRight size={16} className="group-hover/btn:translate-x-2 transition-transform duration-500" />
+                      {deal.actionLabel} <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
                     </button>
                   </div>
                 </motion.div>
@@ -359,16 +360,22 @@ const Dashboard = () => {
           </div>
 
           {currentDeals.length === 0 && (
-            <motion.div 
-               initial={{ opacity: 0 }}
-               animate={{ opacity: 1 }}
-               className="text-center py-32 glass-morphism rounded-[4rem] border border-dashed border-white/10"
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-24 rounded-2xl border border-dashed border-line"
             >
-              <div className="inline-flex p-10 rounded-[3rem] bg-indigo-500/5 mb-8">
-                 <LayoutDashboard size={64} className="text-indigo-500/20" />
+              <div className="inline-flex p-6 rounded-2xl bg-surface mb-6">
+                <Inbox size={40} className="text-bark-faint" />
               </div>
-              <p className="text-2xl font-display font-black text-white/20 uppercase tracking-tighter italic">Awaiting Protocol Deployment...</p>
-              <p className="text-[10px] font-mono font-bold text-slate/40 uppercase tracking-[0.4em] mt-4">Node status: IDLE</p>
+              <p className="text-lg font-serif text-bark-muted">
+                {query ? 'No deals match your search' : activeTab === 'active' ? 'No active deals yet' : 'No completed deals yet'}
+              </p>
+              {!query && activeTab === 'active' && (
+                <Link to="/create-deal" className="inline-block mt-4 text-sm font-semibold text-clay-400 hover:text-clay-300 transition-colors">
+                  Create your first deal →
+                </Link>
+              )}
             </motion.div>
           )}
         </div>
