@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useWallet } from '../context/WalletContext';
 import { LogOut, Wallet } from 'lucide-react';
 import logo from '../assets/logo.png';
+import MagneticButton from './MagneticButton';
 
 const Navbar = () => {
   const { account, connected, toggleModal, disconnect, formatAddress, balances, network } = useWallet();
@@ -28,9 +29,9 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-9">
           {isHome ? (
             <>
-              <a href="#how-it-works" className="text-[13px] font-medium text-bark-muted hover:text-bark transition-colors duration-300">How it works</a>
-              <a href="#features" className="text-[13px] font-medium text-bark-muted hover:text-bark transition-colors duration-300">Capabilities</a>
-              <a href="#developer-sdk" className="text-[13px] font-medium text-bark-muted hover:text-bark transition-colors duration-300">Developers</a>
+              <MagneticButton as="a" href="#how-it-works" strength={8} className="inline-block text-[13px] font-medium text-bark-muted hover:text-bark transition-colors duration-300">How it works</MagneticButton>
+              <MagneticButton as="a" href="#features" strength={8} className="inline-block text-[13px] font-medium text-bark-muted hover:text-bark transition-colors duration-300">Capabilities</MagneticButton>
+              <MagneticButton as="a" href="#developer-sdk" strength={8} className="inline-block text-[13px] font-medium text-bark-muted hover:text-bark transition-colors duration-300">Developers</MagneticButton>
             </>
           ) : (
             <>

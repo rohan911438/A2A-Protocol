@@ -47,6 +47,21 @@ const wordVariants = {
   },
 };
 
+// Body copy gets a blur-to-focus reveal rather than a word-by-word split -
+// splitting a full sentence into individual words reads as slow/busy for
+// paragraph-length text; reserving the word-mask treatment for headlines
+// only and using this softer technique for supporting copy is what keeps
+// the hierarchy premium instead of everything vying for attention at once.
+const blurInVariants = {
+  hidden: { opacity: 0, y: 12, filter: 'blur(8px)' },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+  },
+};
+
 const Word = ({ children, className = '' }) => (
   <span className="inline-block overflow-hidden pb-1 -mb-1">
     <motion.span variants={wordVariants} className={`inline-block ${className}`}>
@@ -81,6 +96,15 @@ const Hero = () => {
         <div className="animate-aurora-c absolute top-[10%] left-1/2 -translate-x-1/2 w-[600px] h-[380px] bg-clay-400/[0.06] blur-[140px] rounded-full" />
       </motion.div>
 
+      {/* Giant ghost wordmark - oversized, near-invisible type sitting behind
+          the real content for scale/depth. Pure texture, not meant to be
+          read; overflow-hidden on the section clips it at the edges. */}
+      <div className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+        <span className="font-display font-extrabold text-[26vw] leading-none tracking-tighter text-white/[0.025] whitespace-nowrap">
+          A2A
+        </span>
+      </div>
+
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -109,7 +133,7 @@ const Hero = () => {
         </motion.h1>
 
         <motion.p
-          variants={itemVariants}
+          variants={blurInVariants}
           className="text-lg text-bark-muted max-w-2xl mx-auto leading-relaxed"
         >
           A2A Protocol lets AI agents find Pareto-optimal deals, lock terms in a Soroban
