@@ -133,8 +133,39 @@ const Hero = () => {
   const terminalX = useTransform(mouseX, [-0.5, 0.5], [-16, 16]);
   const terminalY = useTransform(mouseY, [-0.5, 0.5], [-16, 16]);
 
+  // Belt-and-braces cursor reactivity: a spotlight glow that follows the
+  // pointer, using the exact same plain-DOM-mutation technique as
+  // SpotlightCard (CSS custom properties set directly via
+  // style.setProperty on a native onMouseMove, no framer-motion value
+  // pipeline involved at all). If anything about the motion-value-driven
+  // effects above is being intercepted by something environment-specific,
+  // this one doesn't share any of that machinery, so it's the most
+  // reliable "something on screen visibly follows the cursor" signal in
+  // the section.
+  const handleSpotlightMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty('--spot-x', `${e.clientX - rect.left}px`);
+    e.currentTarget.style.setProperty('--spot-y', `${e.clientY - rect.top}px`);
+  };
+
   return (
-    <section ref={sectionRef} className="relative pt-44 pb-28 px-6 bg-paper overflow-hidden">
+    <section
+      ref={sectionRef}
+      onMouseMove={handleSpotlightMove}
+      className="relative pt-44 pb-28 px-6 bg-paper overflow-hidden"
+    >
+      {/* Cursor spotlight - a glow that tracks the pointer exactly, via
+          plain CSS custom properties set on native mousemove (same proven
+          technique as SpotlightCard, no framer-motion value pipeline). The
+          single most direct "the UI is responding to you" signal in the
+          section, layered under everything else. */}
+      <div
+        className="absolute inset-0 -z-10 pointer-events-none"
+        style={{
+          background: 'radial-gradient(650px circle at var(--spot-x, 50%) var(--spot-y, 50%), rgba(179,234,30,0.10), transparent 60%)',
+        }}
+      />
+
       {/* Cinematic ambient glow - three slow-drifting warm blobs, parallaxed
           against scroll for depth, restrained in opacity so it reads as
           ambient light, not a spotlight. */}
