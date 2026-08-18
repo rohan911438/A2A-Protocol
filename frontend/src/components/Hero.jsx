@@ -6,6 +6,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import ChatDemo from './ChatDemo';
 import MagneticButton from './MagneticButton';
 import CursorOrbit from './CursorOrbit';
+import useMouseParallax from '../hooks/useMouseParallax';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -119,6 +120,16 @@ const Hero = () => {
   const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '12%']);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
+  // One shared cursor source for every reactive element below: the orbit
+  // rings, the ghost wordmark, and the terminal card all move off this
+  // instead of each tracking the mouse independently.
+  const { springX, springY } = useMouseParallax();
+  const ghostX = useTransform(springX, [-0.5, 0.5], [-24, 24]);
+  const ghostY = useTransform(springY, [-0.5, 0.5], [-14, 14]);
+  const terminalRotateX = useTransform(springY, [-0.5, 0.5], [6, -6]);
+  const terminalRotateY = useTransform(springX, [-0.5, 0.5], [-6, 6]);
+  const terminalY = useTransform(springY, [-0.5, 0.5], [-8, 8]);
+
   return (
     <section ref={sectionRef} className="relative pt-44 pb-28 px-6 bg-paper overflow-hidden">
       {/* Cinematic ambient glow - three slow-drifting warm blobs, parallaxed
@@ -130,16 +141,22 @@ const Hero = () => {
         <div className="animate-aurora-c absolute top-[10%] left-1/2 -translate-x-1/2 w-[600px] h-[380px] bg-clay-400/[0.06] blur-[140px] rounded-full" />
       </motion.div>
 
-      <CursorOrbit />
+      <CursorOrbit springX={springX} springY={springY} />
 
       {/* Giant ghost wordmark - oversized, near-invisible type sitting behind
           the real content for scale/depth. Pure texture, not meant to be
-          read; overflow-hidden on the section clips it at the edges. */}
-      <div className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+          read; overflow-hidden on the section clips it at the edges. Drifts
+          gently with the cursor for parallax depth, opposite direction from
+          the orbit rings so the two layers separate rather than moving as
+          one flat plane. */}
+      <motion.div
+        style={{ x: ghostX, y: ghostY }}
+        className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none select-none overflow-hidden"
+      >
         <span className="font-display font-extrabold text-[26vw] leading-none tracking-tighter text-white/[0.025] whitespace-nowrap">
           A2A
         </span>
-      </div>
+      </motion.div>
 
       <motion.div
         variants={containerVariants}
@@ -221,8 +238,14 @@ const Hero = () => {
         <motion.div
           variants={itemVariants}
           className="pt-14 w-full flex justify-center"
+          style={{ perspective: 1200 }}
         >
-          <ChatDemo />
+          {/* The terminal card itself tilts toward the cursor - a concrete,
+              visible piece of UI reacting to the visitor, not just
+              background decoration. */}
+          <motion.div style={{ rotateX: terminalRotateX, rotateY: terminalRotateY, y: terminalY }}>
+            <ChatDemo />
+          </motion.div>
         </motion.div>
       </motion.div>
     </section>

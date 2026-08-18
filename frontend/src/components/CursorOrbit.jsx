@@ -1,30 +1,15 @@
-import React, { useEffect } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import React from 'react';
+import { motion, useTransform } from 'framer-motion';
 
 /**
  * Ambient decorative orbit rings behind the Hero content. Two layers of
  * motion at once: each ring spins continuously on its own (pure CSS,
  * cheap), while the whole cluster tilts in 3D toward wherever the cursor
- * is on the page (spring-damped, so it trails smoothly rather than
- * snapping). Reads as a small "instrument" reacting to the visitor rather
- * than static decoration.
+ * is on the page (springX/springY come from the shared useMouseParallax
+ * source, so this stays in sync with every other cursor-reactive element
+ * in the section instead of tracking the mouse separately).
  */
-const CursorOrbit = () => {
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  useEffect(() => {
-    const handleMove = (e) => {
-      mouseX.set(e.clientX / window.innerWidth - 0.5);
-      mouseY.set(e.clientY / window.innerHeight - 0.5);
-    };
-    window.addEventListener('mousemove', handleMove);
-    return () => window.removeEventListener('mousemove', handleMove);
-  }, [mouseX, mouseY]);
-
-  const springX = useSpring(mouseX, { stiffness: 40, damping: 20, mass: 0.6 });
-  const springY = useSpring(mouseY, { stiffness: 40, damping: 20, mass: 0.6 });
-
+const CursorOrbit = ({ springX, springY }) => {
   const rotateX = useTransform(springY, [-0.5, 0.5], [16, -16]);
   const rotateY = useTransform(springX, [-0.5, 0.5], [-16, 16]);
 
