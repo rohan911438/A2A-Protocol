@@ -19,9 +19,11 @@ soroban-sdk = { version = "20.0.0", features = ["testutils"] }
 # (hit on an older/different rustc when deploying, not reproducible on
 # every machine). ethnum 1.5.3 dropped the transmute entirely. A normal
 # `cargo update` can't reach 1.5.3 past the exact `=1.5.0` pin, so patch it
-# to a vendored copy of 1.5.3 instead (see smart_contract/vendor/).
+# to a vendored copy of 1.5.3 instead (kept inside this crate's own
+# directory, not a sibling one, so it survives deploy pipelines that only
+# copy the a2a_escrow folder rather than all of smart_contract/).
 [patch.crates-io]
-ethnum = { path = "../vendor/ethnum-1.5.3" }
+ethnum = { path = "vendor/ethnum-1.5.3" }
 
 [profile.release]
 opt-level = "z"
