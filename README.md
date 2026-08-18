@@ -28,7 +28,7 @@ A2A Protocol is a hackathon project for an emerging agent economy: AI agents tha
 - CI/CD badge: added at top of this README
 - Live demo (frontend): https://a2aprotocol.netlify.app/
 - Live API (backend): https://a2a-protocol-rn62.onrender.com
-- Escrow contract address: `CCCDR7O4NXP6LBYRK2F3SH67LMMS2ZFNO5EB3O7AIK2LHHT6Y7NVJ7HR`
+- Escrow contract address: `CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU`
 - Token contract address: `CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI`
 - Workflow Video (RiseIn): https://youtu.be/r3UFY5QrDqk?si=7DQqfipm-GlNOP0E
 - Pitch Deck: https://docs.google.com/presentation/d/1iOp4BNFtgHi1xr0aV76iWBP2igbsvbwzLLiuLD3UAFY/edit?usp=sharing
@@ -145,18 +145,24 @@ The architecture is intentionally modular so each layer can evolve independently
 
 ## Smart Contracts & Deployment
 
-- Escrow contract address: `CCCDR7O4NXP6LBYRK2F3SH67LMMS2ZFNO5EB3O7AIK2LHHT6Y7NVJ7HR`
+- Escrow contract address: `CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU`
 - Token contract address: `CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI`
 - Network: Stellar Testnet
 - RPC endpoint: `https://soroban-testnet.stellar.org:443`
 
 Testnet verification links:
 
-- Escrow contract explorer: https://stellar.expert/explorer/testnet/contract/CCCDR7O4NXP6LBYRK2F3SH67LMMS2ZFNO5EB3O7AIK2LHHT6Y7NVJ7HR
+- Escrow contract explorer: https://stellar.expert/explorer/testnet/contract/CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU
 - Token contract explorer: https://stellar.expert/explorer/testnet/contract/CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI
 - Soroban RPC endpoint: https://soroban-testnet.stellar.org:443
 
 Contract verification note: open the escrow contract explorer link above to confirm the deployed contract exists on Stellar Testnet and matches the on-chain address used by the app.
+
+This escrow contract now supports multiple assets per deployment (the
+token is chosen per deal instead of fixed at deploy time) and batched
+milestone releases in a single transaction. See
+[docs/CONTRACT_DEPLOYMENT.md](docs/CONTRACT_DEPLOYMENT.md) for build/deploy
+notes and how to enable the backend's on-chain mode.
 
 ### Mainnet
 
