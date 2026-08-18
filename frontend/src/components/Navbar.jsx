@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useWallet } from '../context/WalletContext';
 import { LogOut, Wallet } from 'lucide-react';
 import logo from '../assets/logo.png';
@@ -40,7 +41,7 @@ const Navbar = () => {
                 {({ isActive }) => (
                   <>
                     Dashboard
-                    {isActive && <span className="absolute -bottom-0.5 left-0 right-0 h-px bg-clay-400" />}
+                    {isActive && <motion.span layoutId="nav-underline" transition={{ type: 'spring', stiffness: 380, damping: 30 }} className="absolute -bottom-0.5 left-0 right-0 h-px bg-clay-400" />}
                   </>
                 )}
               </NavLink>
@@ -51,7 +52,7 @@ const Navbar = () => {
                 {({ isActive }) => (
                   <>
                     New deal
-                    {isActive && <span className="absolute -bottom-0.5 left-0 right-0 h-px bg-clay-400" />}
+                    {isActive && <motion.span layoutId="nav-underline" transition={{ type: 'spring', stiffness: 380, damping: 30 }} className="absolute -bottom-0.5 left-0 right-0 h-px bg-clay-400" />}
                   </>
                 )}
               </NavLink>
