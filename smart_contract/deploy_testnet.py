@@ -7,11 +7,23 @@ contract on Stellar Testnet. Not part of the app - run manually:
 Requires smart_contract/a2a_escrow/target/wasm32-unknown-unknown/release/a2a_escrow.wasm
 to already be built (`cargo build --target wasm32-unknown-unknown --release`).
 
+Modern Rust toolchains link a wasm32-unknown-unknown binary whose element
+segments use an encoding Soroban's host wasm parser rejects outright
+("reference-types not enabled: zero byte expected" / Error(WasmVm,
+InvalidAction)) - this is a linker-level encoding choice, not something
+`-C target-feature`/`-C target-cpu` compiler flags control, so this script
+always re-normalizes the wasm with Binaryen's `wasm-opt -mvp` before
+uploading. Install Binaryen (https://github.com/WebAssembly/binaryen/releases)
+and either put `wasm-opt` on PATH or point WASM_OPT at the binary.
+
 Generates fresh throwaway testnet keypairs, funds them via friendbot,
 uploads+deploys+initializes the contract, then exercises the real deployed
 contract end to end (create_deal in native XLM, a batched release_milestones
 call, complete_deal) and asserts on token balances after each step.
 """
+import os
+import shutil
+import subprocess
 import sys
 import time
 import urllib.request
@@ -24,10 +36,26 @@ from stellar_sdk.soroban_server import SorobanServer
 from stellar_sdk.contract import ContractClient
 
 WASM_PATH = Path(__file__).parent / "a2a_escrow" / "target" / "wasm32-unknown-unknown" / "release" / "a2a_escrow.wasm"
+MVP_WASM_PATH = WASM_PATH.with_suffix(".mvp.wasm")
 HORIZON_URL = "https://horizon-testnet.stellar.org"
 RPC_URL = "https://soroban-testnet.stellar.org"
 NETWORK = Network.TESTNET_NETWORK_PASSPHRASE
 BASE_FEE = 100
+
+
+def normalize_wasm_for_soroban(input_path: Path, output_path: Path) -> Path:
+    wasm_opt = os.environ.get("WASM_OPT") or shutil.which("wasm-opt")
+    if not wasm_opt:
+        raise RuntimeError(
+            "wasm-opt not found. Install Binaryen "
+            "(https://github.com/WebAssembly/binaryen/releases) and either put "
+            "wasm-opt on PATH or set WASM_OPT=/path/to/wasm-opt(.exe). "
+            "Required: the raw cargo-built wasm fails Soroban's validator "
+            "with 'reference-types not enabled' until it's re-encoded to the "
+            "MVP wasm feature set."
+        )
+    subprocess.run([wasm_opt, str(input_path), "-mvp", "-o", str(output_path)], check=True)
+    return output_path
 
 
 def friendbot_fund(public_key: str, retries: int = 4):
@@ -62,11 +90,14 @@ def submit_and_wait(rpc: SorobanServer, signed_env, label: str):
     for _ in range(30):
         time.sleep(2)
         got = rpc.get_transaction(send.hash)
-        if got.status != "NOT_FOUND":
+        # GetTransactionStatus is a plain Enum, not a str subclass - comparing
+        # it directly against string literals (as this used to) is always
+        # False, so every previous run "failed" here even on real success.
+        if got.status.value != "NOT_FOUND":
             break
-    if got is None or got.status == "NOT_FOUND":
+    if got is None or got.status.value == "NOT_FOUND":
         raise RuntimeError(f"[{label}] transaction never confirmed: {send.hash}")
-    if got.status != "SUCCESS":
+    if got.status.value != "SUCCESS":
         raise RuntimeError(f"[{label}] transaction failed: status={got.status} result={got.result_xdr}")
     print(f"  [{label}] confirmed in ledger {got.latest_ledger}")
     return got
@@ -93,8 +124,10 @@ def main():
     friendbot_fund(admin.public_key)
     friendbot_fund(buyer.public_key)
 
-    wasm_bytes = WASM_PATH.read_bytes()
-    print(f"Loaded contract WASM ({len(wasm_bytes)} bytes)")
+    print("Normalizing wasm to the MVP feature set for Soroban's validator (wasm-opt -mvp)...")
+    normalize_wasm_for_soroban(WASM_PATH, MVP_WASM_PATH)
+    wasm_bytes = MVP_WASM_PATH.read_bytes()
+    print(f"Loaded normalized contract WASM ({len(wasm_bytes)} bytes)")
 
     print("Uploading contract WASM...")
     wasm_id = ContractClient.upload_contract_wasm(

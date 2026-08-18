@@ -1,6 +1,13 @@
-# Newer Rust/LLVM toolchains emit the wasm reference-types proposal by
-# default for wasm32-unknown-unknown, but Soroban's host wasm parser rejects
-# it ("reference-types not enabled: zero byte expected"). Pin codegen to the
-# wasm feature set Soroban actually supports.
+# Newer Rust/LLVM toolchains default wasm32-unknown-unknown codegen to a
+# feature baseline beyond plain WebAssembly MVP (reference-types,
+# multivalue, etc.), but Soroban's host wasm parser only accepts MVP-shape
+# binaries and rejects the rest ("reference-types not enabled: zero byte
+# expected" from Error(WasmVm, InvalidAction) at upload/simulate time).
+# `-C target-feature=-reference-types` alone does NOT fix this - it only
+# turns off reference-types *instructions*, not the element-segment
+# encoding format the linker still emits. `target-cpu=mvp` is the actual
+# fix: it resets codegen to the WebAssembly MVP baseline with no
+# extensions at all, which is what `stellar contract build` uses under the
+# hood for exactly this reason.
 [target.wasm32-unknown-unknown]
-rustflags = ["-C", "target-feature=-reference-types"]
+rustflags = ["-C", "target-cpu=mvp"]

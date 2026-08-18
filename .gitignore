@@ -21,5 +21,7 @@ frontend/dist/
 smart_contract/build/
 smart_contract/**/target/
 smart_contract/**/test_snapshots/
+smart_contract/**/*.mvp.wasm
+binaryen-*/
 .codex
 build
