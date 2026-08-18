@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Smartphone, Layers, ShieldCheck, ExternalLink, Loader2, AlertCircle, Ship, Rabbit, Zap, Sparkles } from "lucide-react";
+import { X, ShieldCheck, ExternalLink, Loader2, AlertCircle, Ship, Rabbit, Sparkles } from "lucide-react";
 import { useWallet } from "../context/WalletContext";
 import { walletService } from "../services/StellarWalletService";
 
@@ -26,27 +26,24 @@ const WalletModal = () => {
     {
       id: "freighter",
       name: "Freighter",
-      icon: <Ship className="w-6 h-6 text-indigo-400" />,
+      icon: <Ship className="w-6 h-6 text-clay-400" />,
       description: "Official Stellar browser extension",
-      color: "bg-indigo-500/5 border-indigo-500/20 hover:border-indigo-500/50",
       installed: availableWallets.freighter?.installed,
       installLink: "https://www.freighter.app/"
     },
     {
       id: "rabet",
       name: "Rabet",
-      icon: <Rabbit className="w-6 h-6 text-cyan-400" />,
+      icon: <Rabbit className="w-6 h-6 text-moss-400" />,
       description: "Modern Stellar wallet for everyone",
-      color: "bg-cyan-400/5 border-cyan-400/20 hover:border-cyan-400/50",
       installed: availableWallets.rabet?.installed,
       installLink: "https://rabet.io/"
     },
     {
       id: "albedo",
       name: "Albedo",
-      icon: <Sparkles className="w-6 h-6 text-purple-400" />,
+      icon: <Sparkles className="w-6 h-6 text-clay-300" />,
       description: "Secure web-based Stellar signer",
-      color: "bg-purple-500/5 border-purple-500/20 hover:border-purple-500/50",
       installed: true,
       installLink: "https://albedo.link/"
     }
@@ -63,73 +60,70 @@ const WalletModal = () => {
            animate={{ opacity: 1 }}
            exit={{ opacity: 0 }}
            onClick={toggleModal}
-           className="absolute inset-0 bg-ink-900/90 backdrop-blur-xl"
+           className="absolute inset-0 bg-paper-deep/90 backdrop-blur-md"
         />
 
         {/* Modal */}
         <motion.div
-           initial={{ opacity: 0, scale: 0.9, y: 30 }}
+           initial={{ opacity: 0, scale: 0.95, y: 20 }}
            animate={{ opacity: 1, scale: 1, y: 0 }}
-           exit={{ opacity: 0, scale: 0.9, y: 30 }}
-           className="relative w-full max-w-lg glass-morphism border border-white/5 rounded-[3rem] shadow-2xl overflow-hidden"
+           exit={{ opacity: 0, scale: 0.95, y: 20 }}
+           className="relative w-full max-w-md paper-card overflow-hidden"
         >
           {/* Header */}
-          <div className="p-10 border-b border-white/5 flex items-center justify-between relative overflow-hidden">
-             {/* Decorative Background for header */}
-             <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-3xl rounded-full" />
-             
-             <div className="space-y-2 relative z-10">
-                <div className="inline-flex items-center gap-2 px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[8px] font-black uppercase tracking-[0.3em] text-indigo-400 mb-1">
-                   Security Protocol
+          <div className="p-8 border-b border-line flex items-center justify-between">
+             <div className="space-y-1.5">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-clay-500/10 border border-clay-500/20 text-[10px] font-semibold text-clay-400 mb-1">
+                   <ShieldCheck size={11} /> Connect wallet
                 </div>
-                <h2 className="text-3xl font-display font-black text-white uppercase tracking-tighter">Sign Into <span className="text-glow">Swarm</span></h2>
-                <p className="text-xs text-slate font-medium opacity-60 tracking-wider">Authorize your neural identity to interact with A2A Protocol</p>
+                <h2 className="text-2xl font-serif font-medium text-bark">Connect a wallet</h2>
+                <p className="text-xs text-bark-faint">Sign in with a Stellar wallet to create and manage deals</p>
              </div>
              <button
                onClick={toggleModal}
-               className="p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all text-slate hover:text-white"
+               className="p-2.5 bg-surface hover:bg-surface-raised border border-line rounded-xl transition-all text-bark-faint hover:text-bark"
              >
-               <X className="w-6 h-6" />
+               <X className="w-5 h-5" />
              </button>
           </div>
 
-          <div className="p-10 space-y-6">
+          <div className="p-8 space-y-5">
             {/* Error Message */}
             {error && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
-                className="p-4 rounded-2xl bg-red-400/10 border border-red-400/20 flex items-start gap-4 mb-4"
+                className="p-4 rounded-xl bg-red-400/10 border border-red-400/20 flex items-start gap-3"
               >
-                <AlertCircle className="w-6 h-6 text-red-400 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-red-300 font-medium leading-tight">{error}</p>
+                <AlertCircle className="w-5 h-5 text-red-300 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-red-200 leading-tight">{error}</p>
               </motion.div>
             )}
 
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-3">
                {wallets.map((wallet) => (
                  <button
                    key={wallet.id}
                    disabled={connecting}
                    onClick={() => (wallet.id === "freighter" || wallet.installed) ? connect(wallet.id) : null}
-                   className={`w-full group relative flex items-center gap-5 p-5 rounded-[2rem] border transition-all duration-500 ${
-                     wallet.color
-                   } ${!wallet.installed ? 'opacity-40 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-95'}`}
+                   className={`w-full group relative flex items-center gap-4 p-4 rounded-xl bg-surface border border-line transition-all duration-300 ${
+                     !wallet.installed ? 'opacity-50 cursor-not-allowed' : 'hover:border-clay-400/40'
+                   }`}
                  >
-                   <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-ink-900/50 flex items-center justify-center border border-white/5 group-hover:border-white/20 transition-all shadow-xl">
+                   <div className="flex-shrink-0 w-11 h-11 rounded-xl bg-surface-raised flex items-center justify-center border border-line">
                      {wallet.icon}
                    </div>
-                   
+
                    <div className="flex-grow text-left">
                      <div className="flex items-center gap-2">
-                       <span className="text-lg font-black text-white uppercase tracking-tighter group-hover:text-glow transition-all">{wallet.name}</span>
+                       <span className="text-sm font-semibold text-bark">{wallet.name}</span>
                        {!wallet.installed && (
-                         <span className="text-[8px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate font-black">
-                           Absent
+                         <span className="text-[10px] px-2 py-0.5 rounded-full bg-surface-raised border border-line text-bark-faint font-medium">
+                           Not installed
                          </span>
                        )}
                      </div>
-                     <p className="text-xs text-slate font-medium opacity-60 mt-1">{wallet.description}</p>
+                     <p className="text-xs text-bark-faint mt-0.5">{wallet.description}</p>
                    </div>
 
                    {!wallet.installed && wallet.installLink && (
@@ -138,17 +132,17 @@ const WalletModal = () => {
                        target="_blank"
                        rel="noopener noreferrer"
                        onClick={(e) => e.stopPropagation()}
-                       className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl text-cyan-400 transition-all border border-white/10"
+                       className="p-2.5 bg-surface-raised hover:bg-line rounded-xl text-clay-400 transition-all border border-line"
                      >
                        <ExternalLink className="w-4 h-4" />
                      </a>
                    )}
 
                    {connecting && (
-                     <div className="absolute inset-0 bg-ink-900/60 backdrop-blur-md flex items-center justify-center rounded-[2rem] z-20">
-                       <div className="flex flex-col items-center gap-3">
-                         <Loader2 className="w-8 h-8 animate-spin text-indigo-400" />
-                         <span className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400">Syncing...</span>
+                     <div className="absolute inset-0 bg-surface/90 backdrop-blur-sm flex items-center justify-center rounded-xl z-20">
+                       <div className="flex flex-col items-center gap-2">
+                         <Loader2 className="w-6 h-6 animate-spin text-clay-400" />
+                         <span className="text-[11px] font-medium text-clay-400">Connecting...</span>
                        </div>
                      </div>
                    )}
@@ -158,10 +152,9 @@ const WalletModal = () => {
           </div>
 
           {/* Footer */}
-          <div className="p-10 bg-white/5 text-center border-t border-white/5">
-            <p className="text-[10px] text-slate font-bold uppercase tracking-[0.2em] opacity-40 leading-relaxed">
-              By initializing handshake, you opt-in to the Swarm <br />
-              <span className="text-indigo-400 cursor-pointer hover:underline">Neural Terms</span> and <span className="text-cyan-400 cursor-pointer hover:underline">Privacy Matrix</span>.
+          <div className="p-6 bg-surface text-center border-t border-line">
+            <p className="text-[11px] text-bark-faint leading-relaxed">
+              By connecting, you agree to the <span className="text-clay-400 cursor-pointer hover:underline">Terms</span> and <span className="text-clay-400 cursor-pointer hover:underline">Privacy Policy</span>.
             </p>
           </div>
         </motion.div>
