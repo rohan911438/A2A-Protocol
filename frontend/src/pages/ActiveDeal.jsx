@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, Clock, CheckCircle2, Circle, ArrowRight, AlertCircle, Coins, Activity, Terminal, Shield, Cpu, Lock, Database, Zap } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, ArrowRight, AlertCircle, Coins, Activity, Lock, Loader2 } from 'lucide-react';
 import { useWallet } from '../context/WalletContext';
 import { getContractInfo, getReleaseTxn, submitSignedXdr } from '../services/ContractService';
 import { getDeal, recordRelease, completeDeal } from '../services/DealService';
@@ -52,7 +52,7 @@ const ActiveDeal = () => {
   }, [dealId]);
 
   useEffect(() => {
-    const defaultTasks = ["Neural Model Calibration", "Context Synthesis", "Validation Sequence"];
+    const defaultTasks = ["Milestone 1", "Milestone 2", "Milestone 3"];
     const result = dealRecord?.data?.result || {};
     const finalPrice = result.final_price || 0;
     const milestoneAmounts = result.milestones?.length
@@ -76,7 +76,7 @@ const ActiveDeal = () => {
       else if (idx === firstOpen) status = "In Progress";
       return {
         id: idx + 1,
-        task: defaultTasks[idx] || `Sequence Phase ${idx + 1}`,
+        task: defaultTasks[idx] || `Milestone ${idx + 1}`,
         status,
         amount: amt,
       };
@@ -86,7 +86,7 @@ const ActiveDeal = () => {
 
   const dealTitle = useMemo(() => {
     const request = dealRecord?.data?.request || dealRecord?.data || {};
-    return request?.title || request?.description?.split('—')[0]?.trim() || 'Active Protocol';
+    return request?.title || request?.description?.split('—')[0]?.trim() || 'Active deal';
   }, [dealRecord]);
 
   const totalPrice = useMemo(() => {
@@ -121,33 +121,33 @@ const ActiveDeal = () => {
 
   const handleRelease = async (milestone) => {
     if (!connected || !account) {
-      setTxStatus('Connect wallet to authorize disbursement.');
+      setTxStatus('Connect your wallet to authorize a release.');
       return;
     }
     if (!isValidStellarAccount(account)) {
-      setTxStatus('Invalid sender account. Reconnect wallet and use a Stellar account (G...).');
+      setTxStatus('Invalid sender account. Reconnect your wallet and use a Stellar account (G...).');
       return;
     }
     if (!isValidStellarAccount(sellerWalletRaw)) {
-      setTxStatus('Seller wallet is missing or invalid. Set seller wallet before releasing milestone funds.');
+      setTxStatus('Seller wallet is missing or invalid. Set the seller wallet before releasing funds.');
       return;
     }
     setLoadingId(milestone.id);
-    setTxStatus('Constructing Stellar XDR Payload...');
+    setTxStatus('Building the release transaction...');
     try {
       const { xdr } = await getReleaseTxn(account, dealId, milestone.id - 1, milestone.amount, sellerWalletRaw);
-      
-      setTxStatus('Protocol awaiting signature...');
+
+      setTxStatus('Waiting for your signature...');
       const signedXdr = await signTransaction(xdr);
-      
-      setTxStatus('Syncing with Stellar consensus...');
+
+      setTxStatus('Submitting to Stellar...');
       const { tx_hash } = await submitSignedXdr(signedXdr);
-      
+
       await recordRelease(dealId, milestone.id - 1, tx_hash);
-      setTxStatus(`Success. Snapshot: ${tx_hash.substring(0, 8)}...`);
+      setTxStatus(`Released. Tx ${tx_hash.substring(0, 10)}...`);
       await fetchBalances();
     } catch (err) {
-      setTxStatus(err.message || 'Signature Error');
+      setTxStatus(err.message || 'Signature failed');
     } finally {
       setLoadingId(null);
     }
@@ -158,24 +158,22 @@ const ActiveDeal = () => {
 
   if (loadingData) {
     return (
-      <div className="pt-32 pb-20 px-6 min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
-        <div className="w-16 h-16 rounded-2xl border-2 border-indigo-500/20 border-t-indigo-500 animate-spin flex items-center justify-center">
-            <Cpu className="text-indigo-400" size={24} />
-        </div>
-        <p className="mt-6 text-mist/60 font-mono text-[10px] uppercase tracking-[0.4em] animate-pulse">Syncing Node State...</p>
+      <div className="pt-32 pb-20 px-6 min-h-screen bg-paper flex flex-col items-center justify-center">
+        <Loader2 className="text-clay-400 animate-spin" size={32} />
+        <p className="mt-5 text-bark-faint text-sm">Loading deal...</p>
       </div>
     );
   }
 
   if (!dealId) {
     return (
-      <div className="pt-32 pb-20 px-6 min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
-        <div className="max-w-xl w-full text-center space-y-8 glass-morphism border border-white/10 rounded-[3rem] p-12">
-          <h2 className="text-3xl font-display font-black text-white uppercase tracking-tight">No Active Deal Selected</h2>
-          <p className="text-slate/70 text-sm font-medium">Open this page from Dashboard or Summary so a valid deal context is provided.</p>
+      <div className="pt-32 pb-20 px-6 min-h-screen bg-paper flex flex-col items-center justify-center">
+        <div className="max-w-xl w-full text-center space-y-6 paper-card p-12">
+          <h2 className="text-2xl font-serif font-medium text-bark">No active deal selected</h2>
+          <p className="text-bark-muted text-sm">Open this page from the Dashboard or a deal summary so a valid deal context is provided.</p>
           <button
             onClick={() => navigate('/dashboard')}
-            className="px-10 py-4 bg-white text-ink-900 font-black rounded-2xl hover:scale-105 transition-all shadow-glow uppercase tracking-[0.2em] text-xs"
+            className="btn-clay"
           >
             Return to Dashboard
           </button>
@@ -185,198 +183,169 @@ const ActiveDeal = () => {
   }
 
   return (
-    <div className="pt-32 pb-32 px-6 min-h-screen flex flex-col items-center relative overflow-hidden selection:bg-indigo-500/30 selection:text-stellar-cyan">
-      <motion.div 
-        initial={{ opacity: 0, y: 30 }}
+    <div className="pt-32 pb-32 px-6 min-h-screen bg-paper relative">
+      <div className="absolute top-[-5%] left-1/2 -translate-x-1/2 w-[900px] h-[420px] bg-clay-500/5 blur-[140px] rounded-full pointer-events-none -z-10" />
+
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl w-full space-y-12 z-10"
+        className="max-w-3xl mx-auto w-full space-y-10"
       >
-        {/* Header Section */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10 border-b border-white/5 pb-12">
-          <div className="space-y-6">
-             <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-emerald-400/10 border border-emerald-400/20 text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.1)]">
-                <ShieldCheck size={14} /> Protocol Locked • XDR Secured
-             </div>
-             <h1 className="text-5xl lg:text-6xl font-display font-black text-white uppercase tracking-tighter leading-tight">{dealTitle}</h1>
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8 border-b border-line pb-10">
+          <div className="space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-moss-400/10 border border-moss-400/25 text-xs font-semibold text-moss-400">
+              <ShieldCheck size={13} /> Escrow funded on-chain
+            </div>
+            <h1 className="text-3xl lg:text-4xl font-serif font-medium text-bark tracking-tight">{dealTitle}</h1>
           </div>
-          <div className="flex gap-12 border-l border-white/10 pl-12 h-fit">
-             <div className="space-y-3">
-                <span className="text-[10px] uppercase font-black text-slate tracking-[0.3em] opacity-40 block">Escrow Equilibrium</span>
-                <span className="text-4xl font-display font-black text-white tracking-tighter flex items-center gap-3">
-                   {totalPrice} <span className="text-xs font-mono text-indigo-400 mt-2 uppercase tracking-widest">XLM</span>
-                </span>
-             </div>
+          <div className="space-y-2">
+            <span className="text-[11px] uppercase font-semibold text-bark-faint tracking-widest block">Total value</span>
+            <span className="text-3xl font-serif font-medium text-bark flex items-center gap-2">
+              {totalPrice} <span className="text-xs font-mono text-clay-400 uppercase tracking-wide">XLM</span>
+            </span>
           </div>
         </div>
 
-        {/* Global Progress Container */}
-        <div className="glass-morphism border border-white/10 p-10 rounded-[3.5rem] space-y-8 backdrop-blur-3xl shadow-2xl relative overflow-hidden group">
-           <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/[0.03] blur-[100px] -z-10 group-hover:bg-indigo-500/[0.07] transition-all duration-1000" />
-           
-           <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400/60">
-              <span>Settlement Gradient</span>
-              <span className="text-white">{Math.round(progressPercent)}%</span>
-           </div>
-           
-           <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden shadow-inner flex items-center p-0.5">
-              <motion.div 
-                initial={{ width: 0 }}
-                animate={{ width: `${progressPercent}%` }}
-                className="h-full bg-gradient-to-r from-indigo-500 via-stellar-cyan to-cyber-purple rounded-full shadow-glow"
-              />
-           </div>
-           
-           <div className="flex flex-wrap items-center gap-6 text-[9px] font-black uppercase tracking-[0.3em] text-slate opacity-40">
-              <div className="flex items-center gap-2"><Activity size={14} className="text-emerald-400" /> Real-time Node Sync</div>
-              <div className="flex items-center gap-2"><Database size={14} className="text-indigo-400" /> Ledger Snapshot #4,291</div>
-              <div className="flex items-center gap-2"><Clock size={14} className="text-stellar-cyan" /> Epoch Latency: 12ms</div>
-           </div>
+        {/* Progress */}
+        <div className="paper-card p-8 space-y-5">
+          <div className="flex justify-between items-center text-xs font-semibold uppercase tracking-widest text-bark-faint">
+            <span>Settlement progress</span>
+            <span className="text-bark">{Math.round(progressPercent)}%</span>
+          </div>
+
+          <div className="h-2 w-full bg-surface-raised rounded-full overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${progressPercent}%` }}
+              className="h-full bg-clay-500 rounded-full"
+            />
+          </div>
         </div>
 
-        {/* Milestones Sequence */}
-        <div className="space-y-8">
-           <h2 className="text-[11px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-4">
-              <Terminal size={18} className="text-indigo-500" />
-              <span>Logic Sequence</span>
-              <div className="flex-grow h-px bg-gradient-to-r from-white/10 to-transparent ml-4" />
-           </h2>
+        {/* Milestones */}
+        <div className="space-y-6">
+          <h2 className="text-xs font-semibold text-bark-faint uppercase tracking-[0.2em]">Milestones</h2>
 
-           <div className="space-y-6 relative">
-              {milestones.map((m, i) => (
-                <motion.div 
-                  key={m.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  className={`p-10 rounded-[3.5rem] border-2 transition-all duration-500 group relative overflow-hidden ${
-                    m.status === 'Completed' 
-                    ? 'bg-emerald-400/[0.03] border-emerald-400/20 shadow-glow-sm' 
-                    : m.status === 'In Progress' 
-                    ? 'glass-morphism border-indigo-500/40 shadow-2xl scale-[1.02]' 
-                    : 'bg-white/[0.01] border-white/5 opacity-40'
-                  }`}
-                >
-                   {m.status === 'In Progress' && (
-                       <div className="absolute inset-0 bg-indigo-500/[0.02] animate-pulse" />
-                   )}
-                   
-                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
-                      <div className="flex items-center gap-8">
-                         <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border-2 transition-all ${
-                             m.status === 'Completed' 
-                             ? 'bg-emerald-400/10 border-emerald-400/30 text-emerald-400' 
-                             : m.status === 'In Progress'
-                             ? 'bg-indigo-500/10 border-indigo-500/50 text-indigo-400 shadow-glow'
-                             : 'bg-white/5 border-white/10 text-slate/20'
-                         }`}>
-                            {m.status === 'Completed' ? <CheckCircle2 size={32} /> : m.status === 'In Progress' ? <Activity size={32} className="animate-spin-slow" /> : <Lock size={32} />}
-                         </div>
-                         <div className="space-y-2">
-                            <h3 className={`text-2xl font-display font-black transition-colors uppercase tracking-tight ${m.status === 'Completed' ? 'text-white' : m.status === 'In Progress' ? 'text-white' : 'text-slate'}`}>{m.task}</h3>
-                            <div className="flex items-center gap-4">
-                               <div className="text-[10px] font-mono font-black uppercase tracking-[0.3em] text-indigo-400 flex items-center gap-2">
-                                 <Coins size={12} /> {m.amount} XLM
-                               </div>
-                               <div className="w-1 h-1 rounded-full bg-white/10" />
-                               <div className="text-[9px] font-black uppercase tracking-widest text-slate opacity-40">Phase Sequence Snapshot</div>
-                            </div>
-                         </div>
+          <div className="space-y-4">
+            {milestones.map((m, i) => (
+              <motion.div
+                key={m.id}
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.08 }}
+                className={`p-7 rounded-2xl border transition-all duration-500 ${
+                  m.status === 'Completed'
+                  ? 'bg-moss-400/[0.04] border-moss-400/25'
+                  : m.status === 'In Progress'
+                  ? 'paper-card border-clay-500/30'
+                  : 'bg-surface/40 border-line opacity-60'
+                }`}
+              >
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                  <div className="flex items-center gap-5">
+                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border ${
+                        m.status === 'Completed'
+                        ? 'bg-moss-400/10 border-moss-400/30 text-moss-400'
+                        : m.status === 'In Progress'
+                        ? 'bg-clay-500/10 border-clay-500/30 text-clay-400'
+                        : 'bg-surface border-line text-bark-faint'
+                    }`}>
+                      {m.status === 'Completed' ? <CheckCircle2 size={22} /> : m.status === 'In Progress' ? <Activity size={22} /> : <Lock size={20} />}
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className={`text-lg font-semibold ${m.status === 'Pending' ? 'text-bark-muted' : 'text-bark'}`}>{m.task}</h3>
+                      <div className="text-sm font-mono text-clay-400 flex items-center gap-2">
+                        <Coins size={13} /> {m.amount} XLM
                       </div>
-
-                      <div className="flex items-center gap-4 w-full md:w-auto">
-                        {m.status === 'In Progress' ? (
-                          isBuyer ? (
-                            <button 
-                              onClick={() => handleRelease(m)}
-                              disabled={loadingId === m.id}
-                              className="w-full md:w-auto px-10 py-5 bg-white text-ink-900 text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl hover:scale-105 transition-all flex items-center justify-center gap-3 shadow-glow group/btn"
-                            >
-                               {loadingId === m.id ? 'SYNCHRONIZING...' : 'AUTHORIZE RELEASE'} 
-                               <Zap size={16} className={loadingId === m.id ? 'animate-pulse' : 'group-hover/btn:rotate-12 transition-transform'} />
-                            </button>
-                          ) : (
-                            <div className="text-[10px] font-black text-stellar-cyan uppercase tracking-[0.3em] flex items-center gap-3 px-6 py-4 glass-morphism rounded-2xl border border-stellar-cyan/20 shadow-glow-sm">
-                               <AlertCircle size={16} /> Awaiting Peer Auth
-                            </div>
-                          )
-                        ) : m.status === 'Pending' ? (
-                          <div className="text-[10px] font-black text-slate/20 uppercase tracking-[0.4em] flex items-center gap-3 px-8">
-                             <Lock size={16} /> Sequence Lock
-                          </div>
-                        ) : (
-                          <div className="px-6 py-4 rounded-2xl bg-emerald-400/5 text-emerald-400 text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-3 border border-emerald-400/20 shadow-inner">
-                             <CheckCircle2 size={16} /> Ledger Verified
-                          </div>
-                        )}
-                      </div>
-                   </div>
-                </motion.div>
-              ))}
-              
-              {/* Decorative vertical rail */}
-              <div className="absolute top-10 bottom-10 left-[3.25rem] w-px bg-white/5 -z-10" />
-           </div>
-
-           {isBuyer && (!senderWalletValid || !sellerWalletValid) && (
-             <div className="text-[10px] font-black text-amber-300 uppercase tracking-[0.25em] bg-amber-300/10 border border-amber-300/20 rounded-2xl px-6 py-4">
-               {senderWalletValid
-                 ? 'Seller wallet is not set yet. Ask seller to accept with wallet from Negotiation Room before releasing.'
-                 : 'Sender wallet is invalid. Reconnect wallet and select a Stellar account (G...).'}
-             </div>
-           )}
-        </div>
-
-        <AnimatePresence>
-            {txStatus && (
-                <motion.div 
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="text-[10px] font-mono font-black text-stellar-cyan uppercase tracking-[0.4em] text-center bg-stellar-cyan/5 py-5 rounded-3xl border border-stellar-cyan/10"
-                >
-                    <Activity size={14} className="inline-block mr-4 animate-pulse" /> {txStatus}
-                </motion.div>
-            )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-        {completedCount === milestones.length && milestones.length > 0 && (
-             <motion.div 
-               initial={{ y: 30, opacity: 0 }}
-               animate={{ y: 0, opacity: 1 }}
-               className="p-12 md:p-16 rounded-[4rem] glass-morphism border-2 border-indigo-500/20 flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden group shadow-2xl"
-             >
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-stellar-cyan/5 to-cyber-purple/10 opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
-                
-                <div className="space-y-4 relative z-10 text-center md:text-left">
-                   <h3 className="text-4xl font-display font-black text-white uppercase tracking-tighter leading-none">Protocol Objective <br/> Fulfilled</h3>
-                   <div className="flex items-center justify-center md:justify-start gap-4">
-                      <div className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em]">Node Synthesis Finalized</div>
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                   </div>
-                </div>
-                {isBuyer ? (
-                  <button 
-                    onClick={async () => {
-                      try {
-                        await completeDeal(dealId);
-                        navigate('/dashboard');
-                      } catch (err) {
-                        setTxStatus(err.message || 'Protocol Tear-down Failed');
-                      }
-                    }}
-                    className="px-16 py-7 bg-white text-ink-900 font-black rounded-[2rem] hover:scale-105 transition-all shadow-glow flex items-center justify-center gap-4 z-10 uppercase tracking-[0.3em] text-xs relative overflow-hidden"
-                  >
-                     <span className="relative z-10 flex items-center gap-3">Close Lifecycle <ArrowRight size={20} /></span>
-                  </button>
-                ) : (
-                  <div className="relative z-10 text-[10px] font-black text-white/40 uppercase tracking-[0.4em] bg-white/5 px-8 py-5 rounded-3xl border border-white/10 shadow-inner">
-                    Awaiting peer to terminate session
+                    </div>
                   </div>
-                )}
-             </motion.div>
-           )}
+
+                  <div className="flex items-center gap-3 w-full md:w-auto">
+                    {m.status === 'In Progress' ? (
+                      isBuyer ? (
+                        <button
+                          onClick={() => handleRelease(m)}
+                          disabled={loadingId === m.id}
+                          className="w-full md:w-auto btn-clay text-sm py-3 flex items-center justify-center gap-2"
+                        >
+                          {loadingId === m.id ? 'Releasing...' : 'Release payment'}
+                          {loadingId !== m.id && <ArrowRight size={15} />}
+                        </button>
+                      ) : (
+                        <div className="text-xs font-semibold text-bark-faint flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface border border-line">
+                          <AlertCircle size={14} /> Waiting on buyer
+                        </div>
+                      )
+                    ) : m.status === 'Pending' ? (
+                      <div className="text-xs font-semibold text-bark-faint flex items-center gap-2 px-2">
+                        <Lock size={14} /> Locked
+                      </div>
+                    ) : (
+                      <div className="px-4 py-2.5 rounded-xl bg-moss-400/10 text-moss-400 text-xs font-semibold flex items-center gap-2 border border-moss-400/25">
+                        <CheckCircle2 size={14} /> Released
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {isBuyer && (!senderWalletValid || !sellerWalletValid) && (
+            <div className="text-sm font-medium text-clay-400 bg-clay-500/10 border border-clay-500/25 rounded-xl px-5 py-3.5">
+              {senderWalletValid
+                ? 'Seller wallet is not set yet. Ask the seller to accept the deal before you release funds.'
+                : 'Your wallet is invalid. Reconnect and select a Stellar account (G...).'}
+            </div>
+          )}
+        </div>
+
+        <AnimatePresence>
+          {txStatus && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-sm font-medium text-bark-muted text-center bg-surface py-4 rounded-xl border border-line"
+            >
+              {txStatus}
+            </motion.div>
+          )}
         </AnimatePresence>
 
+        <AnimatePresence>
+          {completedCount === milestones.length && milestones.length > 0 && (
+            <motion.div
+              initial={{ y: 16, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="paper-card p-10 flex flex-col md:flex-row items-center justify-between gap-8 border-clay-500/25"
+            >
+              <div className="space-y-2 text-center md:text-left">
+                <h3 className="text-2xl font-serif font-medium text-bark">All milestones released</h3>
+                <div className="text-sm text-bark-muted">Ready to close out this deal.</div>
+              </div>
+              {isBuyer ? (
+                <button
+                  onClick={async () => {
+                    try {
+                      await completeDeal(dealId);
+                      navigate('/dashboard');
+                    } catch (err) {
+                      setTxStatus(err.message || 'Could not close out the deal');
+                    }
+                  }}
+                  className="btn-clay flex items-center gap-2 shrink-0"
+                >
+                  Mark deal complete <ArrowRight size={16} />
+                </button>
+              ) : (
+                <div className="text-sm font-medium text-bark-faint bg-surface px-6 py-3.5 rounded-xl border border-line shrink-0">
+                  Waiting for the buyer to close out
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </div>
   );
