@@ -50,10 +50,19 @@ The deploying admin key was a throwaway testnet keypair; it has no special
 fund-moving power in the contract (see `initialize()` in `lib.rs`) and
 isn't needed for the app to run against this deployment.
 
-## Remaining work
+## Enabling on-chain mode
 
-`backend/routes/contract.py` still needs to be wired to
-`backend/services/contract_service.py` behind a `CONTRACT_MODE=onchain`
-flag - `contract_service.py` exists and its transaction-building logic was
-verified against this live deployment, but the routes still default to the
-legacy (non-contract-invoking) path.
+`backend/routes/contract.py` is now wired to `contract_service.py` behind
+`CONTRACT_MODE=onchain` (default stays `legacy`, so the live deployment's
+current behavior is unaffected until this is explicitly set). To turn it
+on, set on the backend:
+
+```
+CONTRACT_MODE=onchain
+ESCROW_CONTRACT_ID=CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU
+ESCROW_TOKEN_ID=CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC
+```
+
+Verified end-to-end: `/contract/create-txn` in onchain mode was called
+directly with a funded testnet account and returned a real, valid prepared
+XDR against this deployment.

@@ -50,6 +50,31 @@ const HowItWorks = () => {
           />
         </motion.div>
 
+        {/* Connecting flow line - ties the 4 steps together as one process
+            instead of reading as four disconnected cards. Desktop only,
+            since the grid re-flows to 1-2 columns below lg. */}
+        <div className="hidden lg:block relative h-10 mb-2">
+          <svg className="absolute inset-0 w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 10">
+            <motion.line
+              x1="12.5" y1="5" x2="87.5" y2="5"
+              stroke="#D97757" strokeWidth="0.4" strokeDasharray="0.1 3" strokeLinecap="round"
+              initial={{ pathLength: 0, opacity: 0 }}
+              whileInView={{ pathLength: 1, opacity: 0.4 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+            />
+            {[12.5, 37.5, 62.5, 87.5].map((x, i) => (
+              <motion.circle
+                key={x} cx={x} cy="5" r="1.4" fill="#D97757"
+                initial={{ scale: 0, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 0.9 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.3 + i * 0.15 }}
+              />
+            ))}
+          </svg>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {steps.map((step, i) => (
             <motion.div
