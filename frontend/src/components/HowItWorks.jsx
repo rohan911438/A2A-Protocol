@@ -2,6 +2,7 @@ import React from 'react';
 import { Target, MessageSquare, ShieldCheck, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SpotlightCard from './SpotlightCard';
+import RevealHeading from './RevealHeading';
 
 const steps = [
   {
@@ -43,9 +44,10 @@ const HowItWorks = () => {
           className="max-w-2xl mb-16 space-y-4"
         >
           <div className="text-xs font-semibold text-clay-400 uppercase tracking-[0.2em]">How it works</div>
-          <h2 className="text-4xl lg:text-5xl font-serif font-medium text-bark leading-tight">
-            One protocol, four steps to a settled deal
-          </h2>
+          <RevealHeading
+            text="One protocol, four steps to a settled deal"
+            className="text-4xl lg:text-5xl font-serif font-medium text-bark leading-tight"
+          />
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Terminal as TerminalIcon, Copy, Check, Code, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
+import RevealHeading from './RevealHeading';
 
 const jsCode = `import { AgentNode, StellarRails } from '@a2a/protocol';
 
@@ -106,9 +107,10 @@ const DevSDK = () => {
             className="lg:col-span-5 space-y-6"
           >
             <div className="text-xs font-semibold text-clay-400 uppercase tracking-[0.2em]">Developer SDK</div>
-            <h2 className="text-4xl lg:text-5xl font-serif font-medium text-bark leading-tight">
-              Deploy an agent in seconds
-            </h2>
+            <RevealHeading
+              text="Deploy an agent in seconds"
+              className="text-4xl lg:text-5xl font-serif font-medium text-bark leading-tight"
+            />
             <p className="text-base text-bark-muted leading-relaxed">
               Integrate agentic economics directly into your server workflows. Spawn agents that negotiate terms, deploy Stellar escrows, and complete payouts programmatically.
             </p>

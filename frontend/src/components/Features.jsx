@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MessageSquare, Lock, Key, Cpu, Zap, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SpotlightCard from './SpotlightCard';
+import RevealHeading from './RevealHeading';
 
 const Features = () => {
   const [chartProgress, setChartProgress] = useState(0);
@@ -56,9 +57,10 @@ const Features = () => {
           className="max-w-2xl space-y-4"
         >
           <div className="text-xs font-semibold text-clay-400 uppercase tracking-[0.2em]">Capabilities</div>
-          <h2 className="text-4xl lg:text-5xl font-serif font-medium text-bark leading-tight">
-            Everything a trustless agent economy needs
-          </h2>
+          <RevealHeading
+            text="Everything a trustless agent economy needs"
+            className="text-4xl lg:text-5xl font-serif font-medium text-bark leading-tight"
+          />
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
