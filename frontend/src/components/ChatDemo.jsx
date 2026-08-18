@@ -157,11 +157,11 @@ const ChatDemo = () => {
                 <span className={`font-bold mr-2 uppercase tracking-wider ${
                   log.type === 'buyer' ? 'text-clay-400' :
                   log.type === 'seller' ? 'text-moss-400' :
-                  log.type === 'success' ? 'text-green-400' : 'text-[#C9A868]'
+                  log.type === 'success' ? 'text-moss-400' : 'text-[#C9A868]'
                 }`}>
                   {log.tag}:
                 </span>
-                <span className={log.type === 'success' ? 'text-green-300 font-bold' : 'text-zinc-300 font-medium'}>
+                <span className={log.type === 'success' ? 'text-moss-400 font-bold' : 'text-zinc-300 font-medium'}>
                   {log.text}
                 </span>
               </div>
@@ -183,7 +183,7 @@ const ChatDemo = () => {
               onClick={copyCode}
               className="absolute top-0 right-0 p-1.5 rounded bg-zinc-900 border border-white/5 hover:border-white/10 text-zinc-400 hover:text-white transition-all opacity-0 group-hover:opacity-100 flex items-center gap-1.5 text-[9px] uppercase tracking-wider font-bold"
             >
-              {copied ? <Check size={10} className="text-green-400" /> : <Copy size={10} />}
+              {copied ? <Check size={10} className="text-moss-400" /> : <Copy size={10} />}
               {copied ? 'Copied' : 'Copy'}
             </button>
             <pre className="text-zinc-400 overflow-x-auto text-[11px] leading-relaxed no-scrollbar select-text selection:bg-clay-500/30 selection:text-white">
@@ -204,8 +204,8 @@ const ChatDemo = () => {
               </div>
               <div className="p-4 rounded-xl bg-zinc-950/40 border border-white/5">
                 <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold mb-1 opacity-70">Escrow Finality</div>
-                <div className="text-sm text-green-400 font-bold flex items-center gap-2">
-                  <Shield size={14} className="text-green-400" />
+                <div className="text-sm text-moss-400 font-bold flex items-center gap-2">
+                  <Shield size={14} className="text-moss-400" />
                   Soroban On-Chain
                 </div>
               </div>
@@ -234,7 +234,7 @@ const ChatDemo = () => {
             </div>
 
             <div className="flex items-center gap-2 text-[10px] text-zinc-500 bg-zinc-950/30 p-3 rounded-lg border border-white/5">
-              <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+              <div className="w-1.5 h-1.5 rounded-full bg-moss-400" />
               <span>Consensus reached in 4 negotiation rounds (Total Delta convergence rate: 98.4%)</span>
             </div>
           </div>
@@ -245,11 +245,11 @@ const ChatDemo = () => {
       <div className="px-6 py-4 bg-zinc-950/50 border-t border-zinc-900/60 flex items-center justify-between text-[9px] text-zinc-500 font-bold tracking-widest uppercase">
         <div className="flex items-center gap-2">
           <span>Stellar Testnet Seq:</span>
-          <span className="text-cyan-400 font-mono">#51980</span>
+          <span className="text-clay-400 font-mono">#51980</span>
         </div>
         <div className="flex gap-4">
           <span>Gas Limit: <span className="text-zinc-400 font-mono">0.0001 XLM</span></span>
-          <span>Status: <span className="text-green-400">Stable</span></span>
+          <span>Status: <span className="text-moss-400">Stable</span></span>
         </div>
       </div>
     </div>

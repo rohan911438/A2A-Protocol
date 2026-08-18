@@ -43,6 +43,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-paper font-body selection:bg-clay-500/30 selection:text-clay-400 flex flex-col transition-colors duration-500">
+      <div className="grain-overlay" aria-hidden="true" />
       <Navbar />
       <WalletModal />
 

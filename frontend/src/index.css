@@ -207,6 +207,23 @@
   animation: aurora-drift-c 30s ease-in-out infinite;
 }
 
+/* Film-grain overlay - the single cheapest trick for making a flat dark
+   palette read as filmic/crafted instead of a flat CSS gradient. Static
+   (no animation cost), blended over everything at very low opacity. */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+:root[data-perf='low'] .grain-overlay {
+  display: none;
+}
+
 /* Custom sleek dark scrollbar */
 ::-webkit-scrollbar {
   width: 5px;
