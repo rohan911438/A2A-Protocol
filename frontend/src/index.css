@@ -79,16 +79,10 @@
   backdrop-filter: blur(4px) !important;
 }
 
-:root[data-perf='low'] .animate-grid-move,
-:root[data-perf='low'] .animate-particle,
-:root[data-perf='low'] .animate-scan-line,
-:root[data-perf='low'] .animate-pulse-glow,
-:root[data-perf='low'] .animate-neural-pulse,
 :root[data-perf='low'] .animate-fadeInUp,
 :root[data-perf='low'] .animate-aurora-a,
 :root[data-perf='low'] .animate-aurora-b,
-:root[data-perf='low'] .animate-aurora-c,
-:root[data-perf='low'] .animate-shimmer-glow {
+:root[data-perf='low'] .animate-aurora-c {
   animation: none !important;
 }
 
@@ -172,23 +166,3 @@
   background: #27272a;
 }
 
-/* Shimmer glow text effect keyframes */
-@keyframes shimmer-glow {
-  0% {
-    background-position: 0% 50%;
-    filter: drop-shadow(0 0 10px rgba(179,234,30, 0.15));
-  }
-  50% {
-    background-position: 100% 50%;
-    filter: drop-shadow(0 0 22px rgba(179,234,30, 0.35));
-  }
-  100% {
-    background-position: 0% 50%;
-    filter: drop-shadow(0 0 10px rgba(179,234,30, 0.15));
-  }
-}
-
-.animate-shimmer-glow {
-  background-size: 200% auto;
-  animation: shimmer-glow 6s ease-in-out infinite;
-}

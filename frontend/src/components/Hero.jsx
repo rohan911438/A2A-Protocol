@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '../context/WalletContext';
 import { Terminal, ArrowRight } from 'lucide-react';
@@ -70,10 +70,42 @@ const Word = ({ children, className = '' }) => (
   </span>
 );
 
+// The headline names the product's three real stages (negotiate, settle,
+// pay) - instead of only revealing once, a traveling highlight cycles
+// through them continuously, so the sentence keeps demonstrating the
+// product's actual flow rather than sitting static after load.
+const CycleWord = ({ active, children }) => (
+  <span
+    className={`inline-block italic transition-all duration-500 ease-out ${
+      active
+        ? 'text-clay-400 drop-shadow-[0_0_18px_rgba(179,234,30,0.4)]'
+        : 'text-bark-muted'
+    }`}
+  >
+    {children}
+  </span>
+);
+
 const Hero = () => {
   const navigate = useNavigate();
   const { connected, toggleModal, formatAddress, account } = useWallet();
   const sectionRef = useRef(null);
+  const [activeVerb, setActiveVerb] = useState(0);
+
+  useEffect(() => {
+    // Wait for the initial word-reveal to finish before the cycle starts,
+    // so the two animations never visually collide.
+    let intervalId;
+    const startDelay = setTimeout(() => {
+      intervalId = setInterval(() => {
+        setActiveVerb((v) => (v + 1) % 3);
+      }, 1800);
+    }, 1600);
+    return () => {
+      clearTimeout(startDelay);
+      clearInterval(intervalId);
+    };
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -125,10 +157,11 @@ const Hero = () => {
         >
           <span className="block">
             <Word>Autonomous</Word> <Word>agents</Word> <Word>that</Word>{' '}
-            <Word className="italic text-clay-400 animate-shimmer-glow">negotiate</Word>,
+            <Word><CycleWord active={activeVerb === 0}>negotiate</CycleWord></Word>,
           </span>
           <span className="block">
-            <Word>settle,</Word> <Word>and</Word> <Word>pay</Word> <Word>each</Word> <Word>other.</Word>
+            <Word><CycleWord active={activeVerb === 1}>settle,</CycleWord></Word> <Word>and</Word>{' '}
+            <Word><CycleWord active={activeVerb === 2}>pay</CycleWord></Word> <Word>each</Word> <Word>other.</Word>
           </span>
         </motion.h1>
 
