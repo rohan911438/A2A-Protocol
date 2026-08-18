@@ -1,6 +1,7 @@
 import React from 'react';
 import { Target, MessageSquare, ShieldCheck, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
+import SpotlightCard from './SpotlightCard';
 
 const steps = [
   {
@@ -55,8 +56,8 @@ const HowItWorks = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="paper-card p-7 flex flex-col justify-between min-h-[240px]"
             >
+            <SpotlightCard className="p-7 flex flex-col justify-between min-h-[240px]">
               <div>
                 <div className="flex items-center justify-between mb-8">
                   <div className="w-10 h-10 rounded-lg bg-clay-500/10 border border-clay-500/20 text-clay-400 flex items-center justify-center">
@@ -71,6 +72,7 @@ const HowItWorks = () => {
               <p className="text-sm text-bark-muted leading-relaxed">
                 {step.description}
               </p>
+            </SpotlightCard>
             </motion.div>
           ))}
         </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MessageSquare, Lock, Key, Cpu, Zap, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
+import SpotlightCard from './SpotlightCard';
 
 const Features = () => {
   const [chartProgress, setChartProgress] = useState(0);
@@ -68,8 +69,9 @@ const Features = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.05 }}
-            className="md:col-span-7 paper-card p-8"
+            className="md:col-span-7"
           >
+          <SpotlightCard className="p-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 items-center h-full">
               <div className="space-y-4">
                 <div className="w-11 h-11 rounded-xl bg-clay-500/10 border border-clay-500/20 text-clay-400 flex items-center justify-center">
@@ -116,6 +118,7 @@ const Features = () => {
                 </div>
               </div>
             </div>
+          </SpotlightCard>
           </motion.div>
 
           {/* Card 2: Soroban Smart Escrow */}
@@ -124,8 +127,9 @@ const Features = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="md:col-span-5 paper-card p-8 flex flex-col justify-between"
+            className="md:col-span-5"
           >
+          <SpotlightCard className="p-8 flex flex-col justify-between h-full">
             <div className="space-y-4">
               <div className="w-11 h-11 rounded-xl bg-clay-500/10 border border-clay-500/20 text-clay-400 flex items-center justify-center">
                 <Lock size={18} />
@@ -159,6 +163,7 @@ const Features = () => {
                 {escrowLocked ? 'Locked' : 'Released'}
               </span>
             </div>
+          </SpotlightCard>
           </motion.div>
 
           {/* Card 3: x402 Micropayments */}
@@ -167,8 +172,9 @@ const Features = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.05 }}
-            className="md:col-span-5 paper-card p-8 flex flex-col justify-between"
+            className="md:col-span-5"
           >
+          <SpotlightCard className="p-8 flex flex-col justify-between">
             <div className="space-y-4">
               <div className="w-11 h-11 rounded-xl bg-clay-500/10 border border-clay-500/20 text-clay-400 flex items-center justify-center">
                 <Zap size={18} />
@@ -205,6 +211,7 @@ const Features = () => {
                 </div>
               )}
             </div>
+          </SpotlightCard>
           </motion.div>
 
           {/* Card 4: Swarm Multi-Agent Verification */}
@@ -213,8 +220,9 @@ const Features = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="md:col-span-7 paper-card p-8"
+            className="md:col-span-7"
           >
+          <SpotlightCard className="p-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 items-center h-full">
               <div className="space-y-4">
                 <div className="w-11 h-11 rounded-xl bg-clay-500/10 border border-clay-500/20 text-clay-400 flex items-center justify-center">
@@ -284,6 +292,7 @@ const Features = () => {
                 ))}
               </div>
             </div>
+          </SpotlightCard>
           </motion.div>
 
         </div>
