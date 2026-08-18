@@ -92,7 +92,7 @@ A2AT is the protocol's coordination token. It is not a payment asset — XLM han
 
 ## Risk Disclosure (mandatory — must appear on all public-facing pages)
 
-> A2AT is a utility token for participation in the A2A Protocol ecosystem. Acquiring or holding A2AT does not constitute an investment and does not entitle the holder to any financial return. The formation cost reference reflects the on-chain resources committed to this launch and does not imply any price floor or redemption value for A2AT tokens. Smart contracts are currently deployed on Stellar Testnet; mainnet deployment is planned but not yet complete. Five of six A2AT utilities are planned and have not yet been implemented. Token utility depends on continued protocol development. Stack cost (HAC) is non-refundable upon Stack removal. This is not financial advice. Past on-chain activity does not indicate future results.
+> A2AT is a proposed utility token design for participation in the A2A Protocol ecosystem; no A2AT contract has been deployed. Acquiring or holding A2AT does not constitute an investment and does not entitle the holder to any financial return. The formation cost reference reflects the on-chain resources committed to this launch and does not imply any price floor or redemption value for A2AT tokens. The escrow contract is currently deployed on Stellar Testnet; mainnet deployment is planned but not yet complete. All six planned A2AT utilities are unimplemented design proposals. Token utility depends on continued protocol development. Stack cost (HAC) is non-refundable upon Stack removal. This is not financial advice. Past on-chain activity does not indicate future results.
 
 ---
 

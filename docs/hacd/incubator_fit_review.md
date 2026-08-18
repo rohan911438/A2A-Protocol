@@ -93,7 +93,7 @@ None. No blockers identified.
 ## 5. Warnings
 
 1. `x402_mode = "simulate"` by default — correctly disclosed as a known limitation in risk disclosures, not hidden.
-2. Five of six A2AT utilities are "planned" — all correctly labeled with conditional language. Not a compliance issue; is an honest disclosure.
+2. All six A2AT utilities are "planned"/proposed, and no A2AT contract is deployed — correctly labeled with conditional language throughout. Not a compliance issue; is an honest disclosure. (Previously one utility, protocol fee discount, was mislabeled "live" in some documents; corrected across README, whitepaper, and HACD submission materials.)
 3. Smart contract not formally audited — disclosed in risk section.
 
 ---

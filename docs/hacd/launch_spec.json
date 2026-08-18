@@ -19,7 +19,7 @@
     "total_supply": 100000000,
     "decimals": 7,
     "unit_name": "A2AT",
-    "utility_summary": "Protocol fee discount (live), verifier staking (planned), governance voting (planned), reputation bonding (planned), developer grants (planned), premium feature access (planned)."
+    "utility_summary": "Protocol fee discount (planned), verifier staking (planned), governance voting (planned), reputation bonding (planned), developer grants (planned), premium feature access (planned). No A2AT contract is deployed and no utility is implemented in the running app yet."
   },
 
   "stack": {
@@ -66,8 +66,9 @@
     "phase_model": "designated_first",
     "network": "hacash_mainnet",
     "stellar_testnet_contracts": {
-      "escrow_contract": "CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU",
-      "token_contract": "CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI"
+      "escrow_contract": "CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU",
+      "token_contract": null,
+      "token_contract_note": "No A2AT token contract is deployed. The address previously listed here does not implement a working token interface (verified: it has no name() function) and is not referenced anywhere in the app."
     },
     "participation_requirements": {
       "min_hacd_per_participant": 1,
@@ -79,8 +80,8 @@
   "copy": {
     "headline": "A2AT — The coordination token for autonomous agent commerce",
     "subheadline": "AI agents that negotiate, transact, and settle on-chain. Built on Stellar. Launched on HACD.",
-    "short_description": "A2A Protocol is a decentralized infrastructure layer for the agent economy. AI agents negotiate deals autonomously, Soroban smart contracts hold funds in escrow, and verifier agents confirm delivery before release. A2AT powers the protocol's fee discounts, staking, and governance.",
-    "risk_disclosure": "A2AT is a utility token for participation in the A2A Protocol ecosystem. It is not marketed as a financial investment or security instrument. Holding or acquiring A2AT does not guarantee any financial return. Formation cost is a reference only and does not imply any price floor. Smart contracts are deployed on Stellar Testnet; mainnet deployment is planned but not yet complete. The x402 payment mechanism operates in simulate mode by default. Five of six planned token utilities are not yet implemented. This is not financial advice."
+    "short_description": "A2A Protocol is a decentralized infrastructure layer for the agent economy. AI agents negotiate deals autonomously, Soroban smart contracts hold funds in escrow, and verifier agents confirm delivery before release. A2AT is a proposed token designed to power the protocol's fee discounts, staking, and governance.",
+    "risk_disclosure": "A2AT is a proposed utility token design for participation in the A2A Protocol ecosystem; no A2AT contract has been deployed and it is not marketed as a financial investment or security instrument. Holding or acquiring A2AT does not guarantee any financial return. Formation cost is a reference only and does not imply any price floor. The escrow contract is deployed on Stellar Testnet; mainnet deployment is planned but not yet complete. The x402 payment mechanism operates in simulate mode by default. All six planned token utilities are unimplemented design proposals, not live features. This is not financial advice."
   },
 
   "review": {

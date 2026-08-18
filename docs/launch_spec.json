@@ -24,19 +24,18 @@
     "network": "stellar_testnet",
     "rpc_endpoint": "https://soroban-testnet.stellar.org:443",
     "escrow_contract": {
-      "address": "CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU",
-      "explorer": "https://stellar.expert/explorer/testnet/contract/CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU",
+      "address": "CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU",
+      "explorer": "https://stellar.expert/explorer/testnet/contract/CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU",
       "language": "Rust",
       "framework": "Soroban SDK 20",
       "audited": false,
-      "functions": ["initialize", "create_deal", "release_milestone", "complete_deal", "request_refund", "get_deal"]
+      "functions": ["initialize", "create_deal", "release_milestone", "release_milestones", "complete_deal", "request_refund", "get_deal"]
     },
     "token_contract": {
-      "address": "CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI",
-      "explorer": "https://stellar.expert/explorer/testnet/contract/CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI",
+      "status": "proposed_not_deployed",
+      "note": "A2AT is a proposed token design submitted for HACD Launchpad consideration. No token contract has been deployed or implemented; the app does not reference or depend on it.",
       "ticker": "A2AT",
-      "name": "A2A Protocol Token",
-      "standard": "SEP-0041 (Soroban Token Interface)"
+      "name": "A2A Protocol Token"
     }
   },
 

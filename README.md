@@ -29,7 +29,6 @@ A2A Protocol is a hackathon project for an emerging agent economy: AI agents tha
 - Live demo (frontend): https://a2aprotocol.netlify.app/
 - Live API (backend): https://a2a-protocol-rn62.onrender.com
 - Escrow contract address: `CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU`
-- Token contract address: `CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI`
 - Workflow Video (RiseIn): https://youtu.be/r3UFY5QrDqk?si=7DQqfipm-GlNOP0E
 - Pitch Deck: https://docs.google.com/presentation/d/1iOp4BNFtgHi1xr0aV76iWBP2igbsvbwzLLiuLD3UAFY/edit?usp=sharing
 - Feedback from testnet users: https://docs.google.com/spreadsheets/d/1SDXTvTbcdmux87zRt8ZENfPvrhMRcFtBTl6SMnnYIhE/edit?usp=sharing
@@ -177,28 +176,24 @@ Escrow logic overview:
 - Settlement is released only when the correct on-chain conditions are met.
 - x402-style authorization is used to gate sensitive operations before proceeding.
 
-## Protocol Token — A2AT
+## Protocol Token — A2AT (Proposed, Not Yet Implemented)
 
-The A2A Protocol Token (A2AT) is a Soroban-native token that powers the economic coordination layer of the A2A Protocol ecosystem.
+The A2A Protocol Token (A2AT) is a **proposed** design for a future Soroban-native token to power the protocol's economic coordination layer. It has not been built: there is no deployed, functioning A2AT contract, and none of the app's actual code (backend, frontend, or the escrow contract) references or depends on it in any way. Everything below is roadmap/design material, not a description of the running product.
 
-**Token contract (Testnet):** `CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI`
-
-**Explorer:** https://stellar.expert/explorer/testnet/contract/CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI
-
-### Token Utility
+### Proposed Token Utility
 
 | Utility | Description |
 | :--- | :--- |
-| Protocol fee discount | Deals settled using A2AT receive a 50% discount on x402 fees vs. XLM-only deals |
-| Verifier staking | Verifier agents must stake A2AT to participate; stake is slashed on fraudulent completions |
-| Governance voting | A2AT holders vote on protocol parameter changes (fee schedule, agent types, contract upgrades) |
-| Reputation bonding | Sellers bond A2AT to signal quality; higher bond = higher reputation score in the negotiation engine |
-| Developer grants | Community treasury distributes A2AT grants to developers building integrations |
-| Premium features | Advanced analytics, multi-agent deal rooms, and API access beyond free tier |
+| Protocol fee discount | Deals settled using A2AT would receive a discount on x402 fees vs. XLM-only deals |
+| Verifier staking | Verifier agents would stake A2AT to participate; stake slashed on fraudulent completions |
+| Governance voting | A2AT holders would vote on protocol parameter changes (fee schedule, agent types, contract upgrades) |
+| Reputation bonding | Sellers would bond A2AT to signal quality; higher bond = higher reputation score in the negotiation engine |
+| Developer grants | A community treasury would distribute A2AT grants to developers building integrations |
+| Premium features | Advanced analytics, multi-agent deal rooms, and API access beyond the free tier |
 
-### Token Distribution
+### Proposed Token Distribution
 
-**Total supply: 100,000,000 A2AT**
+**Proposed total supply: 100,000,000 A2AT**
 
 | Allocation | % | Tokens | Vesting |
 | :--- | :--- | :--- | :--- |
@@ -210,13 +205,13 @@ The A2A Protocol Token (A2AT) is a Soroban-native token that powers the economic
 | Liquidity provision | 5% | 5,000,000 | Locked 1 year, then LP |
 | Advisors | 2% | 2,000,000 | 6-month cliff, 2-year linear |
 
-### Demand Drivers
+### Proposed Demand Drivers
 
-- Every deal created generates fee revenue; 25% is used to buy A2AT from the open market.
-- Verifier staking and reputation bonding reduce circulating supply as network usage grows.
-- Governance participation requires holding A2AT, creating an incentive to acquire and retain tokens.
+- Every deal created would generate fee revenue; a share used to buy A2AT from the open market.
+- Verifier staking and reputation bonding would reduce circulating supply as network usage grows.
+- Governance participation would require holding A2AT, creating an incentive to acquire and retain tokens.
 
-For the full tokenomics design and whitepaper, see [docs/WHITEPAPER.md](docs/WHITEPAPER.md).
+This is a design proposal, not a delivered feature - see [docs/WHITEPAPER.md](docs/WHITEPAPER.md) for the full design.
 
 ## Go-To-Market Strategy
 

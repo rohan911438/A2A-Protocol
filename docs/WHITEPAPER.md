@@ -227,28 +227,26 @@ x402 is an emerging HTTP payment standard inspired by the HTTP 402 status code. 
 
 ---
 
-## 7. Token Model — A2AT (A2A Protocol Token)
+## 7. Token Model — A2AT (A2A Protocol Token) — Proposed, Not Yet Implemented
 
 ### 7.1 Token Overview
 
-The A2A Protocol Token (A2AT) is a Soroban-native token deployed on Stellar that serves as the coordination and governance asset of the A2A Protocol ecosystem.
+The A2A Protocol Token (A2AT) is a **proposed** design for a Soroban-native token that would serve as the coordination and governance asset of the A2A Protocol ecosystem. It has not been built or deployed: there is no functioning A2AT contract, and the rest of this document's protocol description (negotiation, escrow, x402 gating) does not depend on or reference it anywhere. Section 7 is roadmap/design material, not a description of a shipped component - see the Roadmap section for its actual status (planned, alongside HACD Launchpad launch).
 
-**Contract address (Testnet):** `CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI`
-
-### 7.2 Utility
+### 7.2 Proposed Utility
 
 | Utility | Description |
 |---|---|
-| **Protocol fee discount** | Deals settled using A2AT receive a 50% discount on x402 fees vs. XLM-only deals |
-| **Verifier staking** | Verifier agents must stake A2AT to participate; stake is slashed on fraudulent completions |
-| **Governance voting** | A2AT holders vote on protocol parameter changes (fee schedule, new agent types, contract upgrades) |
-| **Agent reputation bonding** | Sellers bond A2AT to signal quality; higher bond = higher reputation score in the negotiation engine |
-| **Developer grants** | Community treasury distributes A2AT grants to developers building integrations |
-| **Premium features** | Advanced analytics, multi-agent deal rooms, and API access beyond free tier require A2AT |
+| **Protocol fee discount** | Deals settled using A2AT would receive a discount on x402 fees vs. XLM-only deals |
+| **Verifier staking** | Verifier agents would stake A2AT to participate; stake slashed on fraudulent completions |
+| **Governance voting** | A2AT holders would vote on protocol parameter changes (fee schedule, new agent types, contract upgrades) |
+| **Agent reputation bonding** | Sellers would bond A2AT to signal quality; higher bond = higher reputation score in the negotiation engine |
+| **Developer grants** | A community treasury would distribute A2AT grants to developers building integrations |
+| **Premium features** | Advanced analytics, multi-agent deal rooms, and API access beyond the free tier |
 
-### 7.3 Supply and Distribution
+### 7.3 Proposed Supply and Distribution
 
-**Total supply: 100,000,000 A2AT**
+**Proposed total supply: 100,000,000 A2AT**
 
 | Allocation | % | Tokens | Vesting |
 |---|---|---|---|
@@ -262,28 +260,28 @@ The A2A Protocol Token (A2AT) is a Soroban-native token deployed on Stellar that
 
 ### 7.4 Demand Drivers
 
-1. **Deal volume** — every deal created on the protocol generates fee revenue denominated in A2AT.
-2. **Verifier staking** — as more verifiers participate, staking demand increases.
-3. **Governance participation** — protocol decisions require A2AT to vote, creating holding incentive.
-4. **Reputation bonding** — sellers competing for high-value deals bond more A2AT, reducing circulating supply.
-5. **Fee buyback** — 25% of protocol fee revenue is used to buy A2AT from the open market and add to treasury.
+1. **Deal volume** — every deal created on the protocol would generate fee revenue denominated in A2AT.
+2. **Verifier staking** — as more verifiers participate, staking demand would increase.
+3. **Governance participation** — protocol decisions would require A2AT to vote, creating a holding incentive.
+4. **Reputation bonding** — sellers competing for high-value deals would bond more A2AT, reducing circulating supply.
+5. **Fee buyback** — a share of protocol fee revenue would buy A2AT from the open market and add it to treasury.
 
-### 7.5 Value Accrual
+### 7.5 Proposed Value Accrual
 
-Protocol fees (x402 micro-payments) accrue to the treasury. The DAO votes on:
+Protocol fees (x402 micro-payments) would accrue to the treasury, with the DAO voting on:
 - Buy-and-burn schedule
 - Staking reward rate
 - Grant disbursement
 
-As deal volume grows, fee revenue grows proportionally, creating a direct link between protocol usage and A2AT demand.
+As deal volume grows, fee revenue would grow proportionally, creating a direct link between protocol usage and A2AT demand.
 
 ---
 
-## 8. Governance
+## 8. Governance (Proposed)
 
-### 8.1 Governance Model
+### 8.1 Proposed Governance Model
 
-A2A Protocol uses an on-chain governance model powered by A2AT staking.
+A2A Protocol's proposed governance model would run on-chain, powered by A2AT staking.
 
 **Proposal types:**
 - Parameter changes (fee rates, staking minimums, verifier requirements)

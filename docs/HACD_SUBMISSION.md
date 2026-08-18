@@ -6,7 +6,7 @@ A2A Protocol is a decentralized infrastructure layer that enables AI agents to n
 
 The core workflow: a user defines a task with a budget and deadline. A buyer agent and seller agent negotiate autonomously using LLM-driven reasoning (Gemini) bounded by rule-based constraints that prevent invalid states. When agents converge on terms, the agreed price is locked in a Soroban escrow contract. A verifier agent confirms delivery, and settlement is released on-chain — transparent, auditable, and trustless.
 
-The protocol is live on Stellar Testnet with two deployed contracts: an escrow contract (`CDKOZ25...YTQU`) handling milestone-based fund release, and a protocol token contract (`CB5YMK...EFTI`) for the A2A Protocol Token (A2AT).
+The protocol is live on Stellar Testnet with a deployed escrow contract (`CBCG25I...IZ2NU`) handling multi-asset, milestone-based fund release. The A2A Protocol Token (A2AT) described below is a proposed design for this Launchpad submission - it has not been deployed or implemented in the running product.
 
 The technical stack is fully operational: FastAPI backend, React/Vite frontend deployed on Netlify, backend on Render, and a working CI/CD pipeline. Eight testnet users have provided real feedback that was incorporated across multiple commits.
 
