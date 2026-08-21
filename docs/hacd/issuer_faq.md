@@ -13,7 +13,7 @@ A2AT is the coordination and governance token of A2A Protocol — a decentralize
 
 **Q: What does A2AT do right now, at launch?**
 
-At launch, A2AT enables a reduced x402 protocol fee rate for deals that use A2AT rather than XLM alone. This is the one live utility pathway. All other utilities (verifier staking, governance voting, reputation bonding, developer grants, premium features) are planned and will be implemented as the protocol matures.
+Nothing yet - A2AT is not deployed, so it has no live utility today. At launch, the plan is for A2AT to enable a reduced x402 protocol fee rate for deals that use A2AT rather than XLM alone; this would be the first of six planned utilities to activate. All six (fee discount, verifier staking, governance voting, reputation bonding, developer grants, premium features) are currently unimplemented design proposals.
 
 ---
 
@@ -49,7 +49,7 @@ No formal third-party audit has been completed. The Soroban escrow contract uses
 
 **Q: Is A2AT deployed on Hacash mainnet?**
 
-Not yet. The A2AT token contract is currently on Stellar Testnet. The HACD Stack formation via the HACD Launchpad will deploy on Hacash mainnet. The Stellar-side token contract migration to mainnet is planned for Phase 2.
+No. A2AT is not deployed anywhere yet - it is a proposed design for this Launchpad submission. It has not been built or deployed on Stellar Testnet, Hacash mainnet, or anywhere else. The HACD Stack formation via the HACD Launchpad would deploy on Hacash mainnet; a Stellar-side token contract deployment would follow in Phase 2.
 
 ---
 
@@ -61,7 +61,7 @@ x402 is an HTTP payment standard (inspired by HTTP 402) implemented in A2A Proto
 
 **Q: Can I use A2AT on Stellar now?**
 
-Yes — the token contract is deployed on Stellar Testnet at `CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI`. The live frontend at https://a2aprotocol.netlify.app/ operates against this testnet contract.
+No. `CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI` exists as a contract on Stellar Testnet, but it has no working token interface (it does not respond to a standard `name()` call) and no code in this repository's backend or frontend references it. The live frontend at https://a2aprotocol.netlify.app/ does not operate against it or any A2AT contract - only the Soroban escrow contract and XLM payments are live today.
 
 ---
 

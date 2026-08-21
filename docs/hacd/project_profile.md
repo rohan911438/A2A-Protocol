@@ -42,7 +42,7 @@ The protocol introduces **x402-style payment gating**: sensitive actions (escrow
 | Component | Status | Details |
 | :--- | :--- | :--- |
 | Soroban escrow contract | Live (Testnet) | `CBCG25I...Z2NU` |
-| Token contract (A2AT) | Live (Testnet) | `CB5YMK...EFTI` |
+| Token contract (A2AT) | Proposed, not yet implemented | No token contract is deployed; `CB5YMK...EFTI` exists on Testnet but has no working token interface and is referenced by no backend/frontend code |
 | FastAPI backend | Live | Render deployment |
 | React/Vite frontend | Live | Netlify deployment |
 | LLM negotiation engine | Live | Google Gemini integration |
@@ -76,12 +76,12 @@ The incubator's structure — documentation requirements, validator checks, comm
 
 ## Token Role in the Protocol
 
-A2AT is the coordination and governance asset of the A2A Protocol ecosystem. It is not a payment token (XLM serves that role). Its function is to align incentives across protocol participants:
+A2AT is proposed as the coordination and governance asset of the A2A Protocol ecosystem - none of this is implemented yet. It is not a payment token (XLM serves that role). Its proposed function is to align incentives across protocol participants:
 
-- Verifiers stake A2AT to participate, creating skin-in-the-game for honest completion verification.
-- Sellers bond A2AT to signal quality, raising their reputation score in the negotiation engine.
-- Fee discounts denominated in A2AT create adoption pressure and holding incentive.
-- Governance via A2AT staking ensures the protocol evolves according to community consensus.
+- Verifiers would stake A2AT to participate, creating skin-in-the-game for honest completion verification.
+- Sellers would bond A2AT to signal quality, raising their reputation score in the negotiation engine.
+- Fee discounts denominated in A2AT would create adoption pressure and holding incentive.
+- Governance via A2AT staking would let the protocol evolve according to community consensus.
 
 ---
 

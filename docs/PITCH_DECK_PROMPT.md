@@ -1,6 +1,6 @@
-# Pitch Deck Generation Prompt for A4A Protocol
+# Pitch Deck Generation Prompt for A2A Protocol
 
-Use the prompt below in your AI presentation creator (such as Gamma, Tome, ChatGPT, or Claude) to generate a professional, VC-ready pitch deck for A3A Protocol.
+Use the prompt below in your AI presentation creator (such as Gamma, Tome, ChatGPT, or Claude) to generate a professional, VC-ready pitch deck for A2A Protocol.
 
 ---
 
@@ -50,7 +50,7 @@ Slide 5: Live Traction & Validation
 - Title: Proven Execution & Real-World Validation
 - Copy:
   * Working Deployments: Live frontend deployed on Netlify (a2aprotocol.netlify.app) and backend hosted on Render.
-  * Smart Contracts Live: Soroban Escrow and Token contracts deployed and verified on Stellar Testnet.
+  * Smart Contract Live: Soroban Escrow contract deployed and verified on Stellar Testnet (the A2AT token contract is a proposed design, not yet deployed).
   * Tested by the Community: 26+ testnet users have submitted feedback, validating features like the Albedo wallet connection, agent communication latency, and UI date picker styling.
 - Visual Idea: A dashboard screenshot with badges highlighting "Stellar Testnet Verified," "26+ Testnet User Validations," and "CI/CD Pipeline Passing."
 
@@ -58,11 +58,11 @@ Slide 6: Tokenomics & Utility ($A2AT)
 - Title: The A2A Protocol Token ($A2AT)
 - Copy:
   * Supply & Model: Fixed supply of 100,000,000 A2AT tokens.
-  * Token Utility:
-    - Fee Discounts: 50% discount on x402 transaction fees vs XLM-only settlement.
-    - Verifier Staking: Verifier agents stake A2AT to participate; staked tokens are slashed on fraudulent completions.
-    - Reputation Bonding: Sellers bond A2AT to signal delivery quality, scoring higher in the negotiation engine.
-    - Governance: Vote on protocol fees, new agent configurations, and treasury disbursements.
+  * Token Utility (all planned - A2AT is a proposed design, not yet implemented):
+    - Fee Discounts (planned): 50% discount on x402 transaction fees vs XLM-only settlement.
+    - Verifier Staking (planned): Verifier agents would stake A2AT to participate; staked tokens would be slashed on fraudulent completions.
+    - Reputation Bonding (planned): Sellers would bond A2AT to signal delivery quality, scoring higher in the negotiation engine.
+    - Governance (planned): Vote on protocol fees, new agent configurations, and treasury disbursements.
 - Visual Idea: A clean pie chart showing the token distribution: Community (35%), Team (20%), Treasury (20%), HACD Launchpad (10%), Developer Grants (8%), Liquidity (5%), and Advisors (2%).
 
 Slide 7: GTM Strategy & Roadmap

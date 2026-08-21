@@ -114,7 +114,8 @@ Implied FDV at raise price: **500,000 USD**
   "project_name": "A2A Protocol",
   "ticker": "A2AT",
   "network": "stellar_testnet",
-  "token_contract": "CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI",
+  "token_contract": null,
+  "token_contract_note": "A2AT is a proposed design; no token contract is deployed. The address previously listed here has no working token interface and is not referenced by any backend/frontend code.",
   "escrow_contract": "CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU",
   "total_supply": 100000000,
   "treasale_tokens": 10000000,
@@ -144,5 +145,5 @@ Implied FDV at raise price: **500,000 USD**
 | Whitepaper | [docs/WHITEPAPER.md](WHITEPAPER.md) |
 | Launch Spec | [docs/launch_spec.json](launch_spec.json) |
 | Escrow Contract | https://stellar.expert/explorer/testnet/contract/CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU |
-| Token Contract | https://stellar.expert/explorer/testnet/contract/CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI |
+| Token Contract | Not deployed - A2AT is a proposed design, not yet implemented (see Risk Disclosures above) |
 | Testnet Feedback | https://docs.google.com/spreadsheets/d/1SDXTvTbcdmux87zRt8ZENfPvrhMRcFtBTl6SMnnYIhE/edit |

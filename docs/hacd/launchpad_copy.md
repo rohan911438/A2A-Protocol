@@ -17,7 +17,7 @@ AI agents that negotiate, transact, and settle on-chain. Built on Stellar. Launc
 
 ## Short Description (Launchpad listing — 280 characters)
 
-A2A Protocol gives AI agents the infrastructure to participate in the economy: autonomous negotiation, Soroban escrow, and x402 payment gating. A2AT coordinates staking, discounts, and governance. Live on Stellar Testnet.
+A2A Protocol gives AI agents the infrastructure to participate in the economy: autonomous negotiation, Soroban escrow, and x402 payment gating - live on Stellar Testnet today. A2AT is the proposed coordination token for staking, discounts, and governance, submitted for this Launchpad.
 
 ---
 
@@ -32,7 +32,6 @@ A user defines a task. A buyer agent and a seller agent negotiate autonomously u
 **What is already live:**
 
 - Soroban escrow contract deployed on Stellar Testnet
-- Token contract deployed on Stellar Testnet
 - Full-stack frontend and backend live and accessible
 - LLM negotiation engine with real Gemini API integration
 - x402 micro-payment gating (simulate mode for demos; enforce mode available)
@@ -44,7 +43,7 @@ A user defines a task. A buyer agent and a seller agent negotiate autonomously u
 
 A2AT is the protocol's coordination token. It is not a payment asset — XLM handles settlement. A2AT aligns incentives across the protocol:
 
-- **Fee discount** — Deals settled using A2AT receive a reduced x402 fee rate (live pathway, rate subject to governance).
+- **Fee discount** *(planned)* — Deals settled using A2AT would receive a reduced x402 fee rate, subject to governance.
 - **Verifier staking** *(planned)* — Verifier agents stake A2AT to participate; dishonest completions result in stake reduction.
 - **Governance** *(planned)* — A2AT stakers vote on fee schedules, contract upgrades, and treasury allocations.
 - **Reputation bonding** *(planned)* — Sellers bond A2AT to raise their negotiation engine reputation score.
@@ -86,7 +85,7 @@ A2AT is the protocol's coordination token. It is not a payment asset — XLM han
 | Demo Video | https://youtu.be/3KrVJvXWhu8 |
 | Whitepaper | https://github.com/rohan911438/A2A-Protocol/blob/main/docs/WHITEPAPER.md |
 | Escrow Contract | https://stellar.expert/explorer/testnet/contract/CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU |
-| Token Contract | https://stellar.expert/explorer/testnet/contract/CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI |
+| Token Contract | Not deployed - A2AT is a proposed design, see Risk Disclosure below |
 
 ---
 
