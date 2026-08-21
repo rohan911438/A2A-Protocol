@@ -91,7 +91,14 @@ def call_gemini(prompt: str) -> str:
                 genai.configure(api_key=key)
         if model is None:
             model = genai.GenerativeModel('gemini-1.5-flash')
-        response = model.generate_content(prompt)
+        # FastAPI runs this synchronous call in the shared worker threadpool
+        # (default 40 threads - see run_in_threadpool in routes/deal.py's
+        # /start-negotiation). Each negotiation makes up to 2*max_rounds of
+        # these calls with no timeout previously set, so a single stalled
+        # Gemini request could tie up a worker thread indefinitely; enough
+        # of those in flight under concurrent negotiations would starve
+        # every other endpoint on the server, not just this one.
+        response = model.generate_content(prompt, request_options={"timeout": 20})
         if response and response.text:
             return response.text
     except Exception as e:
