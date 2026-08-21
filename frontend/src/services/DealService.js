@@ -124,3 +124,8 @@ export async function recordDealX402Payment(deal_id, payload) {
     body: JSON.stringify(payload),
   })
 }
+
+export async function getAuditExport(deal_id, wallet_address) {
+  const walletQuery = wallet_address ? `?wallet_address=${encodeURIComponent(wallet_address)}` : ''
+  return request(`/deal/${deal_id}/audit-export${walletQuery}`)
+}

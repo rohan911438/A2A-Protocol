@@ -2,15 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Star, ArrowLeft, Share2, Trophy, ShieldCheck, Inbox, Loader2 } from 'lucide-react';
-import { getDeal } from '../services/DealService';
+import { getDeal, getAuditExport } from '../services/DealService';
+import { useWallet } from '../context/WalletContext';
 import CountUp from '../components/CountUp';
 
 const Completion = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { account } = useWallet();
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [dealRecord, setDealRecord] = useState(null);
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState('');
 
   const dealId = location.state?.dealId || null;
 
@@ -39,6 +43,28 @@ const Completion = () => {
     title: dealRecord?.data?.request?.description || "Deal completed",
     price: finalPrice,
     summary
+  };
+
+  const handleExport = async () => {
+    if (!dealId || exporting) return;
+    setExporting(true);
+    setExportError('');
+    try {
+      const bundle = await getAuditExport(dealId, account || '');
+      const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `a2a-deal-${dealId.slice(0, 8)}-audit.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setExportError(err.message || 'Could not export the audit bundle');
+    } finally {
+      setExporting(false);
+    }
   };
 
   if (loadingData) {
@@ -145,11 +171,17 @@ const Completion = () => {
               <ArrowLeft size={16} /> Back to Dashboard
             </button>
             <button
-              className="w-full py-3.5 rounded-xl bg-surface border border-line text-bark font-medium text-sm hover:border-clay-400/30 transition-all flex items-center justify-center gap-2"
+              onClick={handleExport}
+              disabled={exporting}
+              className="w-full py-3.5 rounded-xl bg-surface border border-line text-bark font-medium text-sm hover:border-clay-400/30 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
             >
-              <Share2 size={16} /> Export summary
+              {exporting ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />}
+              {exporting ? 'Exporting...' : 'Export summary'}
             </button>
           </div>
+          {exportError && (
+            <p className="text-xs text-red-300 text-center">{exportError}</p>
+          )}
         </div>
       </motion.div>
     </div>
