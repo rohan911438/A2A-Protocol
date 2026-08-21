@@ -21,10 +21,6 @@ def get_x402_fee(purpose: str) -> float:
     return DEFAULT_X402_PURPOSE_FEES.get(purpose, DEFAULT_X402_FEE)
 
 
-def _is_stellar_account(value: str | None) -> bool:
-    return bool(value and value.startswith("G") and len(value) == 56)
-
-
 def _is_simulation_mode() -> bool:
     return X402_MODE != "enforce"
 
