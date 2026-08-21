@@ -38,4 +38,6 @@ High-priority areas:
 
 ## Security Issues
 
-Do not open a public issue for security vulnerabilities. Use the `security` label on a private GitHub Issue or contact the team directly.
+Do not open a public issue for security vulnerabilities - a label does not
+make a GitHub Issue private on a public repository. See [SECURITY.md](SECURITY.md)
+for how to report privately via GitHub's vulnerability reporting feature.
