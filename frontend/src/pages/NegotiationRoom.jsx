@@ -33,8 +33,26 @@ const NegotiationRoom = () => {
 
   const resolveDealId = async () => {
     const allDeals = await listDeals();
-    const entries = Object.entries(allDeals || {});
+    let entries = Object.entries(allDeals || {});
     if (!entries.length) return null;
+
+    // GET /deals is unauthenticated and returns every deal on the platform.
+    // When a wallet is connected, restrict the fallback search to deals that
+    // wallet is actually party to - otherwise a user who lands here without
+    // explicit navigation state (e.g. a bookmark or page refresh) could be
+    // silently dropped into a stranger's negotiation and see its terms, or
+    // even accept it as though they were the seller.
+    if (account) {
+      const owned = entries.filter(([, rec]) => {
+        const data = rec?.data || {};
+        const request = data.request || data;
+        const buyerWallet = (request.buyer_wallet || data.buyer_wallet || '').toLowerCase();
+        const sellerWallet = (data.seller_wallet || request.seller_wallet || '').toLowerCase();
+        const acct = account.toLowerCase();
+        return acct === buyerWallet || acct === sellerWallet;
+      });
+      if (owned.length) entries = owned;
+    }
 
     // Prefer deals still in pre-consensus flow, then fallback to latest entry.
     const preferred = ['created', 'accepted', 'running', 'negotiated', 'active'];
@@ -60,7 +78,7 @@ const NegotiationRoom = () => {
     resolveDealId().catch(() => {
       setError('No deal found. Create a deal first.');
     });
-  }, [dealId]);
+  }, [dealId, account]);
 
   useEffect(() => {
     if (!dealId) return;
