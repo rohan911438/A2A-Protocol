@@ -99,18 +99,34 @@ gap:
   action" check is currently payload-shape based, not identity based.
   Before mainnet this should either require a signed-challenge auth layer,
   or the response should be scoped to the requesting wallet.
+- **Update (2026-08-18):** the gap described below has been closed at the
+  code level - `backend/services/contract_service.py` now builds real
+  `InvokeHostFunction` calls into the deployed `A2AEscrow` contract
+  (`create_deal`, `release_milestones`, `complete_deal`, `request_refund`),
+  wired into `/contract/*` behind `CONTRACT_MODE=onchain`, and verified
+  end-to-end against a live testnet deployment (see
+  `docs/CONTRACT_DEPLOYMENT.md`). It is **not yet the active mode in the
+  deployed backend** - `CONTRACT_MODE` still defaults to `legacy` and
+  `render.yaml` does not set it, so the live app still builds plain
+  `manage_data`/`payment` ops today. Flipping `CONTRACT_MODE=onchain` (plus
+  `ESCROW_CONTRACT_ID`/`ESCROW_TOKEN_ID`) in the production environment is
+  now a deployment/rollout decision, not a missing implementation - but
+  until that flip happens, the paragraph below is still an accurate
+  description of the *live* app's behavior.
 - **The deployed Soroban escrow contract (`a2a_escrow`) is not actually
-  invoked by the app.** `/contract/create-txn` and `/contract/release-txn`
-  build a plain Stellar `manage_data` op and a plain `payment` op,
-  respectively — not `InvokeHostFunction` calls into `A2AEscrow::create_deal`
-  / `release_milestone`. In practice, "escrow" today is enforced by
+  invoked by the app** *(true of the current live deployment; see the
+  update above for the now-available `CONTRACT_MODE=onchain` path)*.
+  `/contract/create-txn` and `/contract/release-txn` build a plain Stellar
+  `manage_data` op and a plain `payment` op, respectively — not
+  `InvokeHostFunction` calls into `A2AEscrow::create_deal` /
+  `release_milestone`. In practice, "escrow" today is enforced by
   application trust (backend bookkeeping + wallet-signed payments), not by
   the on-chain contract holding funds. The contract audit fixes above are
   still correct and worth having, but they don't protect real fund flows
-  until the backend is wired to actually call the contract. This is the
-  single biggest gap between "audited" and "trust-minimized" for a mainnet
-  launch handling real value, and should be prioritized before any
-  meaningful transaction volume.
+  until the backend is switched to actually call the contract. This
+  remains the single biggest gap between "audited" and "trust-minimized"
+  for a mainnet launch handling real value until `CONTRACT_MODE=onchain`
+  is turned on in production.
 - **x402 defaults to `simulate` mode** (`X402_MODE=simulate`). This is
   intentional for demos but must be set to `X402_MODE=enforce` in the
   mainnet deployment's environment, alongside `VERIFY_ONCHAIN_TX=true`
