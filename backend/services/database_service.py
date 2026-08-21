@@ -7,8 +7,19 @@ from typing import Any, Optional
 DB_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "a2a_protocol.db")
 
 def get_db_connection():
-    conn = sqlite3.connect(DB_PATH)
+    # Under concurrent traffic (many deal lifecycle calls hitting SQLite at
+    # once), the default rollback-journal mode takes an exclusive lock for
+    # the duration of every write and blocks all readers too, so simultaneous
+    # requests started throwing "database is locked" well before any
+    # reasonable load (reproduced with ~25 concurrent deal-lifecycle calls).
+    # WAL lets readers proceed while a write is in flight, and a generous
+    # busy_timeout makes writers that do collide retry instead of failing
+    # immediately.
+    conn = sqlite3.connect(DB_PATH, timeout=30)
     conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA busy_timeout=30000")
+    conn.execute("PRAGMA synchronous=NORMAL")
     return conn
 
 def init_db():

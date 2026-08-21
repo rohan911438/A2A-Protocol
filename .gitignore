@@ -25,3 +25,13 @@ smart_contract/**/*.mvp.wasm
 binaryen-*/
 .codex
 build
+
+# Runtime SQLite database - this is per-deployment state, not source. It was
+# previously committed to git, which meant every local run's test/demo deal
+# data (potentially including real wallet addresses once used) got baked
+# into repo history, and concurrent local runs would show up as uncommitted
+# diffs on a binary file on every `git status`.
+backend/data/*.db
+backend/data/*.db-journal
+backend/data/*.db-wal
+backend/data/*.db-shm
