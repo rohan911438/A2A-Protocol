@@ -6,11 +6,17 @@ A2A Protocol is currently in testnet stage. All active development is on the `ma
 
 ## Reporting a Vulnerability
 
-**Do not** create a public GitHub Issue for security vulnerabilities.
+**Do not** create a public GitHub Issue for security vulnerabilities - this
+repository is public, so a public Issue discloses the bug to everyone before
+it can be fixed.
 
 To report a vulnerability:
-1. Open a GitHub Issue with the `security` label.
-2. Describe the vulnerability clearly: what it is, how to reproduce it, and potential impact.
+1. Use GitHub's private vulnerability reporting: open the repository's
+   **Security** tab and select **Report a vulnerability**. This creates a
+   private draft security advisory visible only to the maintainer, not a
+   public Issue.
+2. Describe the vulnerability clearly: what it is, how to reproduce it, and
+   potential impact.
 3. We will acknowledge within 48 hours and provide a fix timeline.
 4. Do not publish details publicly until a patch is released.
 
