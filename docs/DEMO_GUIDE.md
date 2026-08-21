@@ -36,7 +36,7 @@
 - Show the architecture diagram in README
 - "Five layers: user intent → coordination → agents → intelligence → trust"
 - "The trust layer is a Soroban Rust contract — verifiable on stellar.expert right now"
-- Open: `https://stellar.expert/explorer/testnet/contract/CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU`
+- Open: `https://stellar.expert/explorer/testnet/contract/CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU`
 - "This is live. Real contract. Real funds can be locked here."
 
 **[1:30–3:00] Full Flow Demo**

@@ -49,7 +49,7 @@ Every decision is logged. Every step is auditable. No platform in the middle.
 
 Two contracts deployed. Verifiable on stellar.expert right now.
 
-Escrow: CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU
+Escrow: CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU
 Token: CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI
 
 Live frontend: a2aprotocol.netlify.app

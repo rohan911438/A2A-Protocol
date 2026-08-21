@@ -14,7 +14,7 @@ const mockLogs = [
   { time: '00:05.110', tag: 'SELLER_AGENT', type: 'seller', text: 'Evaluating Pareto frontier... Convergence probability: 98.4%' },
   { time: '00:05.650', tag: 'SELLER_AGENT', type: 'seller', text: 'AGREEMENT REACHED: 950.00 USDC settled on Stellar USDC rail' },
   { time: '00:06.120', tag: 'CONTRACT', type: 'info', text: 'Generating Soroban smart contract escrow parameters...' },
-  { time: '00:06.940', tag: 'LEDGER', type: 'success', text: 'DEPLOYED Escrow: CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU' },
+  { time: '00:06.940', tag: 'LEDGER', type: 'success', text: 'DEPLOYED Escrow: CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU' },
   { time: '00:07.410', tag: 'SYSTEM', type: 'success', text: '⚡ DEPOSIT CONFIRMED: 950.00 USDC locked in Smart Escrow. Swarm active.' }
 ];
 

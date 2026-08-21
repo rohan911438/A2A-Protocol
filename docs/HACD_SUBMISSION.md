@@ -115,7 +115,7 @@ Implied FDV at raise price: **500,000 USD**
   "ticker": "A2AT",
   "network": "stellar_testnet",
   "token_contract": "CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI",
-  "escrow_contract": "CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU",
+  "escrow_contract": "CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU",
   "total_supply": 100000000,
   "treasale_tokens": 10000000,
   "treasale_price_usd": 0.005,
@@ -143,6 +143,6 @@ Implied FDV at raise price: **500,000 USD**
 | Pitch Deck | https://docs.google.com/presentation/d/1iOp4BNFtgHi1xr0aV76iWBP2igbsvbwzLLiuLD3UAFY/edit?usp=sharing |
 | Whitepaper | [docs/WHITEPAPER.md](WHITEPAPER.md) |
 | Launch Spec | [docs/launch_spec.json](launch_spec.json) |
-| Escrow Contract | https://stellar.expert/explorer/testnet/contract/CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU |
+| Escrow Contract | https://stellar.expert/explorer/testnet/contract/CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU |
 | Token Contract | https://stellar.expert/explorer/testnet/contract/CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI |
 | Testnet Feedback | https://docs.google.com/spreadsheets/d/1SDXTvTbcdmux87zRt8ZENfPvrhMRcFtBTl6SMnnYIhE/edit |

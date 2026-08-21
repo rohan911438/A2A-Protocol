@@ -85,7 +85,7 @@ A2AT is the protocol's coordination token. It is not a payment asset — XLM han
 | GitHub | https://github.com/rohan911438/A2A-Protocol |
 | Demo Video | https://youtu.be/3KrVJvXWhu8 |
 | Whitepaper | https://github.com/rohan911438/A2A-Protocol/blob/main/docs/WHITEPAPER.md |
-| Escrow Contract | https://stellar.expert/explorer/testnet/contract/CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU |
+| Escrow Contract | https://stellar.expert/explorer/testnet/contract/CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU |
 | Token Contract | https://stellar.expert/explorer/testnet/contract/CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI |
 
 ---

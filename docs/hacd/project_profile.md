@@ -41,7 +41,7 @@ The protocol introduces **x402-style payment gating**: sensitive actions (escrow
 
 | Component | Status | Details |
 | :--- | :--- | :--- |
-| Soroban escrow contract | Live (Testnet) | `CDKOZ25...YTQU` |
+| Soroban escrow contract | Live (Testnet) | `CBCG25I...Z2NU` |
 | Token contract (A2AT) | Live (Testnet) | `CB5YMK...EFTI` |
 | FastAPI backend | Live | Render deployment |
 | React/Vite frontend | Live | Netlify deployment |

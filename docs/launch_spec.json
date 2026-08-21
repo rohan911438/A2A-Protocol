@@ -222,7 +222,7 @@
     "backend_api": "https://a2a-protocol-rn62.onrender.com",
     "demo_video": "https://youtu.be/3KrVJvXWhu8",
     "workflow_video": "https://youtu.be/r3UFY5QrDqk",
-    "escrow_explorer": "https://stellar.expert/explorer/testnet/contract/CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU",
+    "escrow_explorer": "https://stellar.expert/explorer/testnet/contract/CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU",
     "token_explorer": "https://stellar.expert/explorer/testnet/contract/CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI",
     "testnet_feedback": "https://docs.google.com/spreadsheets/d/1SDXTvTbcdmux87zRt8ZENfPvrhMRcFtBTl6SMnnYIhE/edit"
   }

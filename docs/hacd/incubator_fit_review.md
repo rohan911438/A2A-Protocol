@@ -26,7 +26,7 @@
 ### Does this project have a working implementation?
 
 **YES.** The repository contains:
-- A deployed Soroban escrow smart contract (`CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU`)
+- A deployed Soroban escrow smart contract (`CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU`)
 - A deployed token contract (`CB5YMKKIGH7UFLWDNZRH5P5ENXE7VQIOJSA2FDVQQB3Z7AEUIFQOEFTI`)
 - A live frontend at https://a2aprotocol.netlify.app/
 - A live backend API at https://a2a-protocol-rn62.onrender.com

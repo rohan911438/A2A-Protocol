@@ -3,7 +3,7 @@
 Use this script to test the deployed Soroban contract on testnet:
 
 ```powershell
-$env:CONTRACT_ID="CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU"
+$env:CONTRACT_ID="CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU"
 $env:ADMIN_SECRET="S..."
 $env:TOKEN_CONTRACT_ID="C..."
 $env:SOROBAN_RPC_URL="https://soroban-testnet.stellar.org:443"

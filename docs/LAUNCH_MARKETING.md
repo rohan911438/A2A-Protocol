@@ -57,7 +57,7 @@ A2A Protocol gives agents that infrastructure:
 **Post 4 (Technical proof):**
 The escrow contract is live on Stellar Testnet right now.
 
-CDKOZ25IENHQFRRNTJDXAYAOUSDBPUXLE52UGTNIPWACAMGAMNXMYTQU
+CBCG25INND2P3BVBBRT44XJHSGDKAMUNEAVWUMI7J2TCIBMJVBNIZ2NU
 
 Every fund lock, milestone release, and refund is on-chain. No platform in the middle.
 
