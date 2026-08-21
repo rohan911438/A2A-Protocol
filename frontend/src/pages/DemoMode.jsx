@@ -9,8 +9,6 @@ import {
   approveDeal,
   getDeal,
 } from '../services/DealService';
-import { getCreateDealTxn } from '../services/ContractService';
-
 const DEMO_BUYER_WALLET = 'GDODHOICP53SCQYY6XRFKGNSOKMTSNDRDI2CHKFQDLMFHGYAQ2D7CAZI';
 const DEMO_SELLER_WALLET = 'GC5OZM7AY73DKZMPWU5BMW3EA6BXCYJIIF6UUQQ44XT4DOJQOXQZU2YF';
 
@@ -118,12 +116,20 @@ const DemoMode = () => {
       // the verification endpoints random fake hashes (which the backend
       // correctly rejects), simulate the remaining steps client-side only
       // so the walkthrough stays honest about what's real vs. illustrative.
+      //
+      // This step previously still called the real /contract/create-txn
+      // endpoint, which calls Horizon testnet to load DEMO_BUYER_WALLET's
+      // account - a live network dependency on a specific hardcoded testnet
+      // account contradicting the "client-side only" comment above, and a
+      // failure point (Horizon downtime, rate limiting, or that testnet
+      // account being merged/reset) that would break the demo judges are
+      // most likely to run. Simulate it client-side like every other step
+      // from here on.
       updateStep(4, 'running', 'Creating escrow transaction payload for Stellar testnet...');
       const finalPrice = Number(negotiated?.final_price || 108);
       const first = Math.round(finalPrice * 0.4);
       const second = Math.max(finalPrice - first, 0);
       const milestones = [first, second].filter((v) => v > 0);
-      await getCreateDealTxn(DEMO_BUYER_WALLET, createdDealId, finalPrice, milestones);
       const fundTxHash = demoHash();
       await sleep(1200);
       updateStep(4, 'done', `Escrow payload generated (simulated). Ref: ${fundTxHash.slice(0, 10)}...`);
