@@ -366,19 +366,25 @@ def post_start_negotiation(payload: NegotiationRequest) -> NegotiationResponse:
         seller_wallet = DEFAULT_SELLER_WALLET
     buyer_wallet = request_data.get("buyer_wallet")
 
-    # Persist the final result while keeping original request and approvals
+    # Persist the final result on top of the existing record instead of
+    # reconstructing `data` from a hardcoded field whitelist. The whitelist
+    # approach silently dropped `seller_accepted` (set by /deal/{id}/accept)
+    # on every call, which meant every deal that went through the normal
+    # accept -> negotiate flow could never pass release's "Seller has not
+    # registered a wallet for this deal yet" check afterward - confirmed via
+    # a full concurrent lifecycle test (create -> accept -> negotiate ->
+    # approve -> fund -> release), where every run failed at the first
+    # release call. Spreading deal_data first and only overriding the fields
+    # this handler actually changes preserves any other field (present or
+    # future) automatically.
     update_deal(
         payload.deal_id,
         data={
+            **deal_data,
             "request": request_data,
             "result": result,
             "approvals": approvals,
             "seller_wallet": seller_wallet,
-            "onchain_accepts": deal_data.get("onchain_accepts", {"buyer": False, "seller": False}),
-            "txids": deal_data.get("txids", {}),
-            "funded": deal_data.get("funded", False),
-            "funding_txid": deal_data.get("funding_txid"),
-            "releases": deal_data.get("releases", {"completed": [], "txids": {}}),
         },
         status=status,
     )
