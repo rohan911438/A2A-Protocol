@@ -37,7 +37,14 @@ def get_wallet_state(address: str) -> Dict[str, Any]:
             "updated_at": deal["updated_at"]
         }
         
-        if status in ["active", "funded", "negotiated", "created", "running"]:
+        # "accepted" (seller has accepted, negotiation not yet started) sits
+        # between "created" and "running"/"negotiated" in the real deal
+        # lifecycle (see routes/deal.py) but was missing from this list, so
+        # a deal in that state was wrongly bucketed into completed_deals /
+        # history instead of active_deals. ("funded" is never actually set
+        # as a status value anywhere - only as a boolean field - so it never
+        # matched here; dropped it in favor of the real status string.)
+        if status in ["active", "accepted", "negotiated", "created", "running"]:
             active_deals.append(deal_summary)
         else:
             completed_deals.append(deal_summary)
