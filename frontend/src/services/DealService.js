@@ -56,8 +56,12 @@ export async function getDeal(id) {
   return request(`/deal/${id}`)
 }
 
-export async function listDeals() {
-  return request('/deals')
+export async function listDeals(wallet = null, limit = null) {
+  const params = new URLSearchParams()
+  if (wallet) params.set('wallet', wallet)
+  if (limit != null) params.set('limit', String(limit))
+  const qs = params.toString()
+  return request(qs ? `/deals?${qs}` : '/deals')
 }
 
 export async function acceptDealWithWallet(deal_id, seller_wallet) {

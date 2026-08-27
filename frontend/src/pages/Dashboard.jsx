@@ -18,7 +18,9 @@ const Dashboard = () => {
   const { account, connected, signTransaction, fetchBalances } = useWallet();
 
   const loadDeals = () => {
-    listDeals()
+    // Scope to the connected wallet server-side when available, so the
+    // dashboard doesn't fetch and deserialize every deal on the platform.
+    listDeals(account || null)
       .then((data) => {
         const items = Object.entries(data || {}).map(([id, record]) => ({
           id,
@@ -32,7 +34,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     loadDeals();
-  }, []);
+  }, [account]);
 
   useEffect(() => {
     getContractInfo()

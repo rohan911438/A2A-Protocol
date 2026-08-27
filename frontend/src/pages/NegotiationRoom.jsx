@@ -32,7 +32,11 @@ const NegotiationRoom = () => {
   }, [location.state]);
 
   const resolveDealId = async () => {
-    const allDeals = await listDeals();
+    // Scope the lookup to the connected wallet server-side when we can, so we
+    // aren't pulling (and paying to deserialize) every deal on the platform
+    // just to find one. Falls back to the capped global list when no wallet
+    // is connected yet.
+    const allDeals = await listDeals(account || null);
     let entries = Object.entries(allDeals || {});
     if (!entries.length) return null;
 
