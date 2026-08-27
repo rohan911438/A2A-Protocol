@@ -23,13 +23,14 @@ def create_deal(data: dict[str, Any], status: str = "created", deal_id: str | No
         INSERT INTO deals (deal_id, buyer_address, seller_address, status, data)
         VALUES (?, ?, ?, ?, ?)
     ''', (deal_id, buyer_address, seller_address, status, json.dumps(data)))
-    
+
+    # Same connection/transaction as the insert above - see log_activity.
+    if buyer_address:
+        log_activity(buyer_address, "DEAL_CREATED", deal_id, f"Initial status: {status}", conn=conn)
+
     conn.commit()
     conn.close()
-    
-    if buyer_address:
-        log_activity(buyer_address, "DEAL_CREATED", deal_id, f"Initial status: {status}")
-        
+
     return deal_id
 
 def update_deal(deal_id: str, data: dict[str, Any] | None = None, status: str | None = None) -> bool:
@@ -69,15 +70,17 @@ def update_deal(deal_id: str, data: dict[str, Any] | None = None, status: str | 
     params.append(deal_id)
 
     cursor.execute(query, tuple(params))
+
+    # Activity logging for the last updated participant, folded into the same
+    # transaction as the UPDATE above (see log_activity). In negotiation, the
+    # seller address is often only populated later.
+    active_wallet = seller_address or buyer_address
+    if active_wallet:
+        log_activity(active_wallet, "DEAL_UPDATED", deal_id, f"Status updated to: {status or 'N/A'}", conn=conn)
+
     conn.commit()
     conn.close()
 
-    # Activity logging for the last updated participant
-    # In negotiation, seller address is often updated later.
-    active_wallet = seller_address or buyer_address
-    if active_wallet:
-        log_activity(active_wallet, "DEAL_UPDATED", deal_id, f"Status updated to: {status or 'N/A'}")
-        
     return True
 
 def get_deal(deal_id: str) -> dict[str, Any] | None:
@@ -100,16 +103,47 @@ def get_deal(deal_id: str) -> dict[str, Any] | None:
         }
     return None
 
-def list_deals() -> dict[str, dict[str, Any]]:
+DEFAULT_LIST_LIMIT = 200
+
+
+def list_deals(
+    wallet: str | None = None,
+    limit: int | None = DEFAULT_LIST_LIMIT,
+    offset: int = 0,
+) -> dict[str, dict[str, Any]]:
     """
-    Returns all stored deals as a dictionary (indexed by deal_id).
+    Returns stored deals as a dictionary (indexed by deal_id).
+
+    A plain unbounded `SELECT * FROM deals` here does not scale: the row count
+    only ever grows, every row's `data` blob is json.loads'd on every call, and
+    the frontend polls this endpoint. Under concurrent load that call alone was
+    enough to collapse throughput (full-table scan + O(N) deserialization while
+    holding the GIL). So:
+      - `wallet` filters on the indexed buyer_address / seller_address columns,
+        which is what both frontend callers actually want (they filter
+        client-side today).
+      - results are capped (`limit`, newest first) so an ever-growing table
+        can't degrade the default call; pass `limit=0` for the old
+        "everything" behavior.
+    The response shape is unchanged.
     """
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM deals')
+
+    query = 'SELECT deal_id, status, data, created_at FROM deals'
+    params: list[Any] = []
+    if wallet:
+        query += ' WHERE buyer_address = ? OR seller_address = ?'
+        params.extend([wallet, wallet])
+    query += ' ORDER BY updated_at DESC'
+    if limit and limit > 0:
+        query += ' LIMIT ? OFFSET ?'
+        params.extend([limit, max(offset, 0)])
+
+    cursor.execute(query, tuple(params))
     rows = cursor.fetchall()
     conn.close()
-    
+
     output: dict[str, dict[str, Any]] = {}
     for row in rows:
         output[row['deal_id']] = {

@@ -805,11 +805,19 @@ def get_smart_deal_summary(id: str, wallet_address: str | None = Query(default=N
 
 
 @router.get("/deals")
-def list_all_deals():
+def list_all_deals(
+    wallet: str | None = Query(default=None, description="Filter to deals this wallet is buyer or seller of"),
+    limit: int = Query(default=200, ge=0, le=1000, description="Max deals to return, newest first; 0 = no limit"),
+    offset: int = Query(default=0, ge=0),
+):
     """
-    4. List Deals: Show all records in the store.
+    4. List Deals: Show records in the store (newest first).
+
+    Defaults to the 200 most-recently-updated deals so this endpoint stays
+    cheap as the table grows; pass ?wallet= to scope to one participant or
+    ?limit=0 for the full unbounded list.
     """
-    return list_deals()
+    return list_deals(wallet=wallet, limit=limit, offset=offset)
 
 
 @router.get("/wallet-state/{address}")

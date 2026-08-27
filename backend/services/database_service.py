@@ -15,9 +15,15 @@ def get_db_connection():
     # WAL lets readers proceed while a write is in flight, and a generous
     # busy_timeout makes writers that do collide retry instead of failing
     # immediately.
+    #
+    # journal_mode=WAL is PERSISTENT in the database file, so it is set once in
+    # init_db() rather than on every connection: re-issuing `PRAGMA
+    # journal_mode=WAL` on an already-WAL database costs ~20ms per call (it
+    # probes/synchronises the WAL file), which was adding a fixed ~20ms tax to
+    # every single request and dominating latency under load. busy_timeout and
+    # synchronous are per-connection but effectively free to set.
     conn = sqlite3.connect(DB_PATH, timeout=30)
     conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA busy_timeout=30000")
     conn.execute("PRAGMA synchronous=NORMAL")
     return conn
@@ -27,6 +33,10 @@ def init_db():
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     conn = get_db_connection()
     cursor = conn.cursor()
+
+    # Persistent journal mode - set here so per-request connections don't have
+    # to (see get_db_connection). Safe to run every startup.
+    cursor.execute("PRAGMA journal_mode=WAL")
 
     # Wallets table to track user state
     cursor.execute('''
@@ -118,26 +128,53 @@ def init_db():
         )
     ''')
 
+    # Indexes for the hot lookup paths. Without these, /deals (ORDER BY
+    # updated_at), /wallet-state and get_deals_by_wallet (WHERE buyer_address
+    # OR seller_address) all fall back to full-table scans that get linearly
+    # slower as the table grows.
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_deals_updated_at ON deals(updated_at DESC)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_deals_buyer ON deals(buyer_address)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_deals_seller ON deals(seller_address)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_activity_wallet ON activity_logs(wallet_address, timestamp DESC)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_reasoning_wallet_deal ON reasoning_logs(wallet_address, deal_id)')
+
     conn.commit()
     conn.close()
 
-def log_activity(wallet_address: str, action_type: str, deal_id: Optional[str] = None, details: Optional[str] = None):
-    """Records a wallet-based action in the activity_logs."""
-    conn = get_db_connection()
+def log_activity(
+    wallet_address: str,
+    action_type: str,
+    deal_id: Optional[str] = None,
+    details: Optional[str] = None,
+    conn=None,
+):
+    """
+    Records a wallet-based action in the activity_logs.
+
+    Pass `conn` to piggy-back on an existing transaction: create_deal /
+    update_deal call this on every write, and opening a second connection +
+    doing a second fsync commit just to append one log row doubled the
+    write-path cost (and the lock window) under concurrent load. When `conn`
+    is supplied the caller owns commit/close.
+    """
+    own = conn is None
+    if own:
+        conn = get_db_connection()
     cursor = conn.cursor()
-    
+
     # Ensure wallet exists
     cursor.execute('INSERT OR IGNORE INTO wallets (address) VALUES (?)', (wallet_address,))
     cursor.execute('UPDATE wallets SET last_seen = ? WHERE address = ?', (datetime.utcnow(), wallet_address))
-    
+
     # Log activity
     cursor.execute('''
         INSERT INTO activity_logs (wallet_address, action_type, deal_id, details)
         VALUES (?, ?, ?, ?)
     ''', (wallet_address, action_type, deal_id, details))
-    
-    conn.commit()
-    conn.close()
+
+    if own:
+        conn.commit()
+        conn.close()
 
 
 def log_reasoning(
