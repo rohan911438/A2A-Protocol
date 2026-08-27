@@ -1,7 +1,6 @@
 import React from 'react';
 import { Target, MessageSquare, ShieldCheck, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
-import SpotlightCard from './SpotlightCard';
 import RevealHeading from './RevealHeading';
 
 const steps = [
@@ -9,97 +8,76 @@ const steps = [
     title: "Define the objective",
     number: "01",
     description: "Initialize your buyer agent with a task, a budget ceiling, and performance constraints.",
-    icon: <Target className="w-5 h-5" />
+    icon: <Target className="w-4 h-4" />
   },
   {
     title: "Agents negotiate",
     number: "02",
     description: "Buyer and seller agents run sub-second, game-theoretic rounds to find Pareto-optimal terms.",
-    icon: <MessageSquare className="w-5 h-5" />
+    icon: <MessageSquare className="w-4 h-4" />
   },
   {
     title: "Escrow locks funds",
     number: "03",
     description: "A Soroban smart contract deploys automatically on Stellar to hold the agreed deposit.",
-    icon: <ShieldCheck className="w-5 h-5" />
+    icon: <ShieldCheck className="w-4 h-4" />
   },
   {
     title: "Settlement releases",
     number: "04",
     description: "Funds move instantly over Stellar once deliverable verification is confirmed.",
-    icon: <Zap className="w-5 h-5" />
+    icon: <Zap className="w-4 h-4" />
   }
 ];
 
 const HowItWorks = () => {
   return (
-    <section id="how-it-works" className="py-28 px-6 relative bg-paper border-t border-line">
-      <div className="max-w-6xl mx-auto">
+    <section id="how-it-works" className="relative bg-paper">
+      <div className="column-frame max-w-6xl mx-auto px-6 sm:px-10 py-28">
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="max-w-2xl mb-16 space-y-4"
+          transition={{ duration: 0.8 }}
+          className="section-rule mb-10"
         >
-          <div className="text-xs font-semibold text-clay-400 uppercase tracking-[0.2em]">How it works</div>
-          <RevealHeading
-            text="One protocol, four steps to a settled deal"
-            className="text-4xl lg:text-5xl font-serif font-medium text-bark leading-tight"
-          />
+          <span className="kicker">02 — How it works</span>
         </motion.div>
 
-        {/* Connecting flow line - ties the 4 steps together as one process
-            instead of reading as four disconnected cards. Desktop only,
-            since the grid re-flows to 1-2 columns below lg. */}
-        <div className="hidden lg:block relative h-10 mb-2">
-          <svg className="absolute inset-0 w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 10">
-            <motion.line
-              x1="12.5" y1="5" x2="87.5" y2="5"
-              stroke="#B3EA1E" strokeWidth="0.4" strokeDasharray="0.1 3" strokeLinecap="round"
-              initial={{ pathLength: 0, opacity: 0 }}
-              whileInView={{ pathLength: 1, opacity: 0.4 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-            />
-            {[12.5, 37.5, 62.5, 87.5].map((x, i) => (
-              <motion.circle
-                key={x} cx={x} cy="5" r="1.4" fill="#B3EA1E"
-                initial={{ scale: 0, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 0.9 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: 0.3 + i * 0.15 }}
-              />
-            ))}
-          </svg>
-        </div>
+        <RevealHeading
+          text="One protocol, four steps to a settled deal"
+          className="font-display font-semibold text-bark tracking-[-0.04em] leading-[1.02] text-[clamp(1.9rem,4.6vw,3.5rem)] max-w-[20ch] mb-20"
+        />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="border-t border-line">
           {steps.map((step, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
+              transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+              className="group grid grid-cols-[3rem_1fr] md:grid-cols-[7rem_minmax(0,14rem)_1fr] gap-x-6 md:gap-x-10 gap-y-3 items-baseline border-b border-line py-10 transition-colors duration-500 hover:bg-white/[0.015]"
             >
-            <SpotlightCard className="p-7 flex flex-col justify-between min-h-[240px]">
-              <div>
-                <div className="flex items-center justify-between mb-8">
-                  <div className="w-10 h-10 rounded-lg bg-clay-500/10 border border-clay-500/20 text-clay-400 flex items-center justify-center">
+              <span className="font-display font-semibold text-4xl md:text-5xl text-white/10 group-hover:text-clay-500/70 transition-colors duration-500 select-none tabular-nums">
+                {step.number}
+              </span>
+
+              <div className="col-start-2 md:col-start-2">
+                <div className="flex items-center gap-3">
+                  <span className="text-bark-faint group-hover:text-clay-400 transition-colors duration-500">
                     {step.icon}
-                  </div>
-                  <span className="text-3xl font-serif text-white/10 select-none">{step.number}</span>
+                  </span>
+                  <h3 className="text-lg font-semibold text-bark tracking-tight">
+                    {step.title}
+                  </h3>
                 </div>
-                <h3 className="text-base font-semibold text-bark mb-2">
-                  {step.title}
-                </h3>
               </div>
-              <p className="text-sm text-bark-muted leading-relaxed">
+
+              <p className="col-start-2 md:col-start-3 text-sm text-bark-muted leading-relaxed max-w-[46ch]">
                 {step.description}
               </p>
-            </SpotlightCard>
             </motion.div>
           ))}
         </div>

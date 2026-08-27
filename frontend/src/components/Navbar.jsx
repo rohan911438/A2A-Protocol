@@ -15,23 +15,23 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-paper/85 border-b border-line backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-surface border border-line flex items-center justify-center overflow-hidden group-hover:border-clay-400/40 transition-colors duration-300">
+          <div className="w-9 h-9 flex items-center justify-center overflow-hidden">
             <img src={logo} className="w-7 h-7 object-contain group-hover:scale-105 transition-transform duration-500" alt="Logo" />
           </div>
-          <div className="flex flex-col -space-y-1">
-            <span className="text-lg font-serif font-medium text-bark tracking-tight">
+          <div className="flex flex-col -space-y-0.5">
+            <span className="text-[15px] font-display font-semibold text-bark tracking-[-0.02em]">
               A2A <span className="text-bark-faint font-normal">Protocol</span>
             </span>
-            <span className="text-[9px] text-bark-faint font-semibold uppercase tracking-[0.25em]">Agent Economy on Stellar</span>
+            <span className="text-[9px] text-bark-faint font-mono uppercase tracking-[0.28em]">Agent Economy on Stellar</span>
           </div>
         </Link>
 
         <div className="hidden md:flex items-center gap-9">
           {isHome ? (
             <>
-              <MagneticButton as="a" href="#how-it-works" strength={8} className="inline-block text-[13px] font-medium text-bark-muted hover:text-bark transition-colors duration-300">How it works</MagneticButton>
-              <MagneticButton as="a" href="#features" strength={8} className="inline-block text-[13px] font-medium text-bark-muted hover:text-bark transition-colors duration-300">Capabilities</MagneticButton>
-              <MagneticButton as="a" href="#developer-sdk" strength={8} className="inline-block text-[13px] font-medium text-bark-muted hover:text-bark transition-colors duration-300">Developers</MagneticButton>
+              <MagneticButton as="a" href="#how-it-works" strength={8} className="inline-block font-mono text-[11px] uppercase tracking-[0.2em] text-bark-muted hover:text-bark transition-colors duration-300">How it works</MagneticButton>
+              <MagneticButton as="a" href="#features" strength={8} className="inline-block font-mono text-[11px] uppercase tracking-[0.2em] text-bark-muted hover:text-bark transition-colors duration-300">Capabilities</MagneticButton>
+              <MagneticButton as="a" href="#developer-sdk" strength={8} className="inline-block font-mono text-[11px] uppercase tracking-[0.2em] text-bark-muted hover:text-bark transition-colors duration-300">Developers</MagneticButton>
             </>
           ) : (
             <>
@@ -65,9 +65,9 @@ const Navbar = () => {
               onClick={connected ? undefined : toggleModal}
               onMouseEnter={() => connected && setShowBalance(true)}
               onMouseLeave={() => setShowBalance(false)}
-              className={`px-5 py-2.5 rounded-xl font-semibold text-[13px] transition-all duration-300 flex items-center gap-2 ${connected
-                  ? 'bg-surface border border-line text-bark cursor-default'
-                  : 'bg-clay-500 text-black hover:bg-clay-600 shadow-[0_6px_18px_rgba(179,234,30,0.25)]'
+              className={`px-4 py-2 rounded-md font-semibold text-[13px] tracking-tight transition-colors duration-300 flex items-center gap-2 ${connected
+                  ? 'bg-transparent border border-line text-bark cursor-default'
+                  : 'bg-clay-500 text-black hover:bg-clay-400'
                 }`}
             >
               <Wallet className="w-3.5 h-3.5" />
