@@ -13,28 +13,25 @@ const Strip = () => (
   <div className="flex items-center shrink-0" aria-hidden="true">
     {items.map((item) => (
       <React.Fragment key={item}>
-        <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-bark-faint px-8 whitespace-nowrap">
-          {item}
-        </span>
-        <span className="w-1 h-1 rounded-full bg-clay-500/40 shrink-0" />
+        <span className="text-sm font-medium text-bark-faint px-6 whitespace-nowrap">{item}</span>
+        <span className="w-1.5 h-1.5 rounded-full bg-clay-500/30 shrink-0" />
       </React.Fragment>
     ))}
   </div>
 );
 
 /**
- * A quiet ticker rule between the hero and the body of the page - the real
- * technologies the protocol runs on, set in small mono caps, moving slowly
- * enough to read as a horizon line rather than an animation.
+ * Continuous horizontal scroll of the real technologies the protocol runs
+ * on - not fabricated stats or logos, just a bit of always-on motion
+ * between static sections so the page doesn't feel like it stops moving
+ * the moment scroll-reveals finish.
  */
 const TechMarquee = () => {
   return (
-    <div className="border-y border-line bg-paper overflow-hidden">
-      <div className="max-w-6xl mx-auto column-frame py-5 overflow-hidden">
-        <div className="flex w-max animate-marquee">
-          <Strip />
-          <Strip />
-        </div>
+    <div className="py-8 border-t border-line bg-paper-soft overflow-hidden">
+      <div className="flex w-max animate-marquee">
+        <Strip />
+        <Strip />
       </div>
     </div>
   );

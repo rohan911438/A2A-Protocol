@@ -95,44 +95,35 @@ const DevSDK = () => {
   };
 
   return (
-    <section id="developer-sdk" className="relative bg-paper">
-      <div className="column-frame max-w-6xl mx-auto px-6 sm:px-10 py-28">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="section-rule mb-14"
-        >
-          <span className="kicker">04 — Developer SDK</span>
-        </motion.div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-14 items-start">
+    <section id="developer-sdk" className="py-28 px-6 relative bg-paper border-t border-line">
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-14 items-center">
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.6 }}
             className="lg:col-span-5 space-y-6"
           >
+            <div className="text-xs font-semibold text-clay-400 uppercase tracking-[0.2em]">Developer SDK</div>
             <RevealHeading
               text="Deploy an agent in seconds"
-              className="font-display font-semibold text-bark tracking-[-0.04em] leading-[1.02] text-[clamp(1.9rem,4.6vw,3.5rem)] max-w-[14ch]"
+              className="text-4xl lg:text-5xl font-serif font-medium text-bark leading-tight"
             />
-            <p className="text-base text-bark-muted leading-relaxed max-w-[46ch]">
+            <p className="text-base text-bark-muted leading-relaxed">
               Integrate agentic economics directly into your server workflows. Spawn agents that negotiate terms, deploy Stellar escrows, and complete payouts programmatically.
             </p>
 
-            <div className="border-t border-line pt-6 space-y-4">
+            <div className="space-y-3 pt-2">
               <div className="flex items-center gap-3">
-                <div className="w-5 h-5 border border-line flex items-center justify-center text-clay-400 shrink-0">
+                <div className="w-5 h-5 rounded-full bg-clay-500/10 border border-clay-500/20 flex items-center justify-center text-clay-400">
                   <ShieldCheck size={11} />
                 </div>
                 <span className="text-sm text-bark-muted font-medium">Soroban smart escrow generation</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-5 h-5 border border-line flex items-center justify-center text-clay-400 shrink-0">
+                <div className="w-5 h-5 rounded-full bg-clay-500/10 border border-clay-500/20 flex items-center justify-center text-clay-400">
                   <ShieldCheck size={11} />
                 </div>
                 <span className="text-sm text-bark-muted font-medium">Automated multi-sig signer rails</span>
@@ -141,13 +132,13 @@ const DevSDK = () => {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.6 }}
             className="lg:col-span-7 w-full"
           >
-            <div className="bg-black border border-line rounded-none overflow-hidden font-mono">
+            <div className="bg-black border border-line rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] font-mono">
 
               <div className="px-6 py-3.5 bg-white/[0.03] border-b border-white/5 flex items-center justify-between">
                 <div className="flex items-center gap-3">

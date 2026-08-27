@@ -87,17 +87,24 @@ const ChatDemo = () => {
   };
 
   return (
-    <div className="w-full max-w-2xl bg-black border border-line rounded-none overflow-hidden font-mono select-none">
-      {/* Title bar - technical label, no mac chrome */}
-      <div className="px-6 py-3.5 bg-white/[0.02] border-b border-line flex items-center justify-between">
-        <span className="text-[10px] text-bark-faint font-semibold uppercase tracking-[0.24em] flex items-center gap-2">
-          <Terminal size={10} className="text-clay-400" />
-          a2a-swarm-protocol / main-session
-        </span>
+    <div className="w-full max-w-xl bg-black border border-line rounded-2xl shadow-[0_24px_60px_rgba(0,0,0,0.5)] overflow-hidden font-mono select-none">
+      {/* Terminal Title Bar */}
+      <div className="px-6 py-3.5 bg-zinc-950/80 border-b border-white/5 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
+          </div>
+          <span className="text-[10px] text-zinc-550 font-bold uppercase tracking-[0.2em] flex items-center gap-1.5 opacity-80">
+            <Terminal size={10} className="text-zinc-650 animate-pulse" />
+            a2a-swarm-protocol ~ main-session
+          </span>
+        </div>
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsRunning(!isRunning)}
-            className="p-1 rounded-sm bg-transparent border border-line hover:border-white/25 text-zinc-400 hover:text-white transition-colors"
+            className="p-1 rounded bg-zinc-950 border border-white/5 hover:border-white/10 text-zinc-400 hover:text-white transition-colors"
             title={isRunning ? "Pause Swarm Simulation" : "Resume Swarm Simulation"}
           >
             {isRunning ? <Square size={10} fill="currentColor" /> : <Play size={10} fill="currentColor" />}

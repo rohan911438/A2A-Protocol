@@ -1,30 +1,56 @@
 import React, { useRef, useState } from 'react';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 /**
- * A flat editorial plate that responds to the cursor with restraint: a very
- * faint light gathers under the pointer and the hairline border firms up.
- * No 3D tilt, no scale lift - those "floating card" cues are exactly what
- * the editorial direction moves away from. The glow is kept only as a quiet
- * "this surface is alive" signal.
+ * A paper-card that tracks the cursor: a soft warm glow follows the pointer,
+ * and the card tilts slightly in 3D toward it (perspective + rotateX/Y),
+ * springing back flat on leave. Two classic "someone designed this" cues
+ * combined on one element rather than a static box that just changes
+ * border color on hover.
  */
-const SpotlightCard = ({ children, className = '', glow = 'rgba(179,234,30,0.06)' }) => {
+const SpotlightCard = ({ children, className = '', glow = 'rgba(179,234,30,0.10)' }) => {
   const ref = useRef(null);
   const [hovering, setHovering] = useState(false);
+
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+  const springRotateX = useSpring(rotateX, { stiffness: 220, damping: 20, mass: 0.5 });
+  const springRotateY = useSpring(rotateY, { stiffness: 220, damping: 20, mass: 0.5 });
+  const scale = useSpring(1, { stiffness: 220, damping: 20 });
 
   const handleMouseMove = (e) => {
     const el = ref.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
-    el.style.setProperty('--spot-x', `${e.clientX - rect.left}px`);
-    el.style.setProperty('--spot-y', `${e.clientY - rect.top}px`);
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+    el.style.setProperty('--spot-x', `${px}px`);
+    el.style.setProperty('--spot-y', `${py}px`);
+
+    const relX = (px / rect.width) - 0.5;
+    const relY = (py / rect.height) - 0.5;
+    rotateY.set(relX * 6);
+    rotateX.set(relY * -6);
+  };
+
+  const handleMouseEnter = () => {
+    scale.set(1.012);
+    setHovering(true);
+  };
+  const handleMouseLeave = () => {
+    rotateX.set(0);
+    rotateY.set(0);
+    scale.set(1);
+    setHovering(false);
   };
 
   return (
-    <div
+    <motion.div
       ref={ref}
       onMouseMove={handleMouseMove}
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={{ rotateX: springRotateX, rotateY: springRotateY, scale, transformPerspective: 800 }}
       className="paper-card relative overflow-hidden h-full"
     >
       {/* Opacity is driven by JS hover state, not a CSS `hover:` variant -
@@ -33,19 +59,14 @@ const SpotlightCard = ({ children, className = '', glow = 'rgba(179,234,30,0.06)
           never match its own :hover pseudo-class. A `hover:opacity-100`
           class here would silently never fire. */}
       <div
-        className="pointer-events-none absolute inset-0 transition-opacity duration-700"
+        className="pointer-events-none absolute inset-0 transition-opacity duration-500"
         style={{
           opacity: hovering ? 1 : 0,
-          background: `radial-gradient(420px circle at var(--spot-x, 50%) var(--spot-y, 50%), ${glow}, transparent 70%)`,
+          background: `radial-gradient(480px circle at var(--spot-x, 50%) var(--spot-y, 50%), ${glow}, transparent 65%)`,
         }}
       />
-      {/* Lime corner tick - the signature accent, one small mark per plate. */}
-      <div
-        className="pointer-events-none absolute left-0 top-0 h-3 w-3 border-l border-t border-clay-500/0 transition-colors duration-500"
-        style={{ borderColor: hovering ? 'rgba(179,234,30,0.5)' : 'rgba(179,234,30,0)' }}
-      />
       <div className={`relative z-10 h-full ${className}`}>{children}</div>
-    </div>
+    </motion.div>
   );
 };
 

@@ -32,48 +32,19 @@
     @apply bg-ink-850/90 backdrop-blur-lg border border-white/5 shadow-[0_30px_70px_rgba(0,0,0,0.85)];
   }
 
-  /* Editorial surface: flat, dark, hairline-bordered. No lift, no shadow, no
-     rounding to speak of - it should read like a framed plate on a page,
-     not a floating SaaS card. Hover only firms the border. */
+  /* Monochrome + single-accent surfaces */
   .paper-card {
-    @apply rounded-none bg-paper-soft border border-line transition-colors duration-500 hover:border-white/25;
+    @apply rounded-2xl bg-surface border border-line shadow-[0_4px_16px_rgba(0,0,0,0.5)] hover:border-clay-500/40 hover:shadow-[0_16px_40px_rgba(0,0,0,0.6)] transition-all duration-500;
   }
 
-  /* The lime accent is a signature, used sparingly - the primary action is a
-     small, sharp lime block, not a glowing pill. */
   .btn-clay {
-    @apply px-6 py-3 rounded-md bg-clay-500 text-black font-semibold text-sm tracking-tight transition-colors duration-300 hover:bg-clay-400 active:scale-[0.985];
+    /* Dark text on the accent fill, not white - clay-500 is a bright lime,
+       so white-on-lime fails contrast outright. */
+    @apply px-7 py-3.5 rounded-xl bg-clay-500 text-black font-semibold transition-all duration-300 hover:bg-clay-400 hover:scale-[1.015] active:scale-[0.98] shadow-[0_8px_24px_rgba(179,234,30,0.25)];
   }
 
-  /* Secondary actions are understated: a hairline frame, quiet until hover. */
   .btn-clay-outline {
-    @apply px-6 py-3 rounded-md bg-transparent border border-line text-bark-muted font-medium text-sm tracking-tight transition-colors duration-300 hover:border-white/30 hover:text-bark;
-  }
-
-  /* Small technical label that sits above a heading or on a rule. */
-  .kicker {
-    @apply font-mono text-[11px] uppercase tracking-[0.32em] text-bark-faint;
-  }
-
-  /* A full-bleed hairline that carries a mono label - the connective tissue
-     between sections so the page reads as one continuous document. */
-  .section-rule {
-    @apply flex items-center gap-4 text-bark-faint;
-  }
-  .section-rule::before {
-    content: "";
-    @apply block w-1.5 h-1.5 rounded-full bg-clay-500 shrink-0;
-  }
-  .section-rule::after {
-    content: "";
-    @apply block flex-1 h-px bg-line;
-  }
-
-  /* The content column: continuous vertical hairlines running the full page
-     height on both edges, blueprint-style. Applied to every section's inner
-     container so the rules never break. */
-  .column-frame {
-    @apply border-x border-line;
+    @apply px-7 py-3.5 rounded-xl bg-transparent border border-bark/15 text-bark font-semibold transition-all duration-300 hover:border-bark/30 hover:bg-bark/[0.03];
   }
 }
 
@@ -115,34 +86,33 @@
   animation: none !important;
 }
 
-/* One slow, faint atmospheric drift - deliberately restrained so it reads as
-   a shift in light rather than a "glow effect". GPU-only (transform +
-   opacity). */
+/* Cinematic ambient background: slow-drifting warm glows, GPU-only
+   (transform + opacity) so they stay smooth even on modest hardware. */
 @keyframes aurora-drift-a {
-  0%, 100% { transform: translate(-4%, -3%) scale(1); opacity: 0.35; }
-  50% { transform: translate(4%, 4%) scale(1.12); opacity: 0.55; }
+  0%, 100% { transform: translate(-6%, -4%) scale(1); opacity: 0.75; }
+  50% { transform: translate(6%, 5%) scale(1.15); opacity: 1; }
 }
 
 @keyframes aurora-drift-b {
-  0%, 100% { transform: translate(4%, 5%) scale(1.05); opacity: 0.22; }
-  50% { transform: translate(-5%, -2%) scale(0.96); opacity: 0.4; }
+  0%, 100% { transform: translate(5%, 6%) scale(1.05); opacity: 0.6; }
+  50% { transform: translate(-7%, -3%) scale(0.95); opacity: 0.9; }
 }
 
 @keyframes aurora-drift-c {
-  0%, 100% { transform: translate(0%, 3%) scale(0.96); opacity: 0.18; }
-  50% { transform: translate(2%, -4%) scale(1.08); opacity: 0.32; }
+  0%, 100% { transform: translate(0%, 4%) scale(0.95); opacity: 0.5; }
+  50% { transform: translate(3%, -6%) scale(1.1); opacity: 0.8; }
 }
 
 .animate-aurora-a {
-  animation: aurora-drift-a 40s ease-in-out infinite;
+  animation: aurora-drift-a 22s ease-in-out infinite;
 }
 
 .animate-aurora-b {
-  animation: aurora-drift-b 48s ease-in-out infinite;
+  animation: aurora-drift-b 26s ease-in-out infinite;
 }
 
 .animate-aurora-c {
-  animation: aurora-drift-c 56s ease-in-out infinite;
+  animation: aurora-drift-c 30s ease-in-out infinite;
 }
 
 /* Film-grain overlay - the single cheapest trick for making a flat dark
@@ -169,7 +139,7 @@
 }
 
 .animate-marquee {
-  animation: marquee-scroll 60s linear infinite;
+  animation: marquee-scroll 32s linear infinite;
 }
 
 .animate-marquee:hover {

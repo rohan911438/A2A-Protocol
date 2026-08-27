@@ -43,7 +43,7 @@ function ScrollProgressBar() {
   return (
     <motion.div
       style={{ scaleX }}
-      className="fixed top-0 left-0 right-0 h-px bg-clay-500/70 origin-left z-[150]"
+      className="fixed top-0 left-0 right-0 h-[2px] bg-clay-500 origin-left z-[150]"
       aria-hidden="true"
     />
   );

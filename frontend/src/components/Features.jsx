@@ -4,12 +4,6 @@ import { motion } from 'framer-motion';
 import SpotlightCard from './SpotlightCard';
 import RevealHeading from './RevealHeading';
 
-const IconMark = ({ children }) => (
-  <div className="w-9 h-9 rounded-none border border-line text-clay-400 flex items-center justify-center">
-    {children}
-  </div>
-);
-
 const Features = () => {
   const [chartProgress, setChartProgress] = useState(0);
   const [escrowLocked, setEscrowLocked] = useState(true);
@@ -52,40 +46,40 @@ const Features = () => {
   const points = getChartPoints(chartProgress);
 
   return (
-    <section id="features" className="relative bg-paper">
-      <div className="column-frame max-w-6xl mx-auto px-6 sm:px-10 py-28 space-y-16">
+    <section id="features" className="py-28 px-6 relative bg-paper-soft border-t border-line">
+      <div className="max-w-6xl mx-auto space-y-16">
 
-        <div>
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="section-rule mb-10"
-          >
-            <span className="kicker">03 — Capabilities</span>
-          </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="max-w-2xl space-y-4"
+        >
+          <div className="text-xs font-semibold text-clay-400 uppercase tracking-[0.2em]">Capabilities</div>
           <RevealHeading
             text="Everything a trustless agent economy needs"
-            className="font-display font-semibold text-bark tracking-[-0.04em] leading-[1.02] text-[clamp(1.9rem,4.6vw,3.5rem)] max-w-[20ch]"
+            className="text-4xl lg:text-5xl font-serif font-medium text-bark leading-tight"
           />
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
 
           {/* Card 1: Pareto Bargaining */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.5, delay: 0.05 }}
             className="md:col-span-7"
           >
           <SpotlightCard className="p-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 items-center h-full">
               <div className="space-y-4">
-                <IconMark><MessageSquare size={16} /></IconMark>
-                <h3 className="text-lg font-semibold text-bark tracking-tight">
+                <div className="w-11 h-11 rounded-xl bg-clay-500/10 border border-clay-500/20 text-clay-400 flex items-center justify-center">
+                  <MessageSquare size={18} />
+                </div>
+                <h3 className="text-lg font-semibold text-bark">
                   Pareto bargaining
                 </h3>
                 <p className="text-sm text-bark-muted leading-relaxed">
@@ -93,8 +87,8 @@ const Features = () => {
                 </p>
               </div>
 
-              <div className="p-4 bg-black border border-line h-[180px] flex flex-col justify-between relative overflow-hidden">
-                <div className="flex justify-between items-center text-[9px] text-bark-faint font-mono uppercase tracking-[0.2em]">
+              <div className="p-4 rounded-xl bg-surface-raised border border-line h-[180px] flex flex-col justify-between relative overflow-hidden">
+                <div className="flex justify-between items-center text-[9px] text-bark-faint font-mono uppercase tracking-wider">
                   <span>Price resolution</span>
                   <span className="text-moss-400 flex items-center gap-1 font-semibold">
                     <span className="w-1.5 h-1.5 rounded-full bg-moss-400" />
@@ -131,16 +125,18 @@ const Features = () => {
 
           {/* Card 2: Soroban Smart Escrow */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.5, delay: 0.1 }}
             className="md:col-span-5"
           >
           <SpotlightCard className="p-8 flex flex-col justify-between h-full">
             <div className="space-y-4">
-              <IconMark><Lock size={16} /></IconMark>
-              <h3 className="text-lg font-semibold text-bark tracking-tight">
+              <div className="w-11 h-11 rounded-xl bg-clay-500/10 border border-clay-500/20 text-clay-400 flex items-center justify-center">
+                <Lock size={18} />
+              </div>
+              <h3 className="text-lg font-semibold text-bark">
                 Soroban smart escrow
               </h3>
               <p className="text-sm text-bark-muted leading-relaxed">
@@ -150,20 +146,20 @@ const Features = () => {
 
             <div
               onClick={() => setEscrowLocked(!escrowLocked)}
-              className="mt-8 p-4 bg-black border border-line flex items-center justify-between cursor-pointer hover:border-white/25 transition-colors duration-300"
+              className="mt-8 p-4 rounded-xl bg-surface-raised border border-line flex items-center justify-between cursor-pointer hover:border-clay-500/30 transition-all duration-300"
             >
               <div className="flex items-center gap-3">
-                <div className={`w-8 h-8 flex items-center justify-center transition-colors duration-300 ${
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
                   escrowLocked ? 'bg-white/5 text-bark-faint' : 'bg-clay-500 text-black'
                 }`}>
                   <Key size={13} className={escrowLocked ? 'rotate-0' : 'rotate-45 transition-transform'} />
                 </div>
                 <div>
-                  <div className="text-[10px] text-bark-faint uppercase tracking-[0.2em] font-semibold">Contract state</div>
+                  <div className="text-[10px] text-bark-faint uppercase tracking-widest font-semibold">Contract state</div>
                   <div className="text-xs text-bark font-bold font-mono">{escrowLocked ? 'LOCKED_ESCROW' : 'RELEASED_SETTLED'}</div>
                 </div>
               </div>
-              <span className={`text-[9px] font-mono font-bold uppercase px-2.5 py-1 border ${
+              <span className={`text-[9px] font-mono font-bold uppercase px-2.5 py-1 rounded-full border ${
                 escrowLocked ? 'bg-clay-500/10 border-clay-500/25 text-clay-400' : 'bg-moss-400/10 border-moss-400/30 text-moss-400'
               }`}>
                 {escrowLocked ? 'Locked' : 'Released'}
@@ -174,16 +170,18 @@ const Features = () => {
 
           {/* Card 3: x402 Micropayments */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.5, delay: 0.05 }}
             className="md:col-span-5"
           >
           <SpotlightCard className="p-8 flex flex-col justify-between">
             <div className="space-y-4">
-              <IconMark><Zap size={16} /></IconMark>
-              <h3 className="text-lg font-semibold text-bark tracking-tight">
+              <div className="w-11 h-11 rounded-xl bg-clay-500/10 border border-clay-500/20 text-clay-400 flex items-center justify-center">
+                <Zap size={18} />
+              </div>
+              <h3 className="text-lg font-semibold text-bark">
                 x402 payment gating
               </h3>
               <p className="text-sm text-bark-muted leading-relaxed">
@@ -194,7 +192,7 @@ const Features = () => {
             <div
               onMouseEnter={() => setX402Success(true)}
               onMouseLeave={() => setX402Success(false)}
-              className="mt-8 p-4 bg-black font-mono text-[10px] leading-relaxed relative overflow-hidden h-[110px] border border-line"
+              className="mt-8 p-4 rounded-xl bg-black font-mono text-[10px] leading-relaxed relative overflow-hidden h-[110px] border border-line"
             >
               {!x402Success ? (
                 <div className="space-y-1.5 text-zinc-500">
@@ -220,17 +218,19 @@ const Features = () => {
 
           {/* Card 4: Swarm Multi-Agent Verification */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.5, delay: 0.1 }}
             className="md:col-span-7"
           >
           <SpotlightCard className="p-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 items-center h-full">
               <div className="space-y-4">
-                <IconMark><Cpu size={16} /></IconMark>
-                <h3 className="text-lg font-semibold text-bark tracking-tight">
+                <div className="w-11 h-11 rounded-xl bg-clay-500/10 border border-clay-500/20 text-clay-400 flex items-center justify-center">
+                  <Cpu size={18} />
+                </div>
+                <h3 className="text-lg font-semibold text-bark">
                   Multi-agent verification
                 </h3>
                 <p className="text-sm text-bark-muted leading-relaxed">
@@ -238,7 +238,7 @@ const Features = () => {
                 </p>
               </div>
 
-              <div className="relative h-[150px] bg-black border border-line flex items-center justify-center overflow-hidden">
+              <div className="relative h-[150px] bg-surface-raised rounded-xl border border-line flex items-center justify-center overflow-hidden">
                 <svg className="absolute inset-0 w-full h-full opacity-70" viewBox="0 0 200 120">
                   <line x1="40" y1="30" x2="160" y2="30" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
                   <line x1="40" y1="30" x2="40" y2="90" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
@@ -284,7 +284,7 @@ const Features = () => {
                   { pos: 'bottom-[20px] left-[30px]', label: 'Escrow', code: 'E', idx: 3 },
                 ].map((node) => (
                   <div key={node.code} className={`absolute ${node.pos} flex flex-col items-center`}>
-                    <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold transition-colors duration-300 ${
+                    <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold transition-all duration-300 ${
                       activeNode === node.idx ? 'bg-clay-500 text-black' : 'bg-white/5 text-bark-faint'
                     }`}>
                       {node.code}
