@@ -35,3 +35,6 @@ backend/data/*.db
 backend/data/*.db-journal
 backend/data/*.db-wal
 backend/data/*.db-shm
+
+# Stress-test harness output (scripts/stress_test.py) - regenerated on each run
+scripts/stress_results*.json
