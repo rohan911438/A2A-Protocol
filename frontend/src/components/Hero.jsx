@@ -290,18 +290,38 @@ const Hero = () => {
           )}
         </motion.div>
 
-        <motion.div
-          variants={itemVariants}
-          className="pt-10 border-t border-line grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-lg mx-auto"
-        >
-          <div className="space-y-1">
-            <div className="text-[11px] text-bark-faint font-semibold uppercase tracking-widest">Escrow security</div>
-            <div className="text-sm font-medium text-bark">Immutable Soroban contracts</div>
-          </div>
-          <div className="space-y-1 sm:border-l sm:border-line sm:pl-6">
-            <div className="text-[11px] text-bark-faint font-semibold uppercase tracking-widest">Network fee</div>
-            <div className="text-sm font-medium text-bark">~0.0001 XLM per contract</div>
-          </div>
+        <motion.div variants={itemVariants} className="relative pt-10 w-full max-w-lg mx-auto">
+          {/* hairline that draws itself in from the left on reveal */}
+          <motion.span
+            aria-hidden="true"
+            className="absolute top-0 left-0 right-0 h-px bg-line origin-left"
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          />
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.8 }}
+            variants={{ visible: { transition: { staggerChildren: 0.14, delayChildren: 0.2 } } }}
+          >
+            {[
+              { k: 'Escrow security', v: 'Immutable Soroban contracts' },
+              { k: 'Network fee', v: '~0.0001 XLM per contract' },
+            ].map((s, i) => (
+              <motion.div
+                key={s.k}
+                variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                className={`space-y-1 ${i === 1 ? 'sm:border-l sm:border-line sm:pl-6' : ''}`}
+              >
+                <div className="text-[11px] text-bark-faint font-semibold uppercase tracking-widest">{s.k}</div>
+                <div className="text-sm font-medium text-bark">{s.v}</div>
+              </motion.div>
+            ))}
+          </motion.div>
         </motion.div>
 
         <motion.div
