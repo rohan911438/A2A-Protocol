@@ -105,11 +105,12 @@ of the round-1 fixes above.
      contract. A re-entrant call sees the already-updated state and the
      `is_released` / status / `remaining_amount` guards reject it.
   2. **An explicit re-entrancy latch** (`DataKey::Guard`, RAII `Guard`
-     type). Set on entry to every fund-moving entrypoint, cleared on normal
-     return via `Drop`; a nested call finds it set and returns
-     `Error::Reentrancy`. Soroban rolls back all storage on a trap and a
-     re-entrant call is always in the same transaction, so the latch can
-     never leak across transactions.
+     type, kept in **temporary storage**). Set on entry to every fund-moving
+     entrypoint, cleared on normal return via `Drop`; a nested call finds it
+     set and returns `Error::Reentrancy`. Temporary storage is wiped between
+     transactions by the protocol, and a trap rolls back every write anyway,
+     so the latch can never leak into a later transaction and brick the
+     contract even in the (impossible) case where `Drop` did not run.
 - **buyer / seller / verifier were not required to be distinct.** If the
   verifier address equalled the seller, the seller could sign their own
   milestone releases; if it equalled the buyer, the buyer could pull their
@@ -150,17 +151,49 @@ of the round-1 fixes above.
   `Deal` was internally inconsistent. It now marks every outstanding
   milestone released before persisting.
 
+### Added security layers (same pass, follow-up)
+
+- **Circuit breaker.** New admin-only `set_paused(bool)` / `is_paused()`.
+  While paused, `create_deal` returns `Error::ContractPaused`. It
+  deliberately does **not** gate `release_milestones`, `complete_deal` or
+  `request_refund`: a pause can stop new value entering the contract but can
+  never trap value already in escrow — funds can always still be released to
+  the seller or refunded to the buyer. `paused` is initialised to `false` in
+  `initialize` and a `paused` event is emitted on every change.
+- **Initialization guard.** `create_deal` and `set_paused` now require the
+  contract to have an admin (`Error::NotInitialized`) before they will run,
+  so the contract cannot custody funds or be configured before
+  `initialize` has been called. (Standard practice is to call `initialize`
+  in the same transaction as the deploy so the admin slot can't be
+  front-run; `admin.require_auth()` in `initialize` already enforces that
+  only the intended key can take the slot.)
+- **Batch-length bound on `release_milestones`.** `milestone_indices` longer
+  than `MAX_MILESTONES` is rejected up front (`Error::TooManyMilestones`) —
+  a longer batch is guaranteed to contain a duplicate or out-of-range index
+  and would only burn resources before reverting.
+- **Defensive non-positive transfer guards.** `complete_deal` and
+  `request_refund` explicitly reject a `<= 0` payout before touching the
+  token contract. Unreachable while the status/`remaining_amount`
+  invariants hold, but it removes any path to a zero/negative transfer
+  reaching an arbitrary token contract.
+- **Read accessors.** Added `get_admin()` alongside `is_paused()` so the
+  configured admin and pause state are inspectable without a storage probe.
+
 New regression tests in `src/test.rs` cover: non-distinct parties, deadline
 lower/upper bounds, empty and oversized milestone vectors, duplicate deal
 ids, post-deadline release rejection with the refund path still working,
-negative milestone amounts, and `complete_deal` milestone consistency. The
-three original lifecycle/batch/refund tests are unchanged and still valid.
+negative milestone amounts, `complete_deal` milestone consistency, the pause
+circuit breaker (new deals blocked, escrowed deals still releasable *and*
+refundable while paused, unpause restores creation), and the
+`NotInitialized` guards on `create_deal` / `set_paused`. The three original
+lifecycle/batch/refund tests are unchanged and still valid.
 
-**Verification status:** this machine has no MSVC/GNU linker available, so
-`cargo test` cannot run here (same toolchain gap noted in every prior
-round). Changes were made by careful manual review against the soroban-sdk
-20 API. **Re-run `cargo test` on CI or a matched toolchain before
-deploying.**
+**Verification status:** `cargo +1.96.0-x86_64-pc-windows-gnu test --lib`
+passes — **13/13 tests green** (3 original lifecycle/batch/refund + 10 new
+hardening/circuit-breaker tests), 0 failures. The MSVC toolchain on this
+machine still has no linker, but the GNU toolchain builds and runs the full
+suite. CI should still run it on its own toolchain before deploy, but the
+state machine and every new guard are exercised and confirmed here.
 
 ## Known limitations (documented, not patched in this pass)
 

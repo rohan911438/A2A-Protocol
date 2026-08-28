@@ -66,6 +66,11 @@ pub enum Error {
     /// A checked integer operation overflowed. Only reachable with crafted,
     /// near-`i128::MAX` amounts; surfaced as a clean error instead of a panic.
     ArithmeticError = 17,
+    /// The admin has paused new-deal creation (circuit breaker). Only
+    /// `create_deal` is blocked - `release_milestones`, `complete_deal` and
+    /// `request_refund` always stay open so funds already in escrow can never
+    /// be frozen by a pause.
+    ContractPaused = 18,
 }
 
 #[contracttype]
@@ -109,42 +114,49 @@ pub struct Deal {
 pub enum DataKey {
     Admin,
     Deal(Symbol),
-    /// Re-entrancy latch. Set on entry to every fund-moving entrypoint,
-    /// cleared on exit via `Drop`. Soroban rolls back *all* storage writes if
-    /// a transaction traps, and a re-entrant call is always within the same
-    /// transaction, so the latch can never leak across transactions even if
-    /// an inner call panics.
+    /// `bool` circuit-breaker flag. When `true`, `create_deal` is rejected;
+    /// every fund-releasing / refunding path stays open regardless.
+    Paused,
+    /// Re-entrancy latch, kept in *temporary* storage. Set on entry to every
+    /// fund-moving entrypoint, cleared on exit via `Drop`. Temporary storage
+    /// is wiped between transactions by the protocol itself, so even in the
+    /// impossible case where `Drop` did not run (it always does on a normal
+    /// return; a trap rolls back every write anyway) the latch cannot leak
+    /// into a later transaction and brick the contract.
     Guard,
 }
 
 #[contract]
 pub struct A2AEscrow;
 
-/// RAII-style re-entrancy latch. Constructing it fails if the latch is
-/// already held (i.e. we are inside a nested call); dropping it releases the
-/// latch. Because `token` in every `Deal` is an address the buyer chose,
-/// `token::Client::transfer` below is an call into *untrusted* code that can
-/// call straight back into this contract - the classic re-entrancy setup.
-/// Combined with the strict checks-effects-interactions ordering in every
-/// entrypoint (state is persisted *before* the transfer), this closes both
-/// same-function and cross-function re-entrancy.
+/// RAII-style re-entrancy latch. Constructing it fails (`Error::Reentrancy`)
+/// if the latch is already held - i.e. we are inside a nested call - and
+/// dropping it releases the latch. Because `token` in every `Deal` is an
+/// address the buyer chose, `token::Client::transfer` below is a call into
+/// *untrusted* code that can call straight back into this contract - the
+/// classic re-entrancy setup. This is layered defence: the primary
+/// protection is the strict checks-effects-interactions ordering in every
+/// entrypoint (state is persisted *before* the transfer). The latch closes
+/// both same-function and cross-function (cross-deal) re-entrancy on top of
+/// that, and lives in temporary storage so it can never persist past the
+/// transaction that set it.
 struct Guard<'a> {
     env: &'a Env,
 }
 
 impl<'a> Guard<'a> {
     fn acquire(env: &'a Env) -> Result<Self, Error> {
-        if env.storage().instance().has(&DataKey::Guard) {
+        if env.storage().temporary().has(&DataKey::Guard) {
             return Err(Error::Reentrancy);
         }
-        env.storage().instance().set(&DataKey::Guard, &true);
+        env.storage().temporary().set(&DataKey::Guard, &true);
         Ok(Guard { env })
     }
 }
 
 impl<'a> Drop for Guard<'a> {
     fn drop(&mut self) {
-        self.env.storage().instance().remove(&DataKey::Guard);
+        self.env.storage().temporary().remove(&DataKey::Guard);
     }
 }
 
@@ -162,8 +174,43 @@ impl A2AEscrow {
             return Err(Error::AlreadyInitialized);
         }
         env.storage().instance().set(&DataKey::Admin, &admin);
+        env.storage().instance().set(&DataKey::Paused, &false);
         env.storage().instance().extend_ttl(DEAL_TTL_THRESHOLD, DEAL_TTL_EXTEND_TO);
         Ok(())
+    }
+
+    /// Circuit breaker. `set_paused(true)` stops any *new* deals from being
+    /// created; it deliberately does **not** touch `release_milestones`,
+    /// `complete_deal` or `request_refund`, so funds already locked in escrow
+    /// can always still be released to the seller or refunded to the buyer
+    /// even while the contract is paused. Admin-only.
+    pub fn set_paused(env: Env, paused: bool) -> Result<(), Error> {
+        let admin: Address = env
+            .storage()
+            .instance()
+            .get(&DataKey::Admin)
+            .ok_or(Error::NotInitialized)?;
+        admin.require_auth();
+
+        env.storage().instance().set(&DataKey::Paused, &paused);
+        env.storage().instance().extend_ttl(DEAL_TTL_THRESHOLD, DEAL_TTL_EXTEND_TO);
+
+        env.events().publish((symbol_short!("paused"),), paused);
+        Ok(())
+    }
+
+    /// Whether new-deal creation is currently paused.
+    pub fn is_paused(env: Env) -> bool {
+        env.storage()
+            .instance()
+            .get(&DataKey::Paused)
+            .unwrap_or(false)
+    }
+
+    /// Read the configured protocol admin, if the contract has been
+    /// initialized.
+    pub fn get_admin(env: Env) -> Option<Address> {
+        env.storage().instance().get(&DataKey::Admin)
     }
 
     /// Create a new deal and lock funds into escrow for a caller-specified
@@ -182,6 +229,15 @@ impl A2AEscrow {
     ) -> Result<(), Error> {
         buyer.require_auth();
         let _guard = Guard::acquire(&env)?;
+
+        // The contract must have an admin (be initialized) before it will
+        // custody any funds, and must not be paused.
+        if !env.storage().instance().has(&DataKey::Admin) {
+            return Err(Error::NotInitialized);
+        }
+        if env.storage().instance().get(&DataKey::Paused).unwrap_or(false) {
+            return Err(Error::ContractPaused);
+        }
 
         let key = DataKey::Deal(deal_id.clone());
         if env.storage().persistent().has(&key) {
@@ -291,6 +347,12 @@ impl A2AEscrow {
         if milestone_indices.is_empty() {
             return Err(Error::EmptyMilestoneSelection);
         }
+        // A deal can hold at most MAX_MILESTONES milestones, so a batch longer
+        // than that is guaranteed to contain a duplicate or out-of-range index
+        // and would only waste resources before reverting.
+        if milestone_indices.len() > MAX_MILESTONES {
+            return Err(Error::TooManyMilestones);
+        }
 
         let key = DataKey::Deal(deal_id.clone());
         let mut deal: Deal = env.storage().persistent().get(&key).ok_or(Error::DealNotFound)?;
@@ -382,6 +444,12 @@ impl A2AEscrow {
         }
 
         let amount_to_release = deal.remaining_amount;
+        // Defensive: unreachable while the status/remaining invariants hold
+        // (a deal at remaining == 0 is already `Completed`), but keeps a
+        // zero/negative transfer from ever reaching the token contract.
+        if amount_to_release <= 0 {
+            return Err(Error::InvalidAmount);
+        }
 
         // Mark every still-unreleased milestone as released so the persisted
         // deal stays internally consistent with `remaining_amount == 0`.
@@ -431,6 +499,11 @@ impl A2AEscrow {
         }
 
         let amount_to_refund = deal.remaining_amount;
+        // Defensive: same reasoning as `complete_deal` - a Funded deal always
+        // has a positive remainder.
+        if amount_to_refund <= 0 {
+            return Err(Error::InvalidAmount);
+        }
 
         // Update state, then transfer (checks-effects-interactions).
         deal.remaining_amount = 0;

@@ -346,3 +346,90 @@ fn test_complete_deal_marks_milestones_released() {
     assert_eq!(deal.remaining_amount, 0);
     assert!(deal.milestones.iter().all(|m| m.is_released));
 }
+
+// --- Circuit breaker + initialization guard -----------------------------
+
+fn setup_uninit() -> Fixture {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let buyer = Address::generate(&env);
+    let seller = Address::generate(&env);
+    let verifier = Address::generate(&env);
+
+    let token_admin = Address::generate(&env);
+    let token_addr = env.register_stellar_asset_contract(token_admin.clone());
+    token::StellarAssetClient::new(&env, &token_addr).mint(&buyer, &1_000_000);
+
+    let contract_id = env.register_contract(None, A2AEscrow);
+    // Deliberately NOT initialized.
+    Fixture { env, contract_id, token_addr, buyer, seller, verifier }
+}
+
+#[test]
+fn test_create_deal_requires_init() {
+    let f = setup_uninit();
+    let milestones = vec![&f.env, Milestone { amount: 100, is_released: false }];
+    let r = f.client().try_create_deal(
+        &symbol_short!("noinit"), &f.buyer, &f.seller, &f.verifier,
+        &f.token_addr, &100i128, &milestones, &1000u64,
+    );
+    assert_eq!(r, Err(Ok(Error::NotInitialized)));
+}
+
+#[test]
+fn test_set_paused_requires_init() {
+    let f = setup_uninit();
+    let r = f.client().try_set_paused(&true);
+    assert_eq!(r, Err(Ok(Error::NotInitialized)));
+}
+
+#[test]
+fn test_pause_blocks_new_deals_but_never_freezes_escrowed_funds() {
+    let f = setup();
+    let token_client = token::Client::new(&f.env, &f.token_addr);
+
+    // A deal funded *before* the pause.
+    let live = symbol_short!("live");
+    let milestones = vec![
+        &f.env,
+        Milestone { amount: 100, is_released: false },
+        Milestone { amount: 100, is_released: false },
+    ];
+    f.client().create_deal(
+        &live, &f.buyer, &f.seller, &f.verifier,
+        &f.token_addr, &200i128, &milestones, &10_000u64,
+    );
+
+    // Pause.
+    f.client().set_paused(&true);
+    assert!(f.client().is_paused());
+
+    // New deals are refused.
+    let r = f.client().try_create_deal(
+        &symbol_short!("blocked"), &f.buyer, &f.seller, &f.verifier,
+        &f.token_addr, &100i128,
+        &vec![&f.env, Milestone { amount: 100, is_released: false }],
+        &10_000u64,
+    );
+    assert_eq!(r, Err(Ok(Error::ContractPaused)));
+
+    // ...but the already-escrowed deal can still be released while paused.
+    f.client().release_milestone(&live, &0u32);
+    assert_eq!(token_client.balance(&f.seller), 100);
+
+    // ...and refunded while paused (advance past the deadline first).
+    f.env.ledger().with_mut(|li| li.timestamp = 20_000);
+    f.client().request_refund(&live);
+    assert_eq!(token_client.balance(&f.buyer), 1_000_000 - 100);
+
+    // Unpause restores normal deal creation.
+    f.client().set_paused(&false);
+    assert!(!f.client().is_paused());
+    f.client().create_deal(
+        &symbol_short!("resumed"), &f.buyer, &f.seller, &f.verifier,
+        &f.token_addr, &100i128,
+        &vec![&f.env, Milestone { amount: 100, is_released: false }],
+        &30_000u64,
+    );
+}
