@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Terminal as TerminalIcon, Copy, Check, Code, ShieldCheck } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import RevealHeading from './RevealHeading';
 import PointerGlow from './PointerGlow';
 
@@ -144,6 +144,11 @@ const DevSDK = () => {
 
               <div className="px-6 py-3.5 bg-white/[0.03] border-b border-white/5 flex items-center justify-between">
                 <div className="flex items-center gap-3">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-white/15" />
+                    <span className="w-2 h-2 rounded-full bg-white/15" />
+                    <span className="w-2 h-2 rounded-full bg-clay-500/50" />
+                  </span>
                   <Code size={13} className="text-clay-400" />
                   <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest opacity-80">A2A SDK Integration</span>
                 </div>
@@ -187,11 +192,21 @@ const DevSDK = () => {
               </div>
 
               <div className="p-6 h-[260px] overflow-y-auto text-xs">
-                <pre className="overflow-x-auto selection:bg-clay-500/30 selection:text-white leading-relaxed no-scrollbar select-text">
-                  {activeTab === 'js' && renderJSCode()}
-                  {activeTab === 'py' && renderPyCode()}
-                  {activeTab === 'cli' && renderCLICode()}
-                </pre>
+                <AnimatePresence mode="wait">
+                  <motion.pre
+                    key={activeTab}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                    className="overflow-x-auto selection:bg-clay-500/30 selection:text-white leading-relaxed no-scrollbar select-text"
+                  >
+                    {activeTab === 'js' && renderJSCode()}
+                    {activeTab === 'py' && renderPyCode()}
+                    {activeTab === 'cli' && renderCLICode()}
+                    <span className="inline-block w-[6px] h-[12px] translate-y-[2px] ml-0.5 bg-clay-400 animate-pulse" aria-hidden="true" />
+                  </motion.pre>
+                </AnimatePresence>
               </div>
 
               <div className="px-6 py-3.5 bg-white/[0.03] border-t border-white/5 flex items-center justify-between text-[9px] text-zinc-500 font-bold uppercase">
