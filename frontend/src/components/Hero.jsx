@@ -120,6 +120,8 @@ const Hero = () => {
   const glowY = useTransform(scrollYProgress, [0, 1], ['0%', '35%']);
   const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '12%']);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  // The scroll cue is only relevant before the visitor has moved.
+  const cueOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
 
   // One shared cursor source for every reactive element below: the orbit
   // rings, the ghost wordmark, and the terminal card all move off this
@@ -317,6 +319,23 @@ const Hero = () => {
             <ChatDemo />
           </motion.div>
         </motion.div>
+      </motion.div>
+
+      {/* Scroll cue - a mouse-wheel glyph that ticks down, fading out the
+          moment the visitor starts scrolling. */}
+      <motion.div
+        style={{ opacity: cueOpacity }}
+        className="absolute bottom-7 left-1/2 -translate-x-1/2 z-10 hidden sm:flex flex-col items-center gap-2 pointer-events-none"
+        aria-hidden="true"
+      >
+        <span className="text-[9px] font-semibold uppercase tracking-[0.32em] text-bark-faint">Scroll</span>
+        <div className="w-5 h-8 rounded-full border border-line flex items-start justify-center p-1">
+          <motion.span
+            animate={{ y: [0, 8, 0], opacity: [0.4, 1, 0.4] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+            className="w-1 h-1.5 rounded-full bg-clay-400"
+          />
+        </div>
       </motion.div>
     </section>
   );
