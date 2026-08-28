@@ -42,7 +42,6 @@ const DemoMode = () => {
   const navigate = useNavigate();
   const [running, setRunning] = useState(false);
   const [steps, setSteps] = useState(initialSteps);
-  const [dealId, setDealId] = useState(null);
   const [error, setError] = useState('');
   const [summary, setSummary] = useState(null);
 
@@ -76,7 +75,6 @@ const DemoMode = () => {
         buyer_wallet: DEMO_BUYER_WALLET,
       });
       createdDealId = createResp.deal_id;
-      setDealId(createdDealId);
       await sleep(1200);
       updateStep(0, 'done', `Deal created: ${createdDealId.slice(0, 8)}...`);
 

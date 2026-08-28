@@ -12,7 +12,9 @@ const DealSummary = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { account, connected, signTransaction, fetchBalances } = useWallet();
-  const [contractInfo, setContractInfo] = useState(null);
+  // Contract metadata is fetched for its cache/warm-up side effect; the
+  // value isn't rendered here, so only the setter slot is kept.
+  const [, setContractInfo] = useState(null);
   const [txStatus, setTxStatus] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(true);

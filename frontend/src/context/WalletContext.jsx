@@ -17,7 +17,7 @@ export const WalletProvider = ({ children }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState(null);
   const [balances, setBalances] = useState([]);
-  const [network, setNetwork] = useState(import.meta.env.VITE_STELLAR_NETWORK || "TESTNET");
+  const [network] = useState(import.meta.env.VITE_STELLAR_NETWORK || "TESTNET");
 
   const isStellarAccount = (value) => typeof value === "string" && /^G[A-Z2-7]{55}$/.test(value);
 

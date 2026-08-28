@@ -20,7 +20,7 @@ const NegotiationRoom = () => {
   const [loading, setLoading] = useState(false);
   const [accepting, setAccepting] = useState(false);
   const [reasoningLogs, setReasoningLogs] = useState([]);
-  const { account, connected, formatAddress } = useWallet();
+  const { account, connected } = useWallet();
 
   const isValidStellarAccount = (value) => typeof value === 'string' && /^G[A-Z2-7]{55}$/.test(value);
 

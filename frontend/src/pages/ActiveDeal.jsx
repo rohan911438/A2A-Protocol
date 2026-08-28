@@ -12,7 +12,9 @@ const ActiveDeal = () => {
   const dealId = location.state?.dealId || null;
   const { account, connected, signTransaction, fetchBalances } = useWallet();
   const [milestones, setMilestones] = useState([]);
-  const [contractInfo, setContractInfo] = useState(null);
+  // Contract metadata is fetched for its cache/warm-up side effect; the
+  // value isn't rendered here, so only the setter slot is kept.
+  const [, setContractInfo] = useState(null);
   const [dealRecord, setDealRecord] = useState(null);
   const [txStatus, setTxStatus] = useState('');
   const [loadingData, setLoadingData] = useState(true);
