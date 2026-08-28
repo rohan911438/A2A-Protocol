@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, Lock, Key, Cpu, Zap, ShieldCheck } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import SpotlightCard from './SpotlightCard';
 import RevealHeading from './RevealHeading';
 import PointerGlow from './PointerGlow';
@@ -10,6 +10,15 @@ const Features = () => {
   const [escrowLocked, setEscrowLocked] = useState(true);
   const [x402Success, setX402Success] = useState(false);
   const [activeNode, setActiveNode] = useState(0);
+
+  // The whole bento grid drifts a little against scroll so it reads as a
+  // layer floating in front of the heading rather than pinned to it.
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
+  const gridY = useTransform(scrollYProgress, [0, 1], [34, -34]);
 
   useEffect(() => {
     const chartInterval = setInterval(() => {
@@ -47,7 +56,7 @@ const Features = () => {
   const points = getChartPoints(chartProgress);
 
   return (
-    <section id="features" className="py-28 px-6 relative bg-paper-soft border-t border-line overflow-hidden">
+    <section ref={sectionRef} id="features" className="py-28 px-6 relative bg-paper-soft border-t border-line overflow-hidden">
       <PointerGlow color="rgba(94,240,214,0.08)" />
       <div className="max-w-6xl mx-auto space-y-16 relative z-10">
 
@@ -65,7 +74,7 @@ const Features = () => {
           />
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <motion.div style={{ y: gridY }} className="grid grid-cols-1 md:grid-cols-12 gap-6">
 
           {/* Card 1: Pareto Bargaining */}
           <motion.div
@@ -299,7 +308,7 @@ const Features = () => {
           </SpotlightCard>
           </motion.div>
 
-        </div>
+        </motion.div>
       </div>
     </section>
   );
