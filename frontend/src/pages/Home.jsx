@@ -5,10 +5,12 @@ import HowItWorks from '../components/HowItWorks';
 import Features from '../components/Features';
 import DevSDK from '../components/DevSDK';
 import CTA from '../components/CTA';
+import SectionRail from '../components/SectionRail';
 
 const Home = () => {
   return (
     <>
+      <SectionRail />
       <Hero />
       <TechMarquee />
       <HowItWorks />
