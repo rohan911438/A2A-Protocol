@@ -6,53 +6,47 @@ Last run: 2026-08-28. Re-run the three commands below to reproduce.
 
 | Check | Command | Result |
 |---|---|---|
-| Lint | `npm run lint` | **0 errors**, 19 warnings (all advisory — see below) |
+| Lint | `npm run lint` | **0 problems** (0 errors, 0 warnings), exit 0 |
 | Production build | `npm run build` | **passes**, no chunk-size warning |
 | Dependency audit | `npm audit` | 6 **low**, build-tooling only, no non-breaking fix |
-| Type/import graph | (covered by build) | 2202 modules resolve, all routes chunk-split |
+| Type/import graph | (covered by build) | ~2200 modules resolve, all routes chunk-split |
+| Dev server smoke | `npm run dev` + curl | boots, HTTP 200, core modules transform clean |
 
-Nothing in the frontend is broken. The remaining lint output is warnings,
-not errors, and every one is a known, deliberate pattern.
+Nothing in the frontend is broken and the lint gate is fully clean.
 
-## What was fixed in this pass
+## What was fixed
 
-1. **ESLint was reporting ~40 errors, ~20 of them false.** `no-unused-vars`
-   had no way to see JSX references, so every `import { motion }` and every
+1. **ESLint reported ~40 errors, ~20 of them false.** `no-unused-vars` had
+   no way to see JSX references, so every `import { motion }` and every
    `as: Tag` prop read as dead code. Added `eslint-plugin-react` purely for
-   `react/jsx-uses-vars`. The experimental `eslint-plugin-react-hooks` v6
-   rules (`set-state-in-effect`, `immutability`, `static-components`) ship
-   at error severity and flag intentional working code here — moved to
-   `warn`. `rules-of-hooks` / `exhaustive-deps` unchanged.
-2. **5 genuinely dead bindings removed** — `setNetwork`, two write-only
-   `contractInfo` states, a fully write-only `dealId` state in DemoMode,
-   and an unused `formatAddress` destructure.
-3. **`MagneticButton`** no longer mints a component type per render
+   `react/jsx-uses-vars`.
+2. **`react-hooks` v7 rules calibrated.** `set-state-in-effect` is turned
+   **off** — it fires on two patterns the React docs present as correct
+   (`setLoading(true)` before an `await`; resetting derived state when its
+   input prop changes). `immutability` / `static-components` stay armed as
+   warnings (current count 0). `rules-of-hooks` / `exhaustive-deps`
+   unchanged.
+3. **Genuinely dead bindings removed** — `setNetwork`, two write-only
+   `contractInfo` states, a write-only `dealId` state, an unused
+   `formatAddress` destructure.
+4. **`WalletContext` refactor** — `fetchBalances` / `connect` / `disconnect`
+   are now `useCallback`, wallet identity hydrates from `localStorage` in
+   lazy `useState` initialisers instead of an effect, `isStellarAccount`
+   hoisted to module scope. Cleared 3 `immutability` + several
+   `exhaustive-deps` warnings.
+5. **`NegotiationRoom`** — `resolveDealId` / `handleStart` moved above their
+   effects and wrapped in `useCallback`; the auto-start effect now lists
+   its real deps. **`Dashboard`** — `loadDeals` is `useCallback`.
+   **`ActiveDeal`** — `milestones` was mirrored from `dealRecord` via an
+   effect; now a `useMemo` (pure projection).
+6. **`MagneticButton`** no longer mints a component type per render
    (`motion.create(Component)` → stable `motion[Component]`).
-4. **`App`** decides reduced-motion mode with a lazy `useState` initializer
+7. **`App`** decides reduced-motion mode with a lazy `useState` initializer
    before first paint instead of `setState` inside an effect.
-5. **Bundle split** — one 1.5 MB entry chunk → ~85 KB app entry +
-   independently cached `stellar` / `react-vendor` / `motion` / `vendor`
-   chunks.
-6. **Deleted** unreferenced Vite-template leftovers (`App.css`,
+8. **Bundle split** — one 1.5 MB entry chunk → ~85 KB app entry +
+   independently cached `stellar` / `react-vendor` / `motion` / `vendor`.
+9. **Deleted** unreferenced Vite-template leftovers (`App.css`,
    `assets/react.svg`, `assets/vite.svg`).
-
-## Remaining warnings (19) — why they are left as warnings
-
-- **`react-hooks/set-state-in-effect` (9)** — one-time state hydration from
-  `localStorage` / feature detection on mount (WalletContext, pages). React
-  docs call this "not recommended" in the general case; here the effects
-  run once and the alternative (lazy initialisers everywhere) buys nothing.
-- **`react-hooks/immutability` (3)** — effects that call a handler declared
-  lower in the same component (`handleStart`, `disconnect`,
-  `fetchBalances`). The handlers only touch stable setters, so the stale
-  closure the rule warns about has no observable effect. Real cleanup would
-  be `useCallback` + reorder; deferred as low-value churn in flows that
-  can't be exercised headlessly here.
-- **`react-hooks/exhaustive-deps` (6)** — pre-existing, in wallet/page
-  effects; adding the flagged deps would re-run network calls on every
-  render.
-- **`react-refresh/only-export-components` (1)** — `WalletContext` exports
-  `useWallet` next to `WalletProvider` by design. HMR-only hint.
 
 ## `npm audit` — 6 low, no action
 
