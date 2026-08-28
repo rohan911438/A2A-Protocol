@@ -163,6 +163,16 @@ milestone releases in a single transaction. See
 [docs/CONTRACT_DEPLOYMENT.md](docs/CONTRACT_DEPLOYMENT.md) for build/deploy
 notes and how to enable the backend's on-chain mode.
 
+### Security review
+
+The escrow contract has been through a five-pass internal security review —
+full report in **[docs/SECURITY_AUDIT.md](docs/SECURITY_AUDIT.md)**. It
+covers 17 findings (all Fixed or Acknowledged), the trust model, a
+per-finding regression-test map, static-analysis results, and residual
+deployment risks. Current status: **13/13 contract tests pass**, `cargo
+clippy` reports no security-relevant lint. `docs/MAINNET_AUDIT.md` tracks
+the backend/frontend side of the same effort.
+
 ### Mainnet
 
 - Escrow contract address: `CADGOK3EO3F5IJAD2JVG4V65N2GXHAWEY5QERK66BZI7UBEQPQJLKRL3`
