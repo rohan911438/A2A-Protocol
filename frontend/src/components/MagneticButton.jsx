@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useRef } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 /**
@@ -29,18 +29,15 @@ const MagneticButton = ({ as: Component = 'button', className = '', children, st
     y.set(0);
   };
 
-  // Wrapping Component with motion.create() must not happen on every render:
-  // doing so creates a brand-new component type each time, which makes React
-  // unmount and remount this button (destroying its ref, in-flight spring
-  // animation, and DOM node) on every single re-render of anything above it
-  // in the tree - including, for the Hero buttons, the headline's own
-  // 1.8s word-cycle timer forcing a remount that often. Memoized on
-  // Component (a stable string/type across renders) so it's only rebuilt
-  // if the actual element type changes.
-  const MotionComponent = useMemo(
-    () => (motion.create ? motion.create(Component) : motion(Component)),
-    [Component]
-  );
+  // `Component` is always a tag name ('button' by default, 'a' for links),
+  // so we can read the matching pre-built motion proxy (`motion.button`,
+  // `motion.a`) straight off `motion`. These are stable references, so the
+  // button never remounts on a parent re-render - which is what a
+  // per-render `motion.create(Component)` used to cause (it mints a new
+  // component type each render, so React tears down and rebuilds this
+  // button, its ref and its in-flight spring, every time anything above it
+  // updates - e.g. the Hero headline's word-cycle timer).
+  const MotionComponent = motion[Component] || motion.div;
 
   return (
     <MotionComponent
