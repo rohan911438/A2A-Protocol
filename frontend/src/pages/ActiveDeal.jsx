@@ -11,7 +11,6 @@ const ActiveDeal = () => {
   const location = useLocation();
   const dealId = location.state?.dealId || null;
   const { account, connected, signTransaction, fetchBalances } = useWallet();
-  const [milestones, setMilestones] = useState([]);
   // Contract metadata is fetched for its cache/warm-up side effect; the
   // value isn't rendered here, so only the setter slot is kept.
   const [, setContractInfo] = useState(null);
@@ -53,7 +52,9 @@ const ActiveDeal = () => {
     };
   }, [dealId]);
 
-  useEffect(() => {
+  // Milestones are a pure projection of the deal record - derive them
+  // during render rather than mirroring into state via an effect.
+  const milestones = useMemo(() => {
     const defaultTasks = ["Milestone 1", "Milestone 2", "Milestone 3"];
     const result = dealRecord?.data?.result || {};
     const finalPrice = result.final_price || 0;
@@ -72,7 +73,7 @@ const ActiveDeal = () => {
         break;
       }
     }
-    const mapped = milestoneAmounts.map((amt, idx) => {
+    return milestoneAmounts.map((amt, idx) => {
       let status = "Pending";
       if (releasedSet.has(idx)) status = "Completed";
       else if (idx === firstOpen) status = "In Progress";
@@ -83,7 +84,6 @@ const ActiveDeal = () => {
         amount: amt,
       };
     });
-    setMilestones(mapped);
   }, [dealRecord]);
 
   const dealTitle = useMemo(() => {

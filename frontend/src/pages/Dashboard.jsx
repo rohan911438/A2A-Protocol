@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp, CheckCircle2, ArrowRight, Coins, Activity, ShieldCheck, Search, Inbox } from 'lucide-react';
@@ -17,7 +17,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { account, connected, signTransaction, fetchBalances } = useWallet();
 
-  const loadDeals = () => {
+  const loadDeals = useCallback(() => {
     // Scope to the connected wallet server-side when available, so the
     // dashboard doesn't fetch and deserialize every deal on the platform.
     listDeals(account || null)
@@ -30,11 +30,11 @@ const Dashboard = () => {
         setDeals(items);
       })
       .catch(() => setDeals([]));
-  };
+  }, [account]);
 
   useEffect(() => {
     loadDeals();
-  }, [account]);
+  }, [loadDeals]);
 
   useEffect(() => {
     getContractInfo()

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, User, ArrowRight, Zap, CheckCircle2, MoreHorizontal, Coins, ShieldCheck } from 'lucide-react';
@@ -31,7 +31,7 @@ const NegotiationRoom = () => {
     }
   }, [location.state]);
 
-  const resolveDealId = async () => {
+  const resolveDealId = useCallback(async () => {
     // Scope the lookup to the connected wallet server-side when we can, so we
     // aren't pulling (and paying to deserialize) every deal on the platform
     // just to find one. Falls back to the capped global list when no wallet
@@ -75,14 +75,14 @@ const NegotiationRoom = () => {
     setDealId(selected);
     localStorage.setItem('last_deal_id', selected);
     return selected;
-  };
+  }, [account]);
 
   useEffect(() => {
     if (dealId) return;
     resolveDealId().catch(() => {
       setError('No deal found. Create a deal first.');
     });
-  }, [dealId, account]);
+  }, [dealId, resolveDealId]);
 
   useEffect(() => {
     if (!dealId) return;
@@ -101,40 +101,7 @@ const NegotiationRoom = () => {
       .catch(() => {});
   }, [dealId]);
 
-  useEffect(() => {
-    // Only auto-run negotiation once the seller has accepted the invite -
-    // this used to trigger on 'created', which meant the buyer's own page
-    // load kicked off negotiation before the seller ever clicked "Accept
-    // Invite", making that button decorative.
-    if (dealId && dealStatus === 'accepted' && messages.length === 0 && !loading && !isTyping) {
-      handleStart();
-    }
-  }, [dealId, dealStatus, messages.length]);
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages, isTyping]);
-
-  const dealTitle = useMemo(() => {
-    const request = dealData?.data?.request || dealData?.data || {};
-    const title = request?.title || '';
-    const desc = request?.description || '';
-    return title || desc.split('—')[0]?.trim() || 'Negotiation';
-  }, [dealData]);
-
-  const buyerWallet = useMemo(() => {
-    const request = dealData?.data?.request || dealData?.data || {};
-    return (request?.buyer_wallet || '').toLowerCase();
-  }, [dealData]);
-
-  const isBuyer = useMemo(() => {
-    if (!account) return false;
-    return buyerWallet && account.toLowerCase() === buyerWallet;
-  }, [account, buyerWallet]);
-
-  const handleStart = async () => {
+  const handleStart = useCallback(async () => {
     let targetDealId = dealId;
     if (!targetDealId) {
       targetDealId = await resolveDealId();
@@ -167,7 +134,42 @@ const NegotiationRoom = () => {
       setIsTyping(false);
       setLoading(false);
     }
-  };
+  }, [dealId, resolveDealId]);
+
+  useEffect(() => {
+    // Only auto-run negotiation once the seller has accepted the invite -
+    // this used to trigger on 'created', which meant the buyer's own page
+    // load kicked off negotiation before the seller ever clicked "Accept
+    // Invite", making that button decorative. The guard conditions (no
+    // messages yet, not already loading/typing) keep this a one-shot even
+    // though loading/isTyping are in the dep list.
+    if (dealId && dealStatus === 'accepted' && messages.length === 0 && !loading && !isTyping) {
+      handleStart();
+    }
+  }, [dealId, dealStatus, messages.length, loading, isTyping, handleStart]);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, isTyping]);
+
+  const dealTitle = useMemo(() => {
+    const request = dealData?.data?.request || dealData?.data || {};
+    const title = request?.title || '';
+    const desc = request?.description || '';
+    return title || desc.split('—')[0]?.trim() || 'Negotiation';
+  }, [dealData]);
+
+  const buyerWallet = useMemo(() => {
+    const request = dealData?.data?.request || dealData?.data || {};
+    return (request?.buyer_wallet || '').toLowerCase();
+  }, [dealData]);
+
+  const isBuyer = useMemo(() => {
+    if (!account) return false;
+    return buyerWallet && account.toLowerCase() === buyerWallet;
+  }, [account, buyerWallet]);
 
   const handleAccept = async () => {
     if (!connected || !account) {
