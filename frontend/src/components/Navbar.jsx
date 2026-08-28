@@ -14,12 +14,11 @@ const Navbar = () => {
   const isHome = useLocation().pathname === '/';
 
   // Scroll-spy: on the home page, light up the nav item for whichever
-  // section is currently crossing the middle band of the viewport.
+  // section is currently crossing the middle band of the viewport. Off the
+  // home page the isHome branch never renders, so a stale value here is
+  // harmless and gets refreshed by the observer on return.
   useEffect(() => {
-    if (!isHome) {
-      setActiveSection(null);
-      return undefined;
-    }
+    if (!isHome) return undefined;
     const ids = ['how-it-works', 'features', 'developer-sdk'];
     const obs = new IntersectionObserver(
       (entries) => {
