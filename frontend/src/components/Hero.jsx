@@ -6,6 +6,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import ChatDemo from './ChatDemo';
 import MagneticButton from './MagneticButton';
 import CursorOrbit from './CursorOrbit';
+import HeroConstellation from './HeroConstellation';
 import useMouseParallax from '../hooks/useMouseParallax';
 
 const containerVariants = {
@@ -176,6 +177,25 @@ const Hero = () => {
       </motion.div>
 
       <CursorOrbit springX={mouseX} springY={mouseY} />
+
+      {/* Living node-lattice that parts and reforms around the cursor - the
+          "premium structure that moves with you" layer, sitting above the
+          ambient glow but below the headline. */}
+      <HeroConstellation />
+
+      {/* Grazing spotlight - a tight, blend-mode highlight that rides the
+          exact pointer position (same --spot-x/--spot-y the section already
+          tracks) *above* the content, so the headline itself catches the
+          light as the cursor sweeps across it. `screen` only ever brightens,
+          never darkens, and it never eats pointer events. */}
+      <div
+        className="absolute inset-0 z-20 pointer-events-none"
+        style={{
+          mixBlendMode: 'screen',
+          background:
+            'radial-gradient(440px circle at var(--spot-x, 50%) var(--spot-y, 50%), rgba(179,234,30,0.16), rgba(94,240,214,0.06) 42%, transparent 62%)',
+        }}
+      />
 
       {/* Giant ghost wordmark - oversized, near-invisible type sitting behind
           the real content for scale/depth. Pure texture, not meant to be
