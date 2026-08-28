@@ -220,9 +220,22 @@ const Hero = () => {
         className="max-w-4xl w-full mx-auto text-center space-y-8 relative z-10"
       >
         <motion.div variants={itemVariants}>
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface border border-line text-xs font-medium text-bark-muted">
-            <span className="w-1.5 h-1.5 rounded-full bg-moss-500" />
-            Live on Stellar Testnet — v1.0.4
+          <div className="relative inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-surface border border-line text-xs font-medium text-bark-muted overflow-hidden">
+            {/* periodic light sweep across the badge */}
+            <motion.span
+              aria-hidden="true"
+              className="absolute inset-0"
+              style={{ background: 'linear-gradient(115deg, transparent 40%, rgba(179,234,30,0.16) 50%, transparent 60%)' }}
+              initial={{ x: '-130%' }}
+              animate={{ x: '130%' }}
+              transition={{ duration: 2.4, repeat: Infinity, repeatDelay: 4, ease: [0.16, 1, 0.3, 1] }}
+            />
+            {/* live status dot with a pinging ripple */}
+            <span className="relative flex h-1.5 w-1.5 shrink-0">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-moss-400 opacity-70 animate-ping" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-moss-500" />
+            </span>
+            <span className="relative">Live on Stellar Testnet — <span className="text-bark">v1.0.4</span></span>
           </div>
         </motion.div>
 
