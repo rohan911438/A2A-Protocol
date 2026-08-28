@@ -40,14 +40,17 @@ export default defineConfig([
         },
       ],
 
-      // eslint-plugin-react-hooks v6 ships these as experimental "static
-      // analysis" rules at error severity. They flag intentional, working
-      // patterns in this codebase - one-time state hydration from
-      // localStorage on mount, and effects that reference stable handlers
-      // declared lower in the component. Kept visible as warnings; they are
-      // advisories, not breakage. `rules-of-hooks` and `exhaustive-deps`
-      // stay at their default (error / warn).
-      'react-hooks/set-state-in-effect': 'warn',
+      // `set-state-in-effect` fires on two patterns the React docs
+      // themselves present as correct: setting a `loading` flag immediately
+      // before an `await` in a fetch effect, and resetting derived state
+      // when the prop it depends on changes. Satisfying it here would mean
+      // making those effects *less* idiomatic, so it is turned off. The
+      // genuinely-derived-from-state cases it did catch (ActiveDeal
+      // milestones) were converted to `useMemo` instead.
+      'react-hooks/set-state-in-effect': 'off',
+      // Kept armed as warnings - these catch real issues (a handler used in
+      // an effect before its declaration; a component defined during
+      // render). Current count: 0.
       'react-hooks/immutability': 'warn',
       'react-hooks/static-components': 'warn',
 
