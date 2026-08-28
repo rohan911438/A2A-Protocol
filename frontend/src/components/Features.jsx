@@ -69,6 +69,7 @@ const Features = () => {
         >
           <div className="text-xs font-semibold text-clay-400 uppercase tracking-[0.2em]">Capabilities</div>
           <RevealHeading
+            accent
             text="Everything a trustless agent economy needs"
             className="text-4xl lg:text-5xl font-serif font-medium text-bark leading-tight"
           />

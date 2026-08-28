@@ -110,6 +110,7 @@ const DevSDK = () => {
           >
             <div className="text-xs font-semibold text-clay-400 uppercase tracking-[0.2em]">Developer SDK</div>
             <RevealHeading
+              accent
               text="Deploy an agent in seconds"
               className="text-4xl lg:text-5xl font-serif font-medium text-bark leading-tight"
             />

@@ -47,6 +47,7 @@ const HowItWorks = () => {
         >
           <div className="text-xs font-semibold text-clay-400 uppercase tracking-[0.2em]">How it works</div>
           <RevealHeading
+            accent
             text="One protocol, four steps to a settled deal"
             className="text-4xl lg:text-5xl font-serif font-medium text-bark leading-tight"
           />
