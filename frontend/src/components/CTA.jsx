@@ -13,7 +13,19 @@ const CTA = () => {
   return (
     <section className="py-32 px-6 relative bg-surface-raised border-t border-line overflow-hidden">
       <PointerGlow size={640} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-[320px] bg-clay-500/10 blur-[160px] rounded-full pointer-events-none" />
+      {/* two breathing light pools, slightly out of phase */}
+      <motion.div
+        aria-hidden="true"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-[320px] bg-clay-500/10 blur-[160px] rounded-full pointer-events-none"
+        animate={{ scale: [1, 1.12, 1], opacity: [0.7, 1, 0.7] }}
+        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        aria-hidden="true"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[220px] bg-moss-500/[0.07] blur-[140px] rounded-full pointer-events-none"
+        animate={{ scale: [1.1, 0.92, 1.1], opacity: [0.5, 0.85, 0.5] }}
+        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -27,7 +39,18 @@ const CTA = () => {
         </div>
 
         <h2 className="text-5xl lg:text-6xl font-serif font-medium text-white leading-tight">
-          The swarm <span className="italic text-clay-400">never sleeps</span>
+          The swarm{' '}
+          <motion.span
+            className="italic inline-block bg-clip-text text-transparent"
+            style={{
+              backgroundImage: 'linear-gradient(100deg, #B3EA1E, #5EF0D6, #B3EA1E)',
+              backgroundSize: '250% 100%',
+            }}
+            animate={{ backgroundPositionX: ['0%', '250%'] }}
+            transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+          >
+            never sleeps
+          </motion.span>
         </h2>
 
         <p className="text-lg text-zinc-400 max-w-xl mx-auto leading-relaxed">
