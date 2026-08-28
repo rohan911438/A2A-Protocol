@@ -86,6 +86,82 @@ lifecycle + refund tests, which use `mock_all_auths()`, still pass).
   wallet. Fixed to only treat a wallet as valid once the deal record shows
   `seller_accepted: true`.
 
+## Contract hardening pass — 2026-08-28
+
+A second, contract-focused pass over `smart_contract/a2a_escrow/src/lib.rs`.
+All of these are defence-in-depth on the escrow state machine itself, on top
+of the round-1 fixes above.
+
+- **Re-entrancy through the caller-chosen token.** Every `Deal` carries its
+  own `token` address, supplied by the buyer at `create_deal`. `token::
+  Client::transfer` is therefore a call into *untrusted* code that can call
+  straight back into the escrow before the first call has finished writing
+  its state — the classic re-entrancy setup (drain via a second
+  `release_milestones` while `remaining_amount` / `is_released` still hold
+  their old values). Two independent mitigations added:
+  1. **Strict checks-effects-interactions ordering.** `create_deal`,
+     `release_milestones`, `complete_deal` and `request_refund` now persist
+     the fully-mutated `Deal` (and bump its TTL) *before* calling the token
+     contract. A re-entrant call sees the already-updated state and the
+     `is_released` / status / `remaining_amount` guards reject it.
+  2. **An explicit re-entrancy latch** (`DataKey::Guard`, RAII `Guard`
+     type). Set on entry to every fund-moving entrypoint, cleared on normal
+     return via `Drop`; a nested call finds it set and returns
+     `Error::Reentrancy`. Soroban rolls back all storage on a trap and a
+     re-entrant call is always in the same transaction, so the latch can
+     never leak across transactions.
+- **buyer / seller / verifier were not required to be distinct.** If the
+  verifier address equalled the seller, the seller could sign their own
+  milestone releases; if it equalled the buyer, the buyer could pull their
+  deposit back out through the release path, bypassing the deadline/refund
+  rules. `create_deal` now rejects any pair of equal parties
+  (`Error::InvalidParties`).
+- **Verifier could still release funds after the deadline.** Past the
+  deadline the buyer is entitled to a full refund via `request_refund`.
+  Previously a slow or malicious verifier could race (or front-run) that
+  refund and hand the money to the seller for work that was never delivered
+  on time. `release_milestones` and `complete_deal` now reject any call at
+  or after `deal.deadline` (`Error::DeadlinePassed`); the refund is the only
+  legal move from then on.
+- **No upper bound on `deadline`.** `request_refund` requires
+  `now >= deadline`, so a fat-fingered or malicious deadline decades in the
+  future would lock the escrowed funds forever — neither party could ever
+  trigger the refund. `create_deal` now caps the deadline at ~1 year out
+  (`MAX_DEAL_DURATION`).
+- **No bound on milestone count.** A deal could be created with an enormous
+  milestone vector; every later `release_milestones` then has to load, clone
+  and re-serialize it, and the persistent entry balloons — a gas/DoS trap
+  for the verifier who has to settle it. Capped at `MAX_MILESTONES = 50`
+  (`Error::TooManyMilestones`); empty milestone vectors are also now
+  rejected explicitly rather than falling through the sum check.
+- **Unchecked `i128` arithmetic.** The milestone-sum loop and
+  `remaining_amount` updates used raw `+` / `-`. With `overflow-checks =
+  true` in the release profile these panic rather than wrap, but a panic
+  mid-transaction is still worse than a typed error. Switched to
+  `checked_add` / `checked_sub` returning `Error::ArithmeticError`, plus a
+  defensive `remaining_amount < 0` guard in `release_milestones`.
+- **`initialize` panicked instead of returning an error**, and `create_deal`
+  reused `Error::AlreadyInitialized` (a contract-instance concept) to mean
+  "this deal id is taken". `initialize` now returns `Result<(), Error>` with
+  `AlreadyInitialized`; `create_deal` returns the new
+  `Error::DealAlreadyExists`.
+- **`complete_deal` left milestones marked unreleased** even though it zeroed
+  `remaining_amount` and set the status to `Completed`, so the persisted
+  `Deal` was internally inconsistent. It now marks every outstanding
+  milestone released before persisting.
+
+New regression tests in `src/test.rs` cover: non-distinct parties, deadline
+lower/upper bounds, empty and oversized milestone vectors, duplicate deal
+ids, post-deadline release rejection with the refund path still working,
+negative milestone amounts, and `complete_deal` milestone consistency. The
+three original lifecycle/batch/refund tests are unchanged and still valid.
+
+**Verification status:** this machine has no MSVC/GNU linker available, so
+`cargo test` cannot run here (same toolchain gap noted in every prior
+round). Changes were made by careful manual review against the soroban-sdk
+20 API. **Re-run `cargo test` on CI or a matched toolchain before
+deploying.**
+
 ## Known limitations (documented, not patched in this pass)
 
 These need a real design change, not a line-level fix, and are called out
