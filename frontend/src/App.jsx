@@ -9,6 +9,7 @@ import WalletModal from './components/WalletModal';
 import CustomCursor from './components/CustomCursor';
 import { WalletProvider, useWallet } from './context/WalletContext';
 import useSmoothScroll from './hooks/useSmoothScroll';
+import { prefersLowMotion } from './utils/perf';
 
 // Home is the first thing most visitors (and judges) see, so it stays in
 // the main bundle for the fastest first paint. Every other route is only
@@ -96,17 +97,16 @@ function AppContent() {
 }
 
 function App() {
-  const [reduceMotion, setReduceMotion] = useState(false);
+  // Decided once, before first paint, from the same heuristic the motion
+  // features use (reduced-motion preference / low core / low memory). Lazy
+  // initializer, so no state-set-in-effect and no first-frame flip.
+  const [reduceMotion] = useState(prefersLowMotion);
 
   useEffect(() => {
-    const cores = navigator.hardwareConcurrency || 8;
-    const memory = navigator.deviceMemory || 8;
-    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced || cores <= 4 || memory <= 4) {
-      setReduceMotion(true);
-      document.documentElement.setAttribute('data-perf', 'low');
-    }
-  }, []);
+    // Mirror the decision onto <html> so the CSS `:root[data-perf='low']`
+    // rules engage too. Attribute write only - no state change here.
+    if (reduceMotion) document.documentElement.setAttribute('data-perf', 'low');
+  }, [reduceMotion]);
 
   return (
     <MotionConfig reducedMotion={reduceMotion ? 'always' : 'user'}>
