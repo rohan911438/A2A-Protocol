@@ -109,11 +109,36 @@
   .btn-clay {
     /* Dark text on the accent fill, not white - clay-500 is a bright lime,
        so white-on-lime fails contrast outright. */
-    @apply px-7 py-3.5 rounded-xl bg-clay-500 text-black font-semibold transition-all duration-300 hover:bg-clay-400 hover:scale-[1.015] active:scale-[0.98] shadow-[0_8px_24px_rgba(179,234,30,0.25)];
+    @apply relative overflow-hidden isolate px-7 py-3.5 rounded-xl bg-clay-500 text-black font-semibold transition-all duration-300 hover:bg-clay-400 hover:scale-[1.015] active:scale-[0.98] shadow-[0_8px_24px_rgba(179,234,30,0.25)];
   }
 
   .btn-clay-outline {
-    @apply px-7 py-3.5 rounded-xl bg-transparent border border-bark/15 text-bark font-semibold transition-all duration-300 hover:border-bark/30 hover:bg-bark/[0.03];
+    @apply relative overflow-hidden isolate px-7 py-3.5 rounded-xl bg-transparent border border-bark/15 text-bark font-semibold transition-all duration-300 hover:border-bark/30 hover:bg-bark/[0.03];
+  }
+
+  /* A single diagonal band of light that sweeps across the button once on
+     hover - the "polished metal / glass" cue. Purely decorative, never
+     intercepts clicks, and sits above the fill but below the label
+     (buttons keep their own content in normal flow). */
+  .btn-clay::after,
+  .btn-clay-outline::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(115deg, transparent 32%, rgba(255, 255, 255, 0.55) 50%, transparent 68%);
+    transform: translateX(-130%);
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+  }
+
+  .btn-clay-outline::after {
+    background: linear-gradient(115deg, transparent 32%, rgba(179, 234, 30, 0.18) 50%, transparent 68%);
+  }
+
+  .btn-clay:hover::after,
+  .btn-clay-outline:hover::after {
+    transform: translateX(130%);
   }
 }
 
