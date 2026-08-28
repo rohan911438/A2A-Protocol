@@ -10,7 +10,37 @@ const Navbar = () => {
   const { account, connected, toggleModal, disconnect, formatAddress, balances, network } = useWallet();
   const [showBalance, setShowBalance] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState(null);
   const isHome = useLocation().pathname === '/';
+
+  // Scroll-spy: on the home page, light up the nav item for whichever
+  // section is currently crossing the middle band of the viewport.
+  useEffect(() => {
+    if (!isHome) {
+      setActiveSection(null);
+      return undefined;
+    }
+    const ids = ['how-it-works', 'features', 'developer-sdk'];
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setActiveSection(e.target.id);
+        });
+      },
+      { rootMargin: '-45% 0px -50% 0px', threshold: 0 }
+    );
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) obs.observe(el);
+    });
+    return () => obs.disconnect();
+  }, [isHome]);
+
+  const homeLinks = [
+    { id: 'how-it-works', label: 'How it works' },
+    { id: 'features', label: 'Capabilities' },
+    { id: 'developer-sdk', label: 'Developers' },
+  ];
 
   // Past the first ~12px the bar tightens: taller-to-shorter, a stronger
   // blur, a real drop shadow and a brighter hairline. It's the small "the
@@ -50,9 +80,26 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-9">
           {isHome ? (
             <>
-              <MagneticButton as="a" href="#how-it-works" strength={8} className="inline-block text-[13px] font-medium text-bark-muted hover:text-bark transition-colors duration-300">How it works</MagneticButton>
-              <MagneticButton as="a" href="#features" strength={8} className="inline-block text-[13px] font-medium text-bark-muted hover:text-bark transition-colors duration-300">Capabilities</MagneticButton>
-              <MagneticButton as="a" href="#developer-sdk" strength={8} className="inline-block text-[13px] font-medium text-bark-muted hover:text-bark transition-colors duration-300">Developers</MagneticButton>
+              {homeLinks.map((l) => (
+                <MagneticButton
+                  key={l.id}
+                  as="a"
+                  href={`#${l.id}`}
+                  strength={8}
+                  className={`relative inline-block text-[13px] font-medium pb-1 transition-colors duration-300 ${
+                    activeSection === l.id ? 'text-bark' : 'text-bark-muted hover:text-bark'
+                  }`}
+                >
+                  {l.label}
+                  {activeSection === l.id && (
+                    <motion.span
+                      layoutId="nav-underline"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      className="absolute -bottom-0.5 left-0 right-0 h-px bg-clay-400"
+                    />
+                  )}
+                </MagneticButton>
+              ))}
             </>
           ) : (
             <>
