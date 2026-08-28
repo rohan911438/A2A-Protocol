@@ -57,6 +57,11 @@ const HowItWorks = () => {
             since the grid re-flows to 1-2 columns below lg. */}
         <div className="hidden lg:block relative h-10 mb-2">
           <svg className="absolute inset-0 w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 10">
+            <defs>
+              <filter id="hiw-comet-glow" x="-50%" y="-400%" width="200%" height="900%">
+                <feGaussianBlur stdDeviation="1.1" />
+              </filter>
+            </defs>
             <motion.line
               x1="12.5" y1="5" x2="87.5" y2="5"
               stroke="#B3EA1E" strokeWidth="0.4" strokeDasharray="0.1 3" strokeLinecap="round"
@@ -74,6 +79,14 @@ const HowItWorks = () => {
                 transition={{ duration: 0.4, delay: 0.3 + i * 0.15 }}
               />
             ))}
+            {/* a comet of energy running the length of the flow, on a loop */}
+            <motion.circle
+              cy="5" r="1" fill="#D4FA6E" filter="url(#hiw-comet-glow)"
+              initial={{ cx: 12.5, opacity: 0 }}
+              whileInView={{ cx: 87.5, opacity: [0, 1, 1, 0] }}
+              viewport={{ once: true }}
+              transition={{ duration: 2.6, ease: 'easeInOut', delay: 1.4, repeat: Infinity, repeatDelay: 1.6 }}
+            />
           </svg>
         </div>
 
@@ -92,7 +105,15 @@ const HowItWorks = () => {
                   <div className="w-10 h-10 rounded-lg bg-clay-500/10 border border-clay-500/20 text-clay-400 flex items-center justify-center">
                     {step.icon}
                   </div>
-                  <span className="text-3xl font-serif text-white/10 select-none">{step.number}</span>
+                  <motion.span
+                    className="text-3xl font-serif text-white/10 select-none"
+                    initial={{ opacity: 0, x: 10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.1 + 0.25, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    {step.number}
+                  </motion.span>
                 </div>
                 <h3 className="text-base font-semibold text-bark mb-2">
                   {step.title}
