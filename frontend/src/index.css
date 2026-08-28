@@ -267,11 +267,22 @@
   animation: marquee-scroll 32s linear infinite;
 }
 
-.animate-marquee:hover {
+@keyframes marquee-scroll-reverse {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+.animate-marquee-reverse {
+  animation: marquee-scroll-reverse 40s linear infinite;
+}
+
+.animate-marquee:hover,
+.animate-marquee-reverse:hover {
   animation-play-state: paused;
 }
 
-:root[data-perf='low'] .animate-marquee {
+:root[data-perf='low'] .animate-marquee,
+:root[data-perf='low'] .animate-marquee-reverse {
   animation: none !important;
 }
 

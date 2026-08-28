@@ -10,11 +10,25 @@ const items = [
   'Testnet Live',
 ];
 
-const Strip = () => (
+// A second pass in a different order so the two rows never line up.
+const itemsAlt = [
+  'Multi-Agent Verification',
+  'Immutable Escrow',
+  'Instant Settlement',
+  'On-chain Audit Trail',
+  'Autonomous Payouts',
+  'Trust-minimized',
+];
+
+const Strip = ({ list }) => (
   <div className="flex items-center shrink-0" aria-hidden="true">
-    {items.map((item) => (
+    {list.map((item) => (
       <React.Fragment key={item}>
-        <span className="text-sm font-medium text-bark-faint px-6 whitespace-nowrap">{item}</span>
+        <span className="group flex items-center px-6 whitespace-nowrap">
+          <span className="text-sm font-medium text-bark-faint transition-colors duration-300 group-hover:text-bark">
+            {item}
+          </span>
+        </span>
         <span className="w-1.5 h-1.5 rounded-full bg-clay-500/30 shrink-0" />
       </React.Fragment>
     ))}
@@ -22,24 +36,29 @@ const Strip = () => (
 );
 
 /**
- * Continuous horizontal scroll of the real technologies the protocol runs
- * on - not fabricated stats or logos, just a bit of always-on motion
- * between static sections so the page doesn't feel like it stops moving
- * the moment scroll-reveals finish.
+ * Two continuous rows of the real technologies the protocol runs on,
+ * scrolling in opposite directions for a bit of parallax depth - always-on
+ * motion between the static sections so the page never feels like it stops
+ * moving the moment scroll-reveals finish. Each item warms to full white on
+ * hover; hovering either row pauses it.
  */
 const TechMarquee = () => {
   return (
     <Reveal
       amount={0.6}
-      className="py-8 border-t border-line bg-paper-soft overflow-hidden relative"
+      className="py-7 border-t border-line bg-paper-soft overflow-hidden relative space-y-3"
     >
-      {/* Feather both horizontal ends so the strip slides out of a soft edge
-          rather than being visibly clipped at the viewport border. */}
+      {/* feather both horizontal ends */}
       <div className="pointer-events-none absolute inset-y-0 left-0 w-24 z-10 bg-gradient-to-r from-paper-soft to-transparent" />
       <div className="pointer-events-none absolute inset-y-0 right-0 w-24 z-10 bg-gradient-to-l from-paper-soft to-transparent" />
+
       <div className="flex w-max animate-marquee">
-        <Strip />
-        <Strip />
+        <Strip list={items} />
+        <Strip list={items} />
+      </div>
+      <div className="flex w-max animate-marquee-reverse opacity-60">
+        <Strip list={itemsAlt} />
+        <Strip list={itemsAlt} />
       </div>
     </Reveal>
   );
