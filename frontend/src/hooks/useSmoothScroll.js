@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
+import { prefersLowMotion } from '../utils/perf';
 
 /**
  * App-wide inertial smooth scrolling.
@@ -25,13 +26,7 @@ export default function useSmoothScroll() {
   const location = useLocation();
 
   useEffect(() => {
-    const root = document.documentElement;
-    const lowPerf = root.getAttribute('data-perf') === 'low';
-    const prefersReduced =
-      window.matchMedia &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (lowPerf || prefersReduced) return undefined;
+    if (prefersLowMotion()) return undefined;
 
     const lenis = new Lenis({
       duration: 1.05,
@@ -54,7 +49,7 @@ export default function useSmoothScroll() {
     // Same-page hash links glide instead of jumping, and stop clear of the
     // 80px fixed navbar.
     const onClick = (e) => {
-      const anchor = e.target.closest('a[href^="#"]');
+      const anchor = e.target.closest?.('a[href^="#"]');
       if (!anchor) return;
       const id = anchor.getAttribute('href');
       if (!id || id === '#') return;

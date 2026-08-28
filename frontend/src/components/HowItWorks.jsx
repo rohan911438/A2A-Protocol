@@ -3,6 +3,7 @@ import { Target, MessageSquare, ShieldCheck, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SpotlightCard from './SpotlightCard';
 import RevealHeading from './RevealHeading';
+import PointerGlow from './PointerGlow';
 
 const steps = [
   {
@@ -33,8 +34,9 @@ const steps = [
 
 const HowItWorks = () => {
   return (
-    <section id="how-it-works" className="py-28 px-6 relative bg-paper border-t border-line">
-      <div className="max-w-6xl mx-auto">
+    <section id="how-it-works" className="py-28 px-6 relative bg-paper border-t border-line overflow-hidden">
+      <PointerGlow />
+      <div className="max-w-6xl mx-auto relative z-10">
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}

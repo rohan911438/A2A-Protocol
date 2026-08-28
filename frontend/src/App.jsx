@@ -6,6 +6,7 @@ import { Loader2 } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import WalletModal from './components/WalletModal';
+import CustomCursor from './components/CustomCursor';
 import { WalletProvider, useWallet } from './context/WalletContext';
 import useSmoothScroll from './hooks/useSmoothScroll';
 
@@ -59,6 +60,7 @@ function AppContent() {
     <div className="min-h-screen bg-paper font-body selection:bg-clay-500/30 selection:text-clay-400 flex flex-col transition-colors duration-500">
       <div className="grain-overlay" aria-hidden="true" />
       <div className="vignette-overlay" aria-hidden="true" />
+      <CustomCursor />
       <ScrollProgressBar />
       <Navbar />
       <WalletModal />

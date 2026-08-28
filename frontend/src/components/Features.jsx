@@ -3,6 +3,7 @@ import { MessageSquare, Lock, Key, Cpu, Zap, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SpotlightCard from './SpotlightCard';
 import RevealHeading from './RevealHeading';
+import PointerGlow from './PointerGlow';
 
 const Features = () => {
   const [chartProgress, setChartProgress] = useState(0);
@@ -46,8 +47,9 @@ const Features = () => {
   const points = getChartPoints(chartProgress);
 
   return (
-    <section id="features" className="py-28 px-6 relative bg-paper-soft border-t border-line">
-      <div className="max-w-6xl mx-auto space-y-16">
+    <section id="features" className="py-28 px-6 relative bg-paper-soft border-t border-line overflow-hidden">
+      <PointerGlow color="rgba(94,240,214,0.08)" />
+      <div className="max-w-6xl mx-auto space-y-16 relative z-10">
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Terminal as TerminalIcon, Copy, Check, Code, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import RevealHeading from './RevealHeading';
+import PointerGlow from './PointerGlow';
 
 const jsCode = `import { AgentNode, StellarRails } from '@a2a/protocol';
 
@@ -95,8 +96,9 @@ const DevSDK = () => {
   };
 
   return (
-    <section id="developer-sdk" className="py-28 px-6 relative bg-paper border-t border-line">
-      <div className="max-w-6xl mx-auto">
+    <section id="developer-sdk" className="py-28 px-6 relative bg-paper border-t border-line overflow-hidden">
+      <PointerGlow />
+      <div className="max-w-6xl mx-auto relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-14 items-center">
 
           <motion.div
