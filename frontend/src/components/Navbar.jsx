@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useWallet } from '../context/WalletContext';
@@ -9,11 +9,32 @@ import MagneticButton from './MagneticButton';
 const Navbar = () => {
   const { account, connected, toggleModal, disconnect, formatAddress, balances, network } = useWallet();
   const [showBalance, setShowBalance] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const isHome = useLocation().pathname === '/';
 
+  // Past the first ~12px the bar tightens: taller-to-shorter, a stronger
+  // blur, a real drop shadow and a brighter hairline. It's the small "the
+  // page is aware you've started reading" cue premium sites share.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-paper/85 border-b border-line backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,box-shadow,border-color,backdrop-filter] duration-500 ${
+        scrolled
+          ? 'bg-paper/90 backdrop-blur-xl border-b border-white/10 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.8)]'
+          : 'bg-paper/60 backdrop-blur-md border-b border-line'
+      }`}
+    >
+      <div
+        className={`max-w-7xl mx-auto px-6 flex items-center justify-between transition-[height] duration-500 ${
+          scrolled ? 'h-16' : 'h-20'
+        }`}
+      >
         <Link to="/" className="flex items-center gap-3 group">
           <div className="w-10 h-10 rounded-xl bg-surface border border-line flex items-center justify-center overflow-hidden group-hover:border-clay-400/40 transition-colors duration-300">
             <img src={logo} className="w-7 h-7 object-contain group-hover:scale-105 transition-transform duration-500" alt="Logo" />

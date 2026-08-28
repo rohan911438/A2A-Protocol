@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import WalletModal from './components/WalletModal';
 import { WalletProvider, useWallet } from './context/WalletContext';
+import useSmoothScroll from './hooks/useSmoothScroll';
 
 // Home is the first thing most visitors (and judges) see, so it stays in
 // the main bundle for the fastest first paint. Every other route is only
@@ -43,7 +44,7 @@ function ScrollProgressBar() {
   return (
     <motion.div
       style={{ scaleX }}
-      className="fixed top-0 left-0 right-0 h-[2px] bg-clay-500 origin-left z-[150]"
+      className="fixed top-0 left-0 right-0 h-[2px] origin-left z-[150] bg-gradient-to-r from-clay-500 via-clay-400 to-moss-400 shadow-[0_0_14px_rgba(179,234,30,0.55)]"
       aria-hidden="true"
     />
   );
@@ -52,10 +53,12 @@ function ScrollProgressBar() {
 function AppContent() {
   const { connected } = useWallet();
   const location = useLocation();
+  useSmoothScroll();
 
   return (
     <div className="min-h-screen bg-paper font-body selection:bg-clay-500/30 selection:text-clay-400 flex flex-col transition-colors duration-500">
       <div className="grain-overlay" aria-hidden="true" />
+      <div className="vignette-overlay" aria-hidden="true" />
       <ScrollProgressBar />
       <Navbar />
       <WalletModal />

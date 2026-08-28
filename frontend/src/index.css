@@ -8,6 +8,31 @@
   html {
     scroll-behavior: smooth;
     background-color: #000000;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Lenis (app-wide inertial scroll, see hooks/useSmoothScroll.js). These
+     rules are what let Lenis take over the scroll position cleanly; without
+     them the native `scroll-behavior: smooth` above fights the interpolation
+     and the page micro-stutters. When Lenis is inactive (reduced-motion /
+     low-power) none of these classes are ever added, so native scrolling is
+     completely untouched. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+
+  .lenis.lenis-stopped {
+    overflow: hidden;
   }
 
   body {
@@ -24,6 +49,20 @@
   h5,
   h6 {
     @apply font-display tracking-tight text-white;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* One consistent, on-brand focus ring for every keyboard-focusable
+     element instead of the browser default (which is invisible on this
+     near-black palette). */
+  :focus-visible {
+    outline: 2px solid theme('colors.clay.500');
+    outline-offset: 2px;
+    border-radius: 4px;
   }
 }
 
@@ -32,9 +71,22 @@
     @apply bg-ink-850/90 backdrop-blur-lg border border-white/5 shadow-[0_30px_70px_rgba(0,0,0,0.85)];
   }
 
-  /* Monochrome + single-accent surfaces */
+  /* Monochrome + single-accent surfaces. The base is a very shallow
+     top-lit gradient (not a flat fill) plus a 1px inset highlight on the
+     top edge - the same "light is coming from above" cue physical panels
+     have. On hover the card lifts a touch and the shadow deepens; the
+     transition is long and eased so it glides rather than snaps. */
   .paper-card {
-    @apply rounded-2xl bg-surface border border-line shadow-[0_4px_16px_rgba(0,0,0,0.5)] hover:border-clay-500/40 hover:shadow-[0_16px_40px_rgba(0,0,0,0.6)] transition-all duration-500;
+    @apply rounded-2xl border border-line transition-[transform,box-shadow,border-color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-clay-500/40 hover:-translate-y-0.5;
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0) 42%),
+      linear-gradient(#141414, #141414);
+    box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.04) inset, 0 4px 16px rgba(0, 0, 0, 0.5);
+  }
+
+  .paper-card:hover {
+    box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
+      0 24px 60px -12px rgba(0, 0, 0, 0.75),
+      0 0 0 1px rgba(179, 234, 30, 0.06);
   }
 
   .btn-clay {
@@ -61,6 +113,37 @@
   .mask-radial-faded {
     mask-image: radial-gradient(circle at center, black, transparent 80%);
   }
+
+  /* Feather the top and bottom edges of a block so long scrolling content
+     dissolves into the page instead of ending on a hard line. */
+  .edge-fade-y {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 8%, black 92%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, black 8%, black 92%, transparent);
+  }
+
+  /* Cheap GPU compositing hint for elements that animate transform on
+     scroll - keeps parallax/reveal layers on their own layer so they don't
+     trigger repaints of the content behind them. */
+  .gpu {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+}
+
+/* Cinematic vignette - a soft darkening toward the four corners, fixed over
+   the whole viewport. Pulls the eye to the centre column and stops the flat
+   pure-black edges from feeling like dead space on wide monitors. Sits below
+   the grain overlay (z-200) and above the page content. */
+.vignette-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 190;
+  pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 0%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+:root[data-perf='low'] .vignette-overlay {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -171,19 +254,33 @@
   animation: none !important;
 }
 
-/* Custom sleek dark scrollbar */
+/* Custom sleek dark scrollbar - a hair wider than a pure hairline so it's
+   actually grabbable, inset from the edge with a transparent border, and it
+   warms to the accent on hover so the one interactive chrome element on the
+   page matches the rest of the system. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #27272a transparent;
+}
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 10px;
+  height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #18181b;
+  background: #27272a;
+  border: 3px solid transparent;
+  background-clip: content-box;
   border-radius: 9999px;
+  transition: background-color 0.2s;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #27272a;
+  background: #4a5a1f;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
 }
 

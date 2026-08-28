@@ -1,10 +1,11 @@
 import React from 'react';
 import logo from '../assets/logo.png';
+import Reveal from './Reveal';
 
 const Footer = () => {
   return (
       <footer className="py-20 px-6 border-t border-line relative z-10 bg-paper-soft">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16">
+        <Reveal className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16">
 
           <div className="col-span-1 md:col-span-2 space-y-6">
             <div className="flex items-center gap-3">
@@ -42,7 +43,7 @@ const Footer = () => {
             </ul>
           </div>
 
-        </div>
+        </Reveal>
 
         <div className="max-w-7xl mx-auto pt-10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-bark-faint border-t border-line mt-14">
           <div>© 2026 A2A Protocol. Built on Stellar.</div>
